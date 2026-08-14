@@ -1,12 +1,8 @@
 import { getActiveMaterials } from "@/app/(app)/materials-actions";
 import { ActiveDesk } from "@/components/desk/active-desk";
+import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
-
-const HEATMAP_PLACEHOLDERS = Array.from(
-  { length: 84 },
-  (_, day) => `heat-ph-${day}`,
-);
 
 export default async function HomePage() {
   const [materials, dictionary] = await Promise.all([
@@ -39,13 +35,8 @@ export default async function HomePage() {
         <p className="mt-1 text-sm text-zinc-500">
           {dictionary.desk.consistencyHint}
         </p>
-        <div className="mt-6 flex gap-1 overflow-x-auto pb-2 opacity-40">
-          {HEATMAP_PLACEHOLDERS.map((id) => (
-            <div
-              key={id}
-              className="aspect-square min-w-2.5 rounded-[2px] bg-zinc-900"
-            />
-          ))}
+        <div className="mt-6">
+          <ContributionHeatmap />
         </div>
       </section>
     </main>

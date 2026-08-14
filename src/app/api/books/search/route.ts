@@ -17,6 +17,13 @@ async function userFacingMessage(
         error: dictionary.errors.booksRateLimit,
       };
     }
+    if (error.status === 503 || error.status >= 500) {
+      return {
+        status: 503,
+        errorKey: "booksUnavailable",
+        error: dictionary.errors.booksUnavailable,
+      };
+    }
     if (error.status === 400 || error.status === 403) {
       return {
         status: 502,

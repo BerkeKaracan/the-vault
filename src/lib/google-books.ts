@@ -61,6 +61,10 @@ function mapVolumes(data: GoogleVolumesResponse): GoogleBookResult[] {
     .filter((item): item is GoogleBookResult => item !== null);
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchVolumes(
   query: string,
   limit: number,
@@ -84,7 +88,12 @@ async function fetchVolumes(
     },
   );
 
-  const data = (await res.json()) as GoogleVolumesResponse;
+  let data: GoogleVolumesResponse;
+  try {
+    data = (await res.json()) as GoogleVolumesResponse;
+  } catch {
+    throw new GoogleBooksError(res.status, `Google Books error: ${res.status}`);
+  }
 
   if (!res.ok || data.error) {
     const status = data.error?.code ?? res.status;
@@ -93,6 +102,33 @@ async function fetchVolumes(
   }
 
   return mapVolumes(data);
+}
+
+async function fetchVolumesWithRetry(
+  query: string,
+  limit: number,
+  apiKey?: string,
+): Promise<GoogleBookResult[]> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await fetchVolumes(query, limit, apiKey);
+    } catch (error) {
+      lastError = error;
+      const retryable =
+        error instanceof GoogleBooksError &&
+        (error.status === 503 || error.status === 429 || error.status >= 500);
+
+      if (!retryable || attempt === 2) {
+        throw error;
+      }
+
+      await sleep(400 * (attempt + 1));
+    }
+  }
+
+  throw lastError;
 }
 
 export async function searchGoogleBooks(
@@ -105,7 +141,7 @@ export async function searchGoogleBooks(
   const apiKey = process.env.GOOGLE_BOOKS_API_KEY?.trim();
 
   try {
-    return await fetchVolumes(trimmed, limit, apiKey || undefined);
+    return await fetchVolumesWithRetry(trimmed, limit, apiKey || undefined);
   } catch (error) {
     // Invalid / misconfigured key → retry once without key
     if (
@@ -113,7 +149,7 @@ export async function searchGoogleBooks(
       error instanceof GoogleBooksError &&
       (error.status === 400 || error.status === 403)
     ) {
-      return await fetchVolumes(trimmed, limit);
+      return await fetchVolumesWithRetry(trimmed, limit);
     }
     throw error;
   }

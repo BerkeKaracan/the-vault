@@ -35,4 +35,6 @@ export type ActionErrorCode =
   | "deskFull"
   | "titleRequired"
   | "authRequired"
+  | "invalidPage"
+  | "notFound"
   | "generic";
