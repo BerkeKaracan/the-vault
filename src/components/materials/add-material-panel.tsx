@@ -46,10 +46,12 @@ export function AddMaterialPanel() {
       };
       if (!res.ok) {
         setBooks([]);
+        // Prefer server-localized message (already interpolated).
         setSearchError(
-          data.errorKey
-            ? translateError(dictionary, data.errorKey)
-            : (data.error ?? dictionary.add.searchFailed),
+          data.error ??
+            (data.errorKey
+              ? translateError(dictionary, data.errorKey)
+              : dictionary.add.searchFailed),
         );
         return;
       }

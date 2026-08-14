@@ -30,13 +30,21 @@ const tr = {
     pageOnly: "Sayfa {page}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
-    consistencyHint: "Günlük disiplin haritası sırada.",
+    consistencyHint: "Günlük disiplin — masaya oturduğun günler.",
+    pageInput: "Ulaşılan sayfa",
+    updateProgress: "Güncelle",
+    markCompleted: "Manuel Bitir",
+    shelve: "Vault’a kaldır",
+    heatmapStats: "{days} aktif gün",
   },
   vault: {
     title: "The Vault",
     subtitle: "Arşiv ve bekleyenler · {count}",
     empty: "Kütüphane henüz boş.",
     add: "Ekle",
+    activate: "Masaya al",
+    statusShelved: "Bekliyor",
+    statusCompleted: "Tamamlandı",
   },
   add: {
     title: "Materyal ekle",
@@ -68,6 +76,8 @@ const tr = {
       "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Vault'a kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
+    invalidPage: "Yeni sayfa, mevcut sayfadan büyük olmalı.",
+    notFound: "Materyal bulunamadı.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -76,6 +86,8 @@ const tr = {
       "Google Books anahtarı reddedildi. Cloud Console’da Books API’yi aç ve anahtarı kontrol et.",
     booksFailed: "Kitap araması başarısız oldu.",
     booksFailedStatus: "Kitap araması başarısız oldu ({status}).",
+    booksUnavailable:
+      "Google Books şu an yanıt vermiyor. Biraz sonra tekrar dene.",
   },
   setup: {
     title: "Ortam değişkenleri eksik",
@@ -123,13 +135,21 @@ const en = {
     pageOnly: "Page {page}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
-    consistencyHint: "Daily discipline heatmap coming next.",
+    consistencyHint: "Daily discipline — days you sat at the desk.",
+    pageInput: "Page reached",
+    updateProgress: "Update",
+    markCompleted: "Mark completed",
+    shelve: "Move to Vault",
+    heatmapStats: "{days} active days",
   },
   vault: {
     title: "The Vault",
     subtitle: "Archive and waiting · {count}",
     empty: "Library is still empty.",
     add: "Add",
+    activate: "Activate",
+    statusShelved: "Shelved",
+    statusCompleted: "Completed",
   },
   add: {
     title: "Add material",
@@ -161,6 +181,8 @@ const en = {
       "Your desk is full. Move a book to the Vault before activating another.",
     titleRequired: "Title is required.",
     authRequired: "Sign in required.",
+    invalidPage: "New page must be greater than the current page.",
+    notFound: "Material not found.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -169,6 +191,8 @@ const en = {
       "Google Books key was rejected. Enable Books API in Cloud Console and verify the key.",
     booksFailed: "Book search failed.",
     booksFailedStatus: "Book search failed ({status}).",
+    booksUnavailable:
+      "Google Books is temporarily unavailable. Try again in a moment.",
   },
   setup: {
     title: "Environment variables missing",
@@ -215,12 +239,20 @@ export type Dictionary = {
     pageOf: string;
     consistency: string;
     consistencyHint: string;
+    pageInput: string;
+    updateProgress: string;
+    markCompleted: string;
+    shelve: string;
+    heatmapStats: string;
   };
   vault: {
     title: string;
     subtitle: string;
     empty: string;
     add: string;
+    activate: string;
+    statusShelved: string;
+    statusCompleted: string;
   };
   add: {
     title: string;
@@ -251,12 +283,15 @@ export type Dictionary = {
     deskFull: string;
     titleRequired: string;
     authRequired: string;
+    invalidPage: string;
+    notFound: string;
     generic: string;
     queryTooShort: string;
     booksRateLimit: string;
     booksKeyRejected: string;
     booksFailed: string;
     booksFailedStatus: string;
+    booksUnavailable: string;
   };
   setup: {
     title: string;
