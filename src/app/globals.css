@@ -16,10 +16,186 @@
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-syne);
+}
+
+/* One scrollport only: the document (html). Never put overflow-y on body. */
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(82 82 91) transparent;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
+  margin: 0;
+  min-height: 100dvh;
+  overflow: visible;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
+}
+
+html::-webkit-scrollbar {
+  width: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: rgb(82 82 91);
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(113 113 122);
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landing-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-4%, 5%, 0) scale(1.12);
+  }
+}
+
+@keyframes landing-grain {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-3%, -4%, 0);
+  }
+}
+
+@keyframes landing-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.72);
+  }
+}
+
+.landing-rise {
+  animation: landing-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-pulse {
+  animation: landing-pulse 2.4s ease-in-out infinite;
+}
+
+/* Fine architectural grid, faded out toward the edges. */
+.landing-hairlines {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 40%,
+    #000 10%,
+    transparent 75%
+  );
+}
+
+.landing-pointer-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  background: radial-gradient(
+    340px circle at var(--pointer-x, 50%) var(--pointer-y, 0%),
+    rgba(74, 222, 128, 0.07),
+    transparent 70%
+  );
+}
+
+.landing-tilt {
+  transform: perspective(1600px) rotateY(-8deg) rotateX(3deg);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.landing-tilt:hover {
+  transform: perspective(1600px) rotateY(-2deg) rotateX(1deg);
+}
+
+@media (max-width: 1023px) {
+  .landing-tilt,
+  .landing-tilt:hover {
+    transform: none;
+  }
+}
+
+/* Scroll-driven reveal where supported; content stays visible everywhere else. */
+.reveal {
+  opacity: 1;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: landing-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 55%;
+    }
+  }
+}
+
+.landing-rise-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.landing-rise-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.landing-rise-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.landing-atmosphere {
+  animation: landing-drift 28s ease-in-out infinite alternate;
+}
+
+.landing-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: landing-grain 7s steps(3) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-rise,
+  .landing-pulse,
+  .landing-atmosphere,
+  .landing-grain,
+  .landing-tilt {
+    animation: none;
+    transform: none;
+  }
 }

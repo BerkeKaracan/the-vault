@@ -4,7 +4,7 @@ import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 
-export default async function HomePage() {
+export default async function DeskPage() {
   const [materials, dictionary] = await Promise.all([
     getActiveMaterials(),
     getDictionary(),

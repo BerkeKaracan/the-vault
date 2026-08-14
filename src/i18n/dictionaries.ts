@@ -5,6 +5,61 @@ const tr = {
   meta: {
     description: "Odak odaklı okuma ve ilerleme terminali",
   },
+  landing: {
+    eyebrow: "Sıfır sosyal gürültü",
+    headlineLine1: "Okumak gösteri değil.",
+    headlineLine2: "Mesaidir.",
+    sub: "The Vault; masandaki kitapları, soru bankalarını ve dokümantasyonları takip eden sessiz bir ilerleme terminali. Feed yok, beğeni yok — sadece mesain.",
+    ctaPrimary: "Giriş yap",
+    ctaSecondary: "Nasıl çalışıyor",
+    statDeskLabel: "aktif materyal limiti",
+    statNoiseLabel: "beğeni, yorum, takipçi",
+    statDailyLabel: "günlük kutu, her gün",
+    manifestoTitle: "Az yüzey. Gerçek mesai.",
+    manifestoBody:
+      "Kitap takibi; sahte incelemeler ve gösteriş raflarıyla dolu bir sosyal ağa dönüştü. The Vault tersini yapıyor: her şeyi söküp geriye yalnızca ölçülebilir mesaiyi bırakıyor.",
+    removedTitle: "Çıkarıldı",
+    removed: [
+      "Haber kaynağı",
+      "Beğeni ve yorum",
+      "Arkadaş listesi",
+      "Yıldızlı incelemeler",
+      "Rozetler ve reklamlar",
+    ],
+    keptTitle: "Kaldı",
+    kept: [
+      "Masandaki üç materyal",
+      "Girdiğin her sayfa",
+      "Bugünün kutusu",
+    ],
+    deskTitle: "Active Desk",
+    deskBody:
+      "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Vault’a kaldırırsın — sınırın kendisi odaktır.",
+    deskMockLabel: "Active Desk",
+    heatTitle: "İstikrar haritası",
+    heatBody:
+      "“Yılda 50 kitap” gibi yapay hedefler yok. Tek soru: bugün masaya oturdun mu. Girdiğin her sayfa o günün kutusunu yakar.",
+    heatMockLabel: "Son 6 ay",
+    heatMockLabelYear: "Son 12 ay",
+    vaultTitle: "The Vault",
+    vaultBody:
+      "Biten ve sırada bekleyen her şey, alt alta listeler yerine kapaklardan oluşan bir ızgarada durur. Kapağı olmayan materyal tipografik kapak alır.",
+    vaultMockLabel: "Arşiv",
+    closingTitle: "Masana dön.",
+    closingBody: "Hesabını aç, ilk materyalini ekle, bugünün kutusunu yak.",
+    closingCta: "Başla",
+    closingNote: "E-posta yeter. Kart yok, reklam yok.",
+    footerNote: "Zihinsel mesai için yapıldı.",
+    mockTitle1: "Suç ve Ceza",
+    mockAuthor1: "Dostoyevski",
+    mockTitle2: "DGS · Sayısal",
+    mockAuthor2: "Deneme 12",
+    mockTitle3: "Postgres Docs",
+    mockAuthor3: "v17",
+    mockTitle4: "Meditasyonlar",
+    mockTitle5: "Sefiller",
+    mockTitle6: "Yerdeniz",
+  },
   nav: {
     desk: "Desk",
     vault: "Vault",
@@ -110,6 +165,62 @@ const en = {
   meta: {
     description: "Focus-first reading and progress terminal",
   },
+  landing: {
+    eyebrow: "Zero social noise",
+    headlineLine1: "Reading isn’t a performance.",
+    headlineLine2: "It’s a shift.",
+    sub: "The Vault is a quiet progress terminal for the books, question banks and docs on your desk. No feed, no likes — just the work.",
+    ctaPrimary: "Sign in",
+    ctaSecondary: "How it works",
+    statDeskLabel: "active material limit",
+    statNoiseLabel: "likes, comments, followers",
+    statDailyLabel: "cell a day, every day",
+    manifestoTitle: "Less surface. Real work.",
+    manifestoBody:
+      "Book tracking turned into a social network of fake reviews and display shelves. The Vault does the opposite: strip everything out and leave only measurable hours.",
+    removedTitle: "Removed",
+    removed: [
+      "The feed",
+      "Likes and comments",
+      "Friend lists",
+      "Star reviews",
+      "Badges and ads",
+    ],
+    keptTitle: "Kept",
+    kept: [
+      "Three materials on the desk",
+      "Every page you log",
+      "Today’s cell",
+    ],
+    deskTitle: "Active Desk",
+    deskBody:
+      "Three materials at most. To add a fourth you move one to the Vault first — the limit is the focus.",
+    deskMockLabel: "Active Desk",
+    heatTitle: "Consistency map",
+    heatBody:
+      "No artificial “50 books a year” targets. One question: did you sit down today. Every page you log lights that day’s cell.",
+    heatMockLabel: "Last 6 months",
+    heatMockLabelYear: "Last 12 months",
+    vaultTitle: "The Vault",
+    vaultBody:
+      "Everything finished or waiting lives in a cover-first grid instead of a flat list. Materials without art get a typographic cover.",
+    vaultMockLabel: "Archive",
+    closingTitle: "Back to the desk.",
+    closingBody:
+      "Create an account, add your first material, light today’s cell.",
+    closingCta: "Get started",
+    closingNote: "Email is enough. No card, no ads.",
+    footerNote: "Built for deep work.",
+    mockTitle1: "Crime and Punishment",
+    mockAuthor1: "Dostoevsky",
+    mockTitle2: "GRE · Quant",
+    mockAuthor2: "Set 12",
+    mockTitle3: "Postgres Docs",
+    mockAuthor3: "v17",
+    mockTitle4: "Meditations",
+    mockTitle5: "Les Misérables",
+    mockTitle6: "Earthsea",
+  },
   nav: {
     desk: "Desk",
     vault: "Vault",
@@ -213,6 +324,47 @@ const en = {
 export type Dictionary = {
   brand: string;
   meta: { description: string };
+  landing: {
+    eyebrow: string;
+    headlineLine1: string;
+    headlineLine2: string;
+    sub: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+    statDeskLabel: string;
+    statNoiseLabel: string;
+    statDailyLabel: string;
+    manifestoTitle: string;
+    manifestoBody: string;
+    removedTitle: string;
+    removed: readonly string[];
+    keptTitle: string;
+    kept: readonly string[];
+    deskTitle: string;
+    deskBody: string;
+    deskMockLabel: string;
+    heatTitle: string;
+    heatBody: string;
+    heatMockLabel: string;
+    heatMockLabelYear: string;
+    vaultTitle: string;
+    vaultBody: string;
+    vaultMockLabel: string;
+    closingTitle: string;
+    closingBody: string;
+    closingCta: string;
+    closingNote: string;
+    footerNote: string;
+    mockTitle1: string;
+    mockAuthor1: string;
+    mockTitle2: string;
+    mockAuthor2: string;
+    mockTitle3: string;
+    mockAuthor3: string;
+    mockTitle4: string;
+    mockTitle5: string;
+    mockTitle6: string;
+  };
   nav: {
     desk: string;
     vault: string;

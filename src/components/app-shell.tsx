@@ -6,16 +6,16 @@ import { LanguageSwitcher } from "@/i18n/language-switcher";
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const dictionary = await getDictionary();
   const nav = [
-    { href: "/", label: dictionary.nav.desk },
+    { href: "/desk", label: dictionary.nav.desk },
     { href: "/vault", label: dictionary.nav.vault },
     { href: "/add", label: dictionary.nav.add },
   ] as const;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="flex min-h-dvh flex-1 flex-col">
       <header className="flex items-center justify-between border-b border-zinc-900 px-6 py-4">
         <Link
-          href="/"
+          href="/desk"
           className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase hover:text-zinc-200"
         >
           {dictionary.brand}

@@ -46,7 +46,7 @@ export function LoginForm() {
         setMessage(error.message);
         return;
       }
-      window.location.href = "/";
+      window.location.href = "/desk";
     });
   }
 
