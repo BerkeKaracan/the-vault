@@ -31,7 +31,7 @@ function mapDbError(message: string | undefined): ActionErrorCode {
 }
 
 function revalidateMaterialPaths() {
-  revalidatePath("/");
+  revalidatePath("/desk");
   revalidatePath("/vault");
   revalidatePath("/add");
 }

@@ -2,11 +2,20 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/env";
 
+function isPublicPath(path: string) {
+  return (
+    path === "/" ||
+    path.startsWith("/login") ||
+    path.startsWith("/auth") ||
+    path.startsWith("/setup")
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   if (!isSupabaseConfigured()) {
-    if (path.startsWith("/setup")) {
+    if (path.startsWith("/setup") || path === "/") {
       return NextResponse.next({ request });
     }
     const url = request.nextUrl.clone();
@@ -46,24 +55,21 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthRoute = path.startsWith("/login") || path.startsWith("/auth");
-  const isSetupRoute = path.startsWith("/setup");
-
-  if (isSetupRoute) {
+  if (path.startsWith("/setup")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = user ? "/desk" : "/";
     return NextResponse.redirect(url);
   }
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isPublicPath(path)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && path.startsWith("/login")) {
+  if (user && (path.startsWith("/login") || path === "/")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/desk";
     return NextResponse.redirect(url);
   }
 
