@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
+import { getAuthUser } from "@/lib/auth";
 import { GoogleBooksError, searchGoogleBooks } from "@/lib/google-books";
 
 async function userFacingMessage(
@@ -46,6 +47,18 @@ async function userFacingMessage(
 }
 
 export async function GET(request: Request) {
+  const user = await getAuthUser();
+  if (!user) {
+    const dictionary = await getDictionary();
+    return NextResponse.json(
+      {
+        error: dictionary.errors.authRequired,
+        errorKey: "authRequired" satisfies ErrorKey,
+      },
+      { status: 401 },
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim() ?? "";
   const dictionary = await getDictionary();

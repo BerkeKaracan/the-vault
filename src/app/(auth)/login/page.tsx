@@ -2,10 +2,16 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
+import { safeNextPath } from "@/lib/paths";
 import { LoginForm } from "./login-form";
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const dictionary = await getDictionary();
+  const params = await searchParams;
+  const nextValue = params.next;
+  const next = safeNextPath(
+    Array.isArray(nextValue) ? nextValue[0] : nextValue,
+  );
 
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-16">
@@ -27,7 +33,7 @@ export default async function LoginPage() {
           {dictionary.login.subtitle}
         </p>
       </div>
-      <LoginForm />
+      <LoginForm next={next} />
     </main>
   );
 }
