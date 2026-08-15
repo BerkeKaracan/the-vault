@@ -1,18 +1,94 @@
 @import "tailwindcss";
 
-:root {
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
   --background: #09090b;
   --foreground: #fafafa;
   --muted: #71717a;
+  --surface: #070708;
+  --elevated: #0c0c0e;
   --accent: #4ade80;
-  --border: #27272a;
+  --accent-fg: #022c22;
+  --accent-glow: rgba(74, 222, 128, 0.1);
+  --heat-0: rgba(255, 255, 255, 0.04);
+  --heat-1: #022c22;
+  --heat-2: #065f46;
+  --heat-3: #059669;
+  --heat-4: #4ade80;
+  --border: rgba(255, 255, 255, 0.1);
+  --desk-fade: rgba(0, 0, 0, 0.55);
+  --scrollbar: rgb(82 82 91);
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --background: #f6f6f4;
+  --foreground: #18181b;
+  --muted: #71717a;
+  --surface: #ffffff;
+  --elevated: #ffffff;
+  --accent: #16a34a;
+  --accent-fg: #ffffff;
+  --accent-glow: rgba(22, 163, 74, 0.12);
+  --heat-0: rgba(24, 24, 27, 0.06);
+  --heat-1: #dcfce7;
+  --heat-2: #86efac;
+  --heat-3: #22c55e;
+  --heat-4: #15803d;
+  --border: rgba(24, 24, 27, 0.12);
+  --desk-fade: rgba(246, 246, 244, 0.92);
+  --scrollbar: rgb(161 161 170);
+}
+
+html[data-theme="dark"][data-accent="blue"] {
+  --accent: #60a5fa;
+  --accent-fg: #0b1b33;
+  --accent-glow: rgba(96, 165, 250, 0.12);
+  --heat-1: #0b1b33;
+  --heat-2: #1e3a8a;
+  --heat-3: #2563eb;
+  --heat-4: #60a5fa;
+}
+
+html[data-theme="light"][data-accent="blue"] {
+  --accent: #2563eb;
+  --accent-fg: #ffffff;
+  --accent-glow: rgba(37, 99, 235, 0.12);
+  --heat-1: #dbeafe;
+  --heat-2: #93c5fd;
+  --heat-3: #3b82f6;
+  --heat-4: #1d4ed8;
+}
+
+html[data-theme="dark"][data-accent="amber"] {
+  --accent: #fbbf24;
+  --accent-fg: #2a1a04;
+  --accent-glow: rgba(251, 191, 36, 0.12);
+  --heat-1: #2a1a04;
+  --heat-2: #92400e;
+  --heat-3: #d97706;
+  --heat-4: #fbbf24;
+}
+
+html[data-theme="light"][data-accent="amber"] {
+  --accent: #d97706;
+  --accent-fg: #ffffff;
+  --accent-glow: rgba(217, 119, 6, 0.14);
+  --heat-1: #fef3c7;
+  --heat-2: #fcd34d;
+  --heat-3: #f59e0b;
+  --heat-4: #b45309;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
   --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -25,7 +101,7 @@ html {
   overflow-y: auto;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: rgb(82 82 91) transparent;
+  scrollbar-color: var(--scrollbar) transparent;
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
 }
@@ -48,7 +124,7 @@ html::-webkit-scrollbar-track {
 }
 
 html::-webkit-scrollbar-thumb {
-  background-color: rgb(82 82 91);
+  background-color: var(--scrollbar);
   border-radius: 999px;
 }
 
@@ -58,6 +134,49 @@ html::-webkit-scrollbar-thumb:hover {
 
 html::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+.heat-0 {
+  background: var(--heat-0);
+}
+.heat-1 {
+  background: var(--heat-1);
+}
+.heat-2 {
+  background: var(--heat-2);
+}
+.heat-3 {
+  background: var(--heat-3);
+}
+.heat-4 {
+  background: var(--heat-4);
+}
+
+.focus-private [data-private] {
+  filter: blur(7px);
+  user-select: none;
+}
+
+.note-body h1,
+.note-body h2,
+.note-body h3 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+  margin: 0.8em 0 0.35em;
+}
+.note-body p,
+.note-body ul {
+  margin: 0.55em 0;
+}
+.note-body ul {
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+.note-body code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.85em;
+  color: var(--accent);
 }
 
 @keyframes landing-rise {
@@ -109,7 +228,61 @@ html::-webkit-scrollbar-corner {
   animation: landing-pulse 2.4s ease-in-out infinite;
 }
 
-/* Fine architectural grid, faded out toward the edges. */
+.landing-wash {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 75% -5%,
+      var(--accent-glow),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 5% 100%,
+      rgba(120, 53, 15, 0.14),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #0b0b0d 0%, #08080a 45%, #050506 100%);
+}
+
+html[data-theme="light"] .landing-wash {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 75% -5%,
+      var(--accent-glow),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 5% 100%,
+      rgba(217, 119, 6, 0.08),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #f7f7f5 0%, #f4f4f2 55%, #f0f0ec 100%);
+}
+
+.landing-vignette {
+  background: radial-gradient(
+    ellipse 75% 60% at 50% 45%,
+    transparent 20%,
+    rgba(3, 3, 4, 0.75) 100%
+  );
+}
+
+html[data-theme="light"] .landing-vignette {
+  background: radial-gradient(
+    ellipse 75% 60% at 50% 45%,
+    transparent 35%,
+    rgba(246, 246, 244, 0.35) 100%
+  );
+}
+
+html[data-theme="light"] .landing-hairlines {
+  background-image:
+    linear-gradient(to right, rgba(24, 24, 27, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(24, 24, 27, 0.04) 1px, transparent 1px);
+}
+
+html[data-theme="light"] .landing-grain {
+  opacity: 0.08;
+}
 .landing-hairlines {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
@@ -122,6 +295,18 @@ html::-webkit-scrollbar-corner {
   );
 }
 
+.landing-orb-warm {
+  background: radial-gradient(
+    circle,
+    rgba(250, 250, 249, 0.05),
+    transparent 65%
+  );
+}
+
+html[data-theme="light"] .landing-orb-warm {
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.08), transparent 65%);
+}
+
 .landing-pointer-glow {
   position: fixed;
   inset: 0;
@@ -131,7 +316,7 @@ html::-webkit-scrollbar-corner {
   transition: opacity 0.8s ease;
   background: radial-gradient(
     340px circle at var(--pointer-x, 50%) var(--pointer-y, 0%),
-    rgba(74, 222, 128, 0.07),
+    var(--accent-glow),
     transparent 70%
   );
 }
@@ -185,6 +370,7 @@ html::-webkit-scrollbar-corner {
 }
 
 .landing-grain {
+  opacity: 0.16;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: landing-grain 7s steps(3) infinite;
 }

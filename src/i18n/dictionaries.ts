@@ -2,6 +2,7 @@ import type { Locale } from "./config";
 
 const tr = {
   brand: "The Vault",
+  busy: "…",
   meta: {
     description: "Odak odaklı okuma ve ilerleme terminali",
   },
@@ -9,12 +10,18 @@ const tr = {
     eyebrow: "Sıfır sosyal gürültü",
     headlineLine1: "Okumak gösteri değil.",
     headlineLine2: "Mesaidir.",
-    sub: "The Vault; masandaki kitapları, soru bankalarını ve dokümantasyonları takip eden sessiz bir ilerleme terminali. Feed yok, beğeni yok — sadece mesain.",
+    sub: "Masandaki kitap, soru ve dokümanları takip eden sessiz bir ilerleme terminali. Feed yok, beğeni yok — sadece mesain.",
     ctaPrimary: "Giriş yap",
     ctaSecondary: "Nasıl çalışıyor",
-    statDeskLabel: "aktif materyal limiti",
-    statNoiseLabel: "beğeni, yorum, takipçi",
-    statDailyLabel: "günlük kutu, her gün",
+    statDeskLabel: "masa limiti",
+    statNoiseLabel: "sosyal gürültü",
+    statDailyLabel: "günlük kutu",
+    kindBook: "Kitap",
+    kindBookHint: "Roman, deneme, el kitabı.",
+    kindSet: "Soru",
+    kindSetHint: "Set, çalışma, deneme.",
+    kindDocs: "Doküman",
+    kindDocsHint: "Not, referans, PDF.",
     manifestoTitle: "Az yüzey. Gerçek mesai.",
     manifestoBody:
       "Kitap takibi; sahte incelemeler ve gösteriş raflarıyla dolu bir sosyal ağa dönüştü. The Vault tersini yapıyor: her şeyi söküp geriye yalnızca ölçülebilir mesaiyi bırakıyor.",
@@ -27,11 +34,7 @@ const tr = {
       "Rozetler ve reklamlar",
     ],
     keptTitle: "Kaldı",
-    kept: [
-      "Masandaki üç materyal",
-      "Girdiğin her sayfa",
-      "Bugünün kutusu",
-    ],
+    kept: ["Masandaki üç materyal", "Girdiğin her sayfa", "Bugünün kutusu"],
     deskTitle: "Active Desk",
     deskBody:
       "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Vault’a kaldırırsın — sınırın kendisi odaktır.",
@@ -50,21 +53,28 @@ const tr = {
     closingCta: "Başla",
     closingNote: "E-posta yeter. Kart yok, reklam yok.",
     footerNote: "Zihinsel mesai için yapıldı.",
-    mockTitle1: "Suç ve Ceza",
-    mockAuthor1: "Dostoyevski",
-    mockTitle2: "DGS · Sayısal",
-    mockAuthor2: "Deneme 12",
-    mockTitle3: "Postgres Docs",
-    mockAuthor3: "v17",
-    mockTitle4: "Meditasyonlar",
-    mockTitle5: "Sefiller",
-    mockTitle6: "Yerdeniz",
+    mockSample: "Örnek",
+    mockLimit: "Limit",
+    mockBookTitle: "Cilt I",
+    mockBookMeta: "Roman",
+    mockSetTitle: "Soru seti",
+    mockSetMeta: "Bölüm 4",
+    mockDocsTitle: "Referans",
+    mockDocsMeta: "Notlar",
+    mockCoverA: "Cilt II",
+    mockCoverB: "Deneme",
+    mockCoverC: "El kitabı",
+    mockCoverD: "Makale",
+    mockCoverE: "Çalışma",
+    mockCoverF: "Arşiv notu",
   },
   nav: {
     desk: "Desk",
     vault: "Vault",
     add: "Ekle",
+    settings: "Ayarlar",
     signOut: "Çıkış",
+    focus: "Odak",
   },
   login: {
     title: "Odak terminali",
@@ -81,16 +91,41 @@ const tr = {
     title: "Active Desk",
     subtitle: "Şu an masanda · {count}/3",
     empty: "Masa boş.",
+    emptySlot: "Boş yer",
+    emptySlotCta: "Materyal ekle",
     addMaterial: "Materyal ekle",
-    pageOnly: "Sayfa {page}",
+    fullHint: "Masa dolu. Yeni bir şey için önce birini Vault’a kaldır.",
+    pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
     consistencyHint: "Günlük disiplin — masaya oturduğun günler.",
-    pageInput: "Ulaşılan sayfa",
-    updateProgress: "Güncelle",
-    markCompleted: "Manuel Bitir",
+    pageInput: "Ulaşılan {unit}",
+    updateProgress: "Kaydet",
+    markCompleted: "Bitir",
     shelve: "Vault’a kaldır",
     heatmapStats: "{days} aktif gün",
+    heatmapLess: "Az",
+    heatmapMore: "Çok",
+    heatmapCell: "{date}: {count}",
+    heatmapCellGoal: "{date}: {count} · {goal}",
+    greetingMorning: "Günaydın",
+    greetingAfternoon: "İyi günler",
+    greetingEvening: "İyi akşamlar",
+    remainingStat: "kalan",
+    slotsStat: "masa",
+    todayStat: "bugün",
+    streakStat: "gün seri",
+    remainingPages: "{count} {unit} kaldı",
+    remainingUnknown: "Toplam yok",
+    todayEmpty: "Bugün henüz kayıt yok",
+    todayLit: "Bugünün kutusu yandı",
+    slotLabel: "Yer {n}",
+    pagesShort: "syf",
+    quickAdd: "+{n}",
+    timerStart: "Başlat",
+    timerStop: "Durdur",
+    pace: "{rate}/{unit} · saat",
+    goalMet: "Hedef",
   },
   vault: {
     title: "The Vault",
@@ -100,6 +135,9 @@ const tr = {
     activate: "Masaya al",
     statusShelved: "Bekliyor",
     statusCompleted: "Tamamlandı",
+    filterAll: "Tümü",
+    sortUpdated: "Son güncelleme",
+    sortTitle: "Başlık",
   },
   add: {
     title: "Materyal ekle",
@@ -121,18 +159,51 @@ const tr = {
     added: '"{title}" eklendi.',
     titleLabel: "Başlık",
     authorLabel: "Yazar",
-    totalPagesLabel: "Toplam sayfa (opsiyonel)",
+    totalPagesLabel: "Toplam (opsiyonel)",
+    descriptionLabel: "Açıklama (opsiyonel)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Ekle",
+    openDetails: "İncele",
+    metricLabel: "Ölçüm",
+    metricPages: "Sayfa",
+    metricQuestions: "Soru",
+    metricChapters: "Bölüm",
+    tagsLabel: "Etiketler",
+    tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
+  },
+  book: {
+    about: "Hakkında",
+    noDescription: "Bu kitap için açıklama yok.",
+    openInLibrary: "Kütüphanede aç",
+    backToAdd: "Aramaya dön",
+    backToDesk: "Masaya dön",
+    backToVault: "Vault’a dön",
+    onDesk: "Masada",
+    notes: "Notlar",
+    notesHint: "Markdown: **kalın**, *italik*, listeler.",
+    notesSave: "Notu kaydet",
+    notesSaved: "Kaydedildi.",
+    notesPlaceholder: "Formül, soru no, alıntı…",
+    notesPreview: "Önizle",
+    notesEdit: "Düzenle",
+  },
+  metric: {
+    page: "sayfa",
+    pages: "sayfa",
+    question: "soru",
+    questions: "soru",
+    chapter: "bölüm",
+    chapters: "bölüm",
   },
   errors: {
     deskFull:
       "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Vault'a kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
-    invalidPage: "Yeni sayfa, mevcut sayfadan büyük olmalı.",
+    invalidPage: "Yeni değer, mevcut olandan büyük olmalı.",
     notFound: "Materyal bulunamadı.",
+    alreadyOwned: "Bu kitap zaten kütüphanende.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -150,7 +221,8 @@ const tr = {
     step1: ".env.example dosyasını .env.local olarak kopyala",
     step2:
       "Supabase → Project Settings → API’den Project URL ve anon public key’i yapıştır",
-    step3: "SQL Editor’de supabase/migrations/001_init.sql çalıştır",
+    step3:
+      "SQL Editor’de supabase/migrations içindeki .sql dosyalarını sırayla çalıştır",
     step4: "Auth → Redirect URLs: http://localhost:3000/auth/callback",
   },
   language: {
@@ -158,10 +230,46 @@ const tr = {
     tr: "TR",
     en: "EN",
   },
+  cookies: {
+    title: "Çerezler",
+    body: "Oturum ve dil için zorunlu çerezler kullanılır. İsteğe bağlı tercih çerezlerini kabul edebilir veya yalnızca zorunluları bırakabilirsin.",
+    necessary: "Yalnızca zorunlu",
+    acceptAll: "Tümünü kabul et",
+  },
+  settings: {
+    title: "Ayarlar",
+    profileTitle: "Profil",
+    generalTitle: "Genel",
+    displayName: "Görünen ad",
+    email: "E-posta",
+    timezone: "Saat dilimi",
+    weekStart: "Haftanın ilk günü",
+    weekMonday: "Pazartesi",
+    weekSunday: "Pazar",
+    cookiePref: "Çerezler",
+    cookieNecessary: "Yalnızca zorunlu",
+    cookieAll: "Tümü",
+    save: "Kaydet",
+    saved: "Kaydedildi.",
+    appearanceTitle: "Görünüm",
+    theme: "Tema",
+    themeDark: "Koyu",
+    themeLight: "Açık",
+    accent: "Vurgu rengi",
+    accentEmerald: "Neon yeşil",
+    accentBlue: "Vercel mavi",
+    accentAmber: "Vault amber",
+    dailyGoal: "Günlük hedef",
+    dailyGoalHint:
+      "Boş = hedef yok. Heatmap’te hedefi geçen günler işaretlenir.",
+    focusMode: "Gizlilik / odak",
+    focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
+  },
 } as const;
 
 const en = {
   brand: "The Vault",
+  busy: "…",
   meta: {
     description: "Focus-first reading and progress terminal",
   },
@@ -169,12 +277,18 @@ const en = {
     eyebrow: "Zero social noise",
     headlineLine1: "Reading isn’t a performance.",
     headlineLine2: "It’s a shift.",
-    sub: "The Vault is a quiet progress terminal for the books, question banks and docs on your desk. No feed, no likes — just the work.",
+    sub: "A quiet progress terminal for the books, sets and docs on your desk. No feed, no likes — just the work.",
     ctaPrimary: "Sign in",
     ctaSecondary: "How it works",
-    statDeskLabel: "active material limit",
-    statNoiseLabel: "likes, comments, followers",
-    statDailyLabel: "cell a day, every day",
+    statDeskLabel: "desk limit",
+    statNoiseLabel: "social noise",
+    statDailyLabel: "daily cell",
+    kindBook: "Book",
+    kindBookHint: "Novel, essay, handbook.",
+    kindSet: "Set",
+    kindSetHint: "Problems, drills, papers.",
+    kindDocs: "Docs",
+    kindDocsHint: "Notes, reference, PDF.",
     manifestoTitle: "Less surface. Real work.",
     manifestoBody:
       "Book tracking turned into a social network of fake reviews and display shelves. The Vault does the opposite: strip everything out and leave only measurable hours.",
@@ -187,11 +301,7 @@ const en = {
       "Badges and ads",
     ],
     keptTitle: "Kept",
-    kept: [
-      "Three materials on the desk",
-      "Every page you log",
-      "Today’s cell",
-    ],
+    kept: ["Three materials on the desk", "Every page you log", "Today’s cell"],
     deskTitle: "Active Desk",
     deskBody:
       "Three materials at most. To add a fourth you move one to the Vault first — the limit is the focus.",
@@ -211,21 +321,28 @@ const en = {
     closingCta: "Get started",
     closingNote: "Email is enough. No card, no ads.",
     footerNote: "Built for deep work.",
-    mockTitle1: "Crime and Punishment",
-    mockAuthor1: "Dostoevsky",
-    mockTitle2: "GRE · Quant",
-    mockAuthor2: "Set 12",
-    mockTitle3: "Postgres Docs",
-    mockAuthor3: "v17",
-    mockTitle4: "Meditations",
-    mockTitle5: "Les Misérables",
-    mockTitle6: "Earthsea",
+    mockSample: "Sample",
+    mockLimit: "Limit",
+    mockBookTitle: "Volume I",
+    mockBookMeta: "Novel",
+    mockSetTitle: "Problem set",
+    mockSetMeta: "Chapter 4",
+    mockDocsTitle: "Reference",
+    mockDocsMeta: "Notes",
+    mockCoverA: "Volume II",
+    mockCoverB: "Essay",
+    mockCoverC: "Handbook",
+    mockCoverD: "Paper",
+    mockCoverE: "Workbook",
+    mockCoverF: "Archive note",
   },
   nav: {
     desk: "Desk",
     vault: "Vault",
     add: "Add",
+    settings: "Settings",
     signOut: "Sign out",
+    focus: "Focus",
   },
   login: {
     title: "Focus terminal",
@@ -242,16 +359,41 @@ const en = {
     title: "Active Desk",
     subtitle: "On your desk · {count}/3",
     empty: "Desk is empty.",
+    emptySlot: "Open slot",
+    emptySlotCta: "Add a material",
     addMaterial: "Add material",
-    pageOnly: "Page {page}",
+    fullHint: "Desk is full. Shelve one to the Vault before adding another.",
+    pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
     consistencyHint: "Daily discipline — days you sat at the desk.",
-    pageInput: "Page reached",
-    updateProgress: "Update",
-    markCompleted: "Mark completed",
+    pageInput: "Reached {unit}",
+    updateProgress: "Log",
+    markCompleted: "Complete",
     shelve: "Move to Vault",
     heatmapStats: "{days} active days",
+    heatmapLess: "Less",
+    heatmapMore: "More",
+    heatmapCell: "{date}: {count}",
+    heatmapCellGoal: "{date}: {count} · {goal}",
+    greetingMorning: "Good morning",
+    greetingAfternoon: "Good afternoon",
+    greetingEvening: "Good evening",
+    remainingStat: "left",
+    slotsStat: "on desk",
+    todayStat: "today",
+    streakStat: "day streak",
+    remainingPages: "{count} {unit} left",
+    remainingUnknown: "No total",
+    todayEmpty: "Nothing logged today",
+    todayLit: "Today’s cell is lit",
+    slotLabel: "Slot {n}",
+    pagesShort: "pp",
+    quickAdd: "+{n}",
+    timerStart: "Start",
+    timerStop: "Stop",
+    pace: "{rate}/{unit} · hour",
+    goalMet: "Goal",
   },
   vault: {
     title: "The Vault",
@@ -261,6 +403,9 @@ const en = {
     activate: "Activate",
     statusShelved: "Shelved",
     statusCompleted: "Completed",
+    filterAll: "All",
+    sortUpdated: "Last updated",
+    sortTitle: "Title",
   },
   add: {
     title: "Add material",
@@ -282,18 +427,51 @@ const en = {
     added: '"{title}" added.',
     titleLabel: "Title",
     authorLabel: "Author",
-    totalPagesLabel: "Total pages (optional)",
+    totalPagesLabel: "Total (optional)",
+    descriptionLabel: "Description (optional)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Add",
+    openDetails: "View",
+    metricLabel: "Metric",
+    metricPages: "Pages",
+    metricQuestions: "Questions",
+    metricChapters: "Chapters",
+    tagsLabel: "Tags",
+    tagsPlaceholder: "Software, Exam, Literature",
+  },
+  book: {
+    about: "About",
+    noDescription: "No description for this book.",
+    openInLibrary: "Open in library",
+    backToAdd: "Back to search",
+    backToDesk: "Back to desk",
+    backToVault: "Back to Vault",
+    onDesk: "On desk",
+    notes: "Notes",
+    notesHint: "Markdown: **bold**, *italic*, lists.",
+    notesSave: "Save note",
+    notesSaved: "Saved.",
+    notesPlaceholder: "Formula, question no, quote…",
+    notesPreview: "Preview",
+    notesEdit: "Edit",
+  },
+  metric: {
+    page: "page",
+    pages: "pages",
+    question: "question",
+    questions: "questions",
+    chapter: "chapter",
+    chapters: "chapters",
   },
   errors: {
     deskFull:
       "Your desk is full. Move a book to the Vault before activating another.",
     titleRequired: "Title is required.",
     authRequired: "Sign in required.",
-    invalidPage: "New page must be greater than the current page.",
+    invalidPage: "New value must be greater than the current one.",
     notFound: "Material not found.",
+    alreadyOwned: "This book is already in your library.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -311,7 +489,8 @@ const en = {
     step1: "Copy .env.example to .env.local",
     step2:
       "Paste Project URL and anon public key from Supabase → Project Settings → API",
-    step3: "Run supabase/migrations/001_init.sql in the SQL Editor",
+    step3:
+      "Run the SQL files in supabase/migrations (in order) in the SQL Editor",
     step4: "Auth → Redirect URLs: http://localhost:3000/auth/callback",
   },
   language: {
@@ -319,10 +498,46 @@ const en = {
     tr: "TR",
     en: "EN",
   },
+  cookies: {
+    title: "Cookies",
+    body: "Necessary cookies keep your session and language. You can accept optional preference cookies or keep necessary only.",
+    necessary: "Necessary only",
+    acceptAll: "Accept all",
+  },
+  settings: {
+    title: "Settings",
+    profileTitle: "Profile",
+    generalTitle: "General",
+    displayName: "Display name",
+    email: "Email",
+    timezone: "Time zone",
+    weekStart: "First day of week",
+    weekMonday: "Monday",
+    weekSunday: "Sunday",
+    cookiePref: "Cookies",
+    cookieNecessary: "Necessary only",
+    cookieAll: "All",
+    save: "Save",
+    saved: "Saved.",
+    appearanceTitle: "Appearance",
+    theme: "Theme",
+    themeDark: "Dark",
+    themeLight: "Light",
+    accent: "Accent color",
+    accentEmerald: "Neon green",
+    accentBlue: "Vercel blue",
+    accentAmber: "Vault amber",
+    dailyGoal: "Daily goal",
+    dailyGoalHint:
+      "Leave empty for no goal. Days that beat it get a mark on the heatmap.",
+    focusMode: "Privacy / focus",
+    focusModeHint: "Blurs titles and numbers.",
+  },
 } as const;
 
 export type Dictionary = {
   brand: string;
+  busy: string;
   meta: { description: string };
   landing: {
     eyebrow: string;
@@ -334,6 +549,12 @@ export type Dictionary = {
     statDeskLabel: string;
     statNoiseLabel: string;
     statDailyLabel: string;
+    kindBook: string;
+    kindBookHint: string;
+    kindSet: string;
+    kindSetHint: string;
+    kindDocs: string;
+    kindDocsHint: string;
     manifestoTitle: string;
     manifestoBody: string;
     removedTitle: string;
@@ -355,21 +576,28 @@ export type Dictionary = {
     closingCta: string;
     closingNote: string;
     footerNote: string;
-    mockTitle1: string;
-    mockAuthor1: string;
-    mockTitle2: string;
-    mockAuthor2: string;
-    mockTitle3: string;
-    mockAuthor3: string;
-    mockTitle4: string;
-    mockTitle5: string;
-    mockTitle6: string;
+    mockSample: string;
+    mockLimit: string;
+    mockBookTitle: string;
+    mockBookMeta: string;
+    mockSetTitle: string;
+    mockSetMeta: string;
+    mockDocsTitle: string;
+    mockDocsMeta: string;
+    mockCoverA: string;
+    mockCoverB: string;
+    mockCoverC: string;
+    mockCoverD: string;
+    mockCoverE: string;
+    mockCoverF: string;
   };
   nav: {
     desk: string;
     vault: string;
     add: string;
+    settings: string;
     signOut: string;
+    focus: string;
   };
   login: {
     title: string;
@@ -386,7 +614,10 @@ export type Dictionary = {
     title: string;
     subtitle: string;
     empty: string;
+    emptySlot: string;
+    emptySlotCta: string;
     addMaterial: string;
+    fullHint: string;
     pageOnly: string;
     pageOf: string;
     consistency: string;
@@ -396,6 +627,28 @@ export type Dictionary = {
     markCompleted: string;
     shelve: string;
     heatmapStats: string;
+    heatmapLess: string;
+    heatmapMore: string;
+    heatmapCell: string;
+    heatmapCellGoal: string;
+    greetingMorning: string;
+    greetingAfternoon: string;
+    greetingEvening: string;
+    remainingStat: string;
+    slotsStat: string;
+    todayStat: string;
+    streakStat: string;
+    remainingPages: string;
+    remainingUnknown: string;
+    todayEmpty: string;
+    todayLit: string;
+    slotLabel: string;
+    pagesShort: string;
+    quickAdd: string;
+    timerStart: string;
+    timerStop: string;
+    pace: string;
+    goalMet: string;
   };
   vault: {
     title: string;
@@ -405,6 +658,9 @@ export type Dictionary = {
     activate: string;
     statusShelved: string;
     statusCompleted: string;
+    filterAll: string;
+    sortUpdated: string;
+    sortTitle: string;
   };
   add: {
     title: string;
@@ -427,9 +683,41 @@ export type Dictionary = {
     titleLabel: string;
     authorLabel: string;
     totalPagesLabel: string;
+    descriptionLabel: string;
     statusActive: string;
     statusVault: string;
     submit: string;
+    openDetails: string;
+    metricLabel: string;
+    metricPages: string;
+    metricQuestions: string;
+    metricChapters: string;
+    tagsLabel: string;
+    tagsPlaceholder: string;
+  };
+  book: {
+    about: string;
+    noDescription: string;
+    openInLibrary: string;
+    backToAdd: string;
+    backToDesk: string;
+    backToVault: string;
+    onDesk: string;
+    notes: string;
+    notesHint: string;
+    notesSave: string;
+    notesSaved: string;
+    notesPlaceholder: string;
+    notesPreview: string;
+    notesEdit: string;
+  };
+  metric: {
+    page: string;
+    pages: string;
+    question: string;
+    questions: string;
+    chapter: string;
+    chapters: string;
   };
   errors: {
     deskFull: string;
@@ -437,6 +725,7 @@ export type Dictionary = {
     authRequired: string;
     invalidPage: string;
     notFound: string;
+    alreadyOwned: string;
     generic: string;
     queryTooShort: string;
     booksRateLimit: string;
@@ -457,6 +746,40 @@ export type Dictionary = {
     label: string;
     tr: string;
     en: string;
+  };
+  cookies: {
+    title: string;
+    body: string;
+    necessary: string;
+    acceptAll: string;
+  };
+  settings: {
+    title: string;
+    profileTitle: string;
+    generalTitle: string;
+    displayName: string;
+    email: string;
+    timezone: string;
+    weekStart: string;
+    weekMonday: string;
+    weekSunday: string;
+    cookiePref: string;
+    cookieNecessary: string;
+    cookieAll: string;
+    save: string;
+    saved: string;
+    appearanceTitle: string;
+    theme: string;
+    themeDark: string;
+    themeLight: string;
+    accent: string;
+    accentEmerald: string;
+    accentBlue: string;
+    accentAmber: string;
+    dailyGoal: string;
+    dailyGoalHint: string;
+    focusMode: string;
+    focusModeHint: string;
   };
 };
 

@@ -61,7 +61,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const books = await searchGoogleBooks(q);
+    const books = await searchGoogleBooks(q, 12);
     return NextResponse.json({ books });
   } catch (error) {
     const payload = await userFacingMessage(error);

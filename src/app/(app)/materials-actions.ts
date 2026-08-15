@@ -1,12 +1,21 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
+import { isMetricType, parseTags } from "@/lib/catalog";
+import {
+  type GoogleBookResult,
+  getGoogleBook,
+  isGoogleVolumeId,
+} from "@/lib/google-books";
+import { findMaterialByGoogleId } from "@/lib/materials";
 import { createClient } from "@/lib/supabase/server";
 import type {
   ActionErrorCode,
   ActionResult,
   Material,
+  MaterialNote,
   MaterialStatus,
+  MetricType,
 } from "@/lib/types";
 
 async function countActive(userId: string): Promise<number> {
@@ -27,13 +36,38 @@ function mapDbError(message: string | undefined): ActionErrorCode {
   if (message.includes("page_after must be greater")) return "invalidPage";
   if (message.includes("Material not found")) return "notFound";
   if (message.includes("Not authenticated")) return "authRequired";
+  if (
+    message.includes("duplicate key") ||
+    message.includes("materials_user_google_books_id")
+  ) {
+    return "alreadyOwned";
+  }
   return "generic";
 }
 
-function revalidateMaterialPaths() {
+function revalidateMaterialPaths(
+  materialId?: string,
+  googleId?: string | null,
+) {
   revalidatePath("/desk");
   revalidatePath("/vault");
   revalidatePath("/add");
+  revalidatePath("/materials", "layout");
+  revalidatePath("/discover", "layout");
+  if (materialId) {
+    revalidatePath(`/materials/${materialId}`);
+  }
+  if (googleId) {
+    revalidatePath(`/discover/${googleId}`);
+  }
+}
+
+function categoriesOrNull(
+  categories: string[] | null | undefined,
+): string[] | null {
+  if (!categories || categories.length === 0) return null;
+  const cleaned = categories.map((item) => item.trim()).filter(Boolean);
+  return cleaned.length > 0 ? cleaned : null;
 }
 
 export type AddMaterialInput = {
@@ -44,6 +78,12 @@ export type AddMaterialInput = {
   googleBooksId?: string | null;
   source: "google" | "custom";
   status: Extract<MaterialStatus, "active" | "shelved">;
+  description?: string | null;
+  publishedDate?: string | null;
+  publisher?: string | null;
+  categories?: string[] | null;
+  metricType?: MetricType;
+  tags?: string[] | string;
 };
 
 export async function addMaterial(
@@ -70,6 +110,12 @@ export async function addMaterial(
     }
   }
 
+  const description = input.description?.trim() ?? "";
+  const rawMetric = input.metricType ?? "pages";
+  const metricType: MetricType = isMetricType(rawMetric) ? rawMetric : "pages";
+  const tags =
+    typeof input.tags === "string" ? parseTags(input.tags) : (input.tags ?? []);
+
   const { data, error } = await supabase
     .from("materials")
     .insert({
@@ -81,6 +127,12 @@ export async function addMaterial(
       google_books_id: input.googleBooksId ?? null,
       source: input.source,
       status: input.status,
+      description: description.length > 0 ? description : null,
+      published_date: input.publishedDate?.trim() || null,
+      publisher: input.publisher?.trim() || null,
+      categories: categoriesOrNull(input.categories),
+      metric_type: metricType,
+      tags,
     })
     .select()
     .single();
@@ -88,15 +140,62 @@ export async function addMaterial(
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "generic" };
+  }
 
-  revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  return { ok: true, data };
+}
+
+export async function addGoogleBook(
+  googleId: string,
+  status: Extract<MaterialStatus, "active" | "shelved">,
+  extras?: { metricType?: MetricType; tags?: string[] | string },
+): Promise<ActionResult<Material>> {
+  if (!isGoogleVolumeId(googleId)) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const existing = await findMaterialByGoogleId(googleId);
+  if (existing) {
+    return { ok: false, error: "alreadyOwned" };
+  }
+
+  let book: GoogleBookResult | null;
+  try {
+    book = await getGoogleBook(googleId);
+  } catch {
+    return { ok: false, error: "generic" };
+  }
+
+  if (!book) {
+    return { ok: false, error: "notFound" };
+  }
+
+  return addMaterial({
+    title: book.title,
+    author: book.authors.join(", ") || null,
+    totalPages: book.pageCount,
+    coverUrl: book.coverUrl,
+    googleBooksId: book.id,
+    source: "google",
+    status,
+    description: book.description,
+    publishedDate: book.publishedDate,
+    publisher: book.publisher,
+    categories: book.categories,
+    metricType: extras?.metricType ?? "pages",
+    tags: extras?.tags,
+  });
 }
 
 export async function logProgress(input: {
   materialId: string;
   pageAfter: number;
   loggedOn: string;
+  durationSeconds?: number;
+  unitsDelta?: number;
 }): Promise<ActionResult<Material>> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.loggedOn)) {
     return { ok: false, error: "generic" };
@@ -122,9 +221,32 @@ export async function logProgress(input: {
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "generic" };
+  }
 
-  revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  const duration = input.durationSeconds;
+  if (duration && Number.isFinite(duration) && duration > 0) {
+    const ended = new Date();
+    const seconds = Math.floor(duration);
+    const started = new Date(ended.getTime() - seconds * 1000);
+    const units =
+      input.unitsDelta && input.unitsDelta > 0
+        ? Math.floor(input.unitsDelta)
+        : null;
+    await supabase.from("reading_sessions").insert({
+      user_id: user.id,
+      material_id: input.materialId,
+      started_at: started.toISOString(),
+      ended_at: ended.toISOString(),
+      duration_seconds: seconds,
+      units_delta: units,
+    });
+  }
+
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
+  return { ok: true, data };
 }
 
 export async function markCompleted(
@@ -166,9 +288,12 @@ export async function activateMaterial(
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
 
-  revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  return { ok: true, data };
 }
 
 async function updateMaterialStatus(
@@ -198,44 +323,8 @@ async function updateMaterialStatus(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
-}
-
-export async function getActiveMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("status", "active")
-    .order("updated_at", { ascending: false });
-
-  if (error) throw error;
-  return (data ?? []) as Material[];
-}
-
-export async function getVaultMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .in("status", ["shelved", "completed"])
-    .order("updated_at", { ascending: false });
-
-  if (error) throw error;
-  return (data ?? []) as Material[];
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  return { ok: true, data };
 }
 
 /** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
@@ -260,8 +349,102 @@ export async function getHeatmapTotals(
 
   const totals: Record<string, number> = {};
   for (const row of data ?? []) {
-    const day = row.logged_on as string;
-    totals[day] = (totals[day] ?? 0) + (row.pages_delta as number);
+    totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
   }
   return totals;
+}
+
+export async function getMaterialNote(
+  materialId: string,
+): Promise<MaterialNote | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("material_notes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("material_id", materialId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertMaterialNote(input: {
+  materialId: string;
+  body: string;
+}): Promise<ActionResult<MaterialNote>> {
+  const body = input.body.slice(0, 20000);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing } = await supabase
+    .from("material_notes")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("material_id", input.materialId)
+    .maybeSingle();
+
+  const now = new Date().toISOString();
+  const query = existing
+    ? supabase
+        .from("material_notes")
+        .update({ body, updated_at: now })
+        .eq("id", existing.id)
+        .select()
+        .single()
+    : supabase
+        .from("material_notes")
+        .insert({
+          user_id: user.id,
+          material_id: input.materialId,
+          body,
+        })
+        .select()
+        .single();
+
+  const { data, error } = await query;
+  if (error || !data) {
+    return { ok: false, error: "generic" };
+  }
+
+  revalidateMaterialPaths(input.materialId);
+  return { ok: true, data };
+}
+
+export async function getMaterialPace(
+  materialId: string,
+): Promise<number | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("reading_sessions")
+    .select("duration_seconds, units_delta")
+    .eq("user_id", user.id)
+    .eq("material_id", materialId)
+    .not("units_delta", "is", null);
+
+  if (error) throw error;
+  let seconds = 0;
+  let units = 0;
+  for (const row of data ?? []) {
+    if (!row.units_delta) continue;
+    seconds += row.duration_seconds;
+    units += row.units_delta;
+  }
+  if (seconds <= 0 || units <= 0) return null;
+  return Math.round((units / seconds) * 3600);
 }
