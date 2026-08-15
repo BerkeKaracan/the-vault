@@ -203,7 +203,7 @@ export function ProgressControls({
           min={material.current_page + 1}
           value={pageAfter}
           onChange={(e) => setPageAfter(e.target.value)}
-          aria-label={dictionary.desk.pageInput}
+          aria-label={t(dictionary.desk.pageInput, { unit })}
           className="w-24 rounded-md border border-white/10 bg-black/50 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-accent/50"
         />
         <button

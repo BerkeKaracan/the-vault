@@ -1,5 +1,4 @@
 import { cache } from "react";
-import type { Locale } from "@/i18n/config";
 import { cleanBookDescription } from "@/lib/text";
 
 export type GoogleBookResult = {
@@ -129,28 +128,22 @@ function throwIfGoogleError(
   }
 }
 
-function googleMarket(locale: Locale): {
-  country: string;
-  acceptLanguage: string;
-} {
-  if (locale === "tr") {
-    return { country: "TR", acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.4" };
-  }
-  return { country: "US", acceptLanguage: "en-US,en;q=0.9,tr;q=0.3" };
-}
+/** Same catalog for every UI language; copy is localized after fetch. */
+const GOOGLE_MARKET = {
+  country: "TR",
+  acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.8",
+} as const;
 
 async function fetchVolumes(
   query: string,
   limit: number,
-  locale: Locale,
   apiKey?: string,
 ): Promise<GoogleBookResult[]> {
-  const market = googleMarket(locale);
   const params = new URLSearchParams({
     q: query,
     maxResults: String(Math.min(Math.max(limit, 1), 40)),
     printType: "books",
-    country: market.country,
+    country: GOOGLE_MARKET.country,
   });
 
   if (apiKey) {
@@ -163,7 +156,7 @@ async function fetchVolumes(
       cache: "no-store",
       headers: {
         Accept: "application/json",
-        "Accept-Language": market.acceptLanguage,
+        "Accept-Language": GOOGLE_MARKET.acceptLanguage,
       },
     },
   );
@@ -175,12 +168,10 @@ async function fetchVolumes(
 
 async function fetchVolume(
   id: string,
-  locale: Locale,
   apiKey?: string,
 ): Promise<GoogleBookResult | null> {
-  const market = googleMarket(locale);
   const params = new URLSearchParams({
-    country: market.country,
+    country: GOOGLE_MARKET.country,
   });
   if (apiKey) params.set("key", apiKey);
 
@@ -190,7 +181,7 @@ async function fetchVolume(
       next: { revalidate: 60 * 60 * 24 },
       headers: {
         Accept: "application/json",
-        "Accept-Language": market.acceptLanguage,
+        "Accept-Language": GOOGLE_MARKET.acceptLanguage,
       },
     },
   );
@@ -249,21 +240,15 @@ async function withOptionalKey<T>(
 export async function searchGoogleBooks(
   query: string,
   limit = 12,
-  locale: Locale = "tr",
 ): Promise<GoogleBookResult[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];
-  return withOptionalKey((apiKey) =>
-    fetchVolumes(trimmed, limit, locale, apiKey),
-  );
+  return withOptionalKey((apiKey) => fetchVolumes(trimmed, limit, apiKey));
 }
 
 export const getGoogleBook = cache(
-  async (
-    id: string,
-    locale: Locale = "tr",
-  ): Promise<GoogleBookResult | null> => {
+  async (id: string): Promise<GoogleBookResult | null> => {
     if (!isGoogleVolumeId(id)) return null;
-    return withOptionalKey((apiKey) => fetchVolume(id, locale, apiKey));
+    return withOptionalKey((apiKey) => fetchVolume(id, apiKey));
   },
 );

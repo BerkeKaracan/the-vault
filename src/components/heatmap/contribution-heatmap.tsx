@@ -101,8 +101,12 @@ export function ContributionHeatmap({
               key={date}
               title={
                 goalMet
-                  ? `${date}: ${pages} · ${dictionary.desk.goalMet}`
-                  : `${date}: ${pages}`
+                  ? t(dictionary.desk.heatmapCellGoal, {
+                      date,
+                      count: pages,
+                      goal: dictionary.desk.goalMet,
+                    })
+                  : t(dictionary.desk.heatmapCell, { date, count: pages })
               }
               className={`relative aspect-square rounded-xs ${heatClass(pages)} ${isToday ? "ring-1 ring-accent/80" : ""} ${isFuture ? "opacity-30" : ""}`}
             >
@@ -115,6 +119,15 @@ export function ContributionHeatmap({
             </span>
           );
         })}
+      </div>
+      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[0.58rem] text-zinc-600">
+        <span>{dictionary.desk.heatmapLess}</span>
+        <span className="heat-0 size-2.5 rounded-xs" />
+        <span className="heat-1 size-2.5 rounded-xs" />
+        <span className="heat-2 size-2.5 rounded-xs" />
+        <span className="heat-3 size-2.5 rounded-xs" />
+        <span className="heat-4 size-2.5 rounded-xs" />
+        <span>{dictionary.desk.heatmapMore}</span>
       </div>
     </div>
   );

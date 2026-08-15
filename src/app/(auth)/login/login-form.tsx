@@ -119,7 +119,7 @@ export function LoginForm() {
         className="rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-950 transition hover:bg-white disabled:opacity-50"
       >
         {pending
-          ? "…"
+          ? dictionary.busy
           : mode === "login"
             ? dictionary.login.submitLogin
             : dictionary.login.submitSignup}

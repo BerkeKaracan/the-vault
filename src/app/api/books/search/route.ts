@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { ErrorKey } from "@/i18n/dictionaries";
-import { getDictionary, getLocale } from "@/i18n/get-dictionary";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { GoogleBooksError, searchGoogleBooks } from "@/lib/google-books";
 
@@ -49,7 +49,6 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim() ?? "";
   const dictionary = await getDictionary();
-  const locale = await getLocale();
 
   if (q.length < 2) {
     return NextResponse.json(
@@ -62,7 +61,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const books = await searchGoogleBooks(q, 12, locale);
+    const books = await searchGoogleBooks(q, 12);
     return NextResponse.json({ books });
   } catch (error) {
     const payload = await userFacingMessage(error);

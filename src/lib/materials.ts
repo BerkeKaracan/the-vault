@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { getLocale } from "@/i18n/get-dictionary";
 import {
   type GoogleBookResult,
   getGoogleBook,
@@ -85,7 +84,7 @@ async function hydrateMaterial(material: Material): Promise<Material> {
 
   let book: GoogleBookResult | null;
   try {
-    book = await getGoogleBook(material.google_books_id, await getLocale());
+    book = await getGoogleBook(material.google_books_id);
   } catch {
     return material;
   }

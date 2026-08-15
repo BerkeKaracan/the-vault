@@ -22,7 +22,7 @@ function translateError(
 type SortKey = "updated" | "title";
 
 export function VaultGrid({ materials }: { materials: Material[] }) {
-  const { dictionary } = useI18n();
+  const { dictionary, locale } = useI18n();
   const [message, setMessage] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -40,8 +40,8 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
         list.push(tag);
       }
     }
-    return list.sort((a, b) => a.localeCompare(b, "tr"));
-  }, [materials]);
+    return list.sort((a, b) => a.localeCompare(b, locale));
+  }, [materials, locale]);
 
   const visible = useMemo(() => {
     const filtered = tagFilter
@@ -53,10 +53,12 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
         )
       : materials;
     if (sort === "title") {
-      return [...filtered].sort((a, b) => a.title.localeCompare(b.title, "tr"));
+      return [...filtered].sort((a, b) =>
+        a.title.localeCompare(b.title, locale),
+      );
     }
     return filtered;
-  }, [materials, tagFilter, sort]);
+  }, [materials, tagFilter, sort, locale]);
 
   if (materials.length === 0) {
     return (
@@ -154,7 +156,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
                 className="mt-2 rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-950 disabled:opacity-40"
               >
                 {pending && pendingId === material.id
-                  ? "…"
+                  ? dictionary.busy
                   : dictionary.vault.activate}
               </button>
             </div>

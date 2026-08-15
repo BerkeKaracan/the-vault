@@ -2,6 +2,7 @@ import type { Locale } from "./config";
 
 const tr = {
   brand: "The Vault",
+  busy: "…",
   meta: {
     description: "Odak odaklı okuma ve ilerleme terminali",
   },
@@ -94,21 +95,23 @@ const tr = {
     emptySlotCta: "Materyal ekle",
     addMaterial: "Materyal ekle",
     fullHint: "Masa dolu. Yeni bir şey için önce birini Vault’a kaldır.",
-    pageOnly: "Sayfa {page}",
+    pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
     consistencyHint: "Günlük disiplin — masaya oturduğun günler.",
-    pageInput: "Ulaşılan sayfa",
+    pageInput: "Ulaşılan {unit}",
     updateProgress: "Kaydet",
     markCompleted: "Bitir",
     shelve: "Vault’a kaldır",
     heatmapStats: "{days} aktif gün",
     heatmapLess: "Az",
     heatmapMore: "Çok",
+    heatmapCell: "{date}: {count}",
+    heatmapCellGoal: "{date}: {count} · {goal}",
     greetingMorning: "Günaydın",
     greetingAfternoon: "İyi günler",
     greetingEvening: "İyi akşamlar",
-    remainingStat: "kalan sayfa",
+    remainingStat: "kalan",
     slotsStat: "masa",
     todayStat: "bugün",
     streakStat: "gün seri",
@@ -198,7 +201,7 @@ const tr = {
       "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Vault'a kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
-    invalidPage: "Yeni sayfa, mevcut sayfadan büyük olmalı.",
+    invalidPage: "Yeni değer, mevcut olandan büyük olmalı.",
     notFound: "Materyal bulunamadı.",
     alreadyOwned: "Bu kitap zaten kütüphanende.",
     generic: "Bir hata oluştu.",
@@ -263,6 +266,7 @@ const tr = {
 
 const en = {
   brand: "The Vault",
+  busy: "…",
   meta: {
     description: "Focus-first reading and progress terminal",
   },
@@ -356,21 +360,23 @@ const en = {
     emptySlotCta: "Add a material",
     addMaterial: "Add material",
     fullHint: "Desk is full. Shelve one to the Vault before adding another.",
-    pageOnly: "Page {page}",
+    pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
     consistencyHint: "Daily discipline — days you sat at the desk.",
-    pageInput: "Page reached",
+    pageInput: "Reached {unit}",
     updateProgress: "Log",
     markCompleted: "Complete",
     shelve: "Move to Vault",
     heatmapStats: "{days} active days",
     heatmapLess: "Less",
     heatmapMore: "More",
+    heatmapCell: "{date}: {count}",
+    heatmapCellGoal: "{date}: {count} · {goal}",
     greetingMorning: "Good morning",
     greetingAfternoon: "Good afternoon",
     greetingEvening: "Good evening",
-    remainingStat: "pages left",
+    remainingStat: "left",
     slotsStat: "on desk",
     todayStat: "today",
     streakStat: "day streak",
@@ -460,7 +466,7 @@ const en = {
       "Your desk is full. Move a book to the Vault before activating another.",
     titleRequired: "Title is required.",
     authRequired: "Sign in required.",
-    invalidPage: "New page must be greater than the current page.",
+    invalidPage: "New value must be greater than the current one.",
     notFound: "Material not found.",
     alreadyOwned: "This book is already in your library.",
     generic: "Something went wrong.",
@@ -525,6 +531,7 @@ const en = {
 
 export type Dictionary = {
   brand: string;
+  busy: string;
   meta: { description: string };
   landing: {
     eyebrow: string;
@@ -616,6 +623,8 @@ export type Dictionary = {
     heatmapStats: string;
     heatmapLess: string;
     heatmapMore: string;
+    heatmapCell: string;
+    heatmapCellGoal: string;
     greetingMorning: string;
     greetingAfternoon: string;
     greetingEvening: string;

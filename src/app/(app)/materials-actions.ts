@@ -1,7 +1,6 @@
 "use server";
 
 import { refresh, revalidatePath } from "next/cache";
-import { getLocale } from "@/i18n/get-dictionary";
 import { isMetricType, parseTags } from "@/lib/catalog";
 import {
   type GoogleBookResult,
@@ -165,7 +164,7 @@ export async function addGoogleBook(
 
   let book: GoogleBookResult | null;
   try {
-    book = await getGoogleBook(googleId, await getLocale());
+    book = await getGoogleBook(googleId);
   } catch {
     return { ok: false, error: "generic" };
   }

@@ -25,8 +25,7 @@ export async function generateMetadata({
     return { title: "The Vault" };
   }
   try {
-    const locale = await getLocale();
-    const book = await getGoogleBook(googleId, locale);
+    const book = await getGoogleBook(googleId);
     if (!book) return { title: "The Vault" };
     return { title: `${book.title} · The Vault` };
   } catch {
@@ -47,7 +46,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
 
   let book: GoogleBookResult | null;
   try {
-    book = await getGoogleBook(googleId, locale);
+    book = await getGoogleBook(googleId);
   } catch (error) {
     const unavailable =
       error instanceof GoogleBooksError &&

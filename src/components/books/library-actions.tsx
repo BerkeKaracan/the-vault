@@ -39,7 +39,14 @@ export function LibraryActions({
         current: material.current_page,
         total: material.total_pages,
       })
-    : t(dictionary.desk.pageOnly, { page: material.current_page });
+    : t(dictionary.desk.pageOnly, {
+        page: material.current_page,
+        unit: metricUnit(
+          dictionary,
+          material.metric_type,
+          material.current_page,
+        ),
+      });
 
   function run(action: () => Promise<{ ok: boolean; error?: string }>) {
     setMessage(null);
