@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { addGoogleBook, addMaterial } from "@/app/(app)/materials-actions";
+import { MetricFields } from "@/components/materials/catalog-fields";
 import { Cover } from "@/components/materials/cover";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import type { GoogleBookResult } from "@/lib/google-books";
 import { snippet } from "@/lib/text";
+import type { MetricType } from "@/lib/types";
 
 type Tab = "search" | "manual";
 
@@ -31,6 +33,8 @@ export function AddMaterialPanel() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [metricType, setMetricType] = useState<MetricType>("pages");
+  const [tags, setTags] = useState("");
 
   async function runSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -72,7 +76,10 @@ export function AddMaterialPanel() {
   function saveBook(book: GoogleBookResult, status: "active" | "shelved") {
     setActionMessage(null);
     startTransition(async () => {
-      const result = await addGoogleBook(book.id, status);
+      const result = await addGoogleBook(book.id, status, {
+        metricType,
+        tags,
+      });
       if (!result.ok) {
         setActionMessage(translateError(dictionary, result.error));
         return;
@@ -111,6 +118,8 @@ export function AddMaterialPanel() {
         source: "custom",
         status,
         description: description || null,
+        metricType,
+        tags,
       });
       if (!result.ok) {
         setActionMessage(translateError(dictionary, result.error));
@@ -153,6 +162,13 @@ export function AddMaterialPanel() {
           {actionMessage}
         </output>
       ) : null}
+
+      <MetricFields
+        metricType={metricType}
+        onMetricChange={setMetricType}
+        tags={tags}
+        onTagsChange={setTags}
+      />
 
       {tab === "search" ? (
         <div className="flex flex-col gap-6">

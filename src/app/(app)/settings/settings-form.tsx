@@ -2,16 +2,18 @@
 
 import { useState, useTransition } from "react";
 import { updateProfile } from "@/app/(app)/settings-actions";
+import { AccentSwatches } from "@/components/materials/catalog-fields";
 import type { CookieConsent } from "@/i18n/config";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
 import { useI18n } from "@/i18n/provider";
+import { isAccentColor } from "@/lib/catalog";
 import { setCookieConsent } from "@/lib/consent-actions";
 import { TIMEZONES } from "@/lib/timezones";
-import type { Profile, WeekStart } from "@/lib/types";
+import type { AccentColor, Profile, WeekStart } from "@/lib/types";
 
 const fieldClass =
-  "mt-1.5 w-full rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-zinc-500";
+  "mt-1.5 w-full rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-accent/50";
 
 export function SettingsForm({
   email,
@@ -30,6 +32,14 @@ export function SettingsForm({
   const [weekStartsOn, setWeekStartsOn] = useState<WeekStart>(
     profile?.week_starts_on ?? "monday",
   );
+  const [accentColor, setAccentColor] = useState<AccentColor>(
+    profile?.accent_color && isAccentColor(profile.accent_color)
+      ? profile.accent_color
+      : "emerald",
+  );
+  const [dailyGoal, setDailyGoal] = useState(
+    profile?.daily_goal != null ? String(profile.daily_goal) : "",
+  );
   const [cookiePref, setCookiePref] = useState<CookieConsent>(
     consent ?? "necessary",
   );
@@ -40,12 +50,16 @@ export function SettingsForm({
     e.preventDefault();
     setMessage(null);
 
+    const parsedGoal = dailyGoal.trim() === "" ? null : Number(dailyGoal);
+
     startTransition(async () => {
       const [profileResult] = await Promise.all([
         updateProfile({
           displayName,
           timezone,
           weekStartsOn,
+          accentColor,
+          dailyGoal: parsedGoal,
         }),
         setCookieConsent(cookiePref),
       ]);
@@ -87,6 +101,34 @@ export function SettingsForm({
             className={`${fieldClass} text-zinc-500`}
           />
         </label>
+      </section>
+
+      <section>
+        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-zinc-50">
+          {dictionary.settings.appearanceTitle}
+        </h2>
+        <div className="mt-6">
+          <AccentSwatches value={accentColor} onChange={setAccentColor} />
+        </div>
+        <label className="mt-6 block text-sm text-zinc-400">
+          {dictionary.settings.dailyGoal}
+          <input
+            type="number"
+            min={1}
+            value={dailyGoal}
+            onChange={(e) => setDailyGoal(e.target.value)}
+            className={fieldClass}
+          />
+          <span className="mt-1.5 block text-xs text-zinc-600">
+            {dictionary.settings.dailyGoalHint}
+          </span>
+        </label>
+        <p className="mt-6 text-sm text-zinc-400">
+          {dictionary.settings.focusMode}
+        </p>
+        <p className="mt-1 text-xs text-zinc-600">
+          {dictionary.settings.focusModeHint}
+        </p>
       </section>
 
       <section>
@@ -173,7 +215,7 @@ export function SettingsForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-medium text-emerald-950 transition hover:bg-emerald-300 disabled:opacity-40"
+          className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
         >
           {dictionary.settings.save}
         </button>

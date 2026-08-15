@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import {
   activateMaterial,
-  logProgress,
   markCompleted,
   shelveMaterial,
 } from "@/app/(app)/materials-actions";
+import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import { getLocalDateString } from "@/lib/local-date";
+import { metricUnit } from "@/lib/metric";
 import type { Material } from "@/lib/types";
 
 function translateError(
@@ -23,18 +23,16 @@ function translateError(
   return dictionary.errors.generic;
 }
 
-export function LibraryActions({ material }: { material: Material }) {
+export function LibraryActions({
+  material,
+  pace,
+}: {
+  material: Material;
+  pace?: number | null;
+}) {
   const { dictionary } = useI18n();
-  const [pageAfter, setPageAfter] = useState(
-    String(Math.max(material.current_page + 1, 1)),
-  );
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setPageAfter(String(Math.max(material.current_page + 1, 1)));
-    setMessage(null);
-  }, [material.current_page]);
 
   const progressLabel = material.total_pages
     ? t(dictionary.desk.pageOf, {
@@ -55,54 +53,40 @@ export function LibraryActions({ material }: { material: Material }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-mono text-xs text-zinc-500">{progressLabel}</p>
+      <p data-private className="font-mono text-xs text-zinc-500">
+        {progressLabel}
+      </p>
+      {pace != null ? (
+        <p className="font-mono text-xs text-zinc-600">
+          {t(dictionary.desk.pace, {
+            rate: pace,
+            unit: metricUnit(dictionary, material.metric_type),
+          })}
+        </p>
+      ) : null}
 
       {material.status === "active" ? (
-        <form
-          className="flex flex-wrap items-center gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            run(() =>
-              logProgress({
-                materialId: material.id,
-                pageAfter: Number(pageAfter),
-                loggedOn: getLocalDateString(),
-              }),
-            );
-          }}
-        >
-          <input
-            type="number"
-            min={material.current_page + 1}
-            value={pageAfter}
-            onChange={(e) => setPageAfter(e.target.value)}
-            aria-label={dictionary.desk.pageInput}
-            className="w-24 rounded-md border border-white/10 bg-black/50 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-emerald-400/50"
-          />
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-md bg-emerald-400 px-4 py-2 text-sm font-medium text-emerald-950 hover:bg-emerald-300 disabled:opacity-40"
-          >
-            {dictionary.desk.updateProgress}
-          </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => run(() => markCompleted(material.id))}
-            className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
-          >
-            {dictionary.desk.markCompleted}
-          </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => run(() => shelveMaterial(material.id))}
-            className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
-          >
-            {dictionary.desk.shelve}
-          </button>
-        </form>
+        <>
+          <ProgressControls material={material} />
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => run(() => markCompleted(material.id))}
+              className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
+            >
+              {dictionary.desk.markCompleted}
+            </button>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => run(() => shelveMaterial(material.id))}
+              className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
+            >
+              {dictionary.desk.shelve}
+            </button>
+          </div>
+        </>
       ) : (
         <button
           type="button"

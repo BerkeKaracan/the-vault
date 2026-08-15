@@ -73,6 +73,7 @@ const tr = {
     add: "Ekle",
     settings: "Ayarlar",
     signOut: "Çıkış",
+    focus: "Odak",
   },
   login: {
     title: "Odak terminali",
@@ -111,12 +112,17 @@ const tr = {
     slotsStat: "masa",
     todayStat: "bugün",
     streakStat: "gün seri",
-    remainingPages: "{count} sayfa kaldı",
-    remainingUnknown: "Toplam sayfa yok",
-    todayEmpty: "Bugün henüz sayfa yok",
+    remainingPages: "{count} {unit} kaldı",
+    remainingUnknown: "Toplam yok",
+    todayEmpty: "Bugün henüz kayıt yok",
     todayLit: "Bugünün kutusu yandı",
     slotLabel: "Yer {n}",
     pagesShort: "syf",
+    quickAdd: "+{n}",
+    timerStart: "Başlat",
+    timerStop: "Durdur",
+    pace: "{rate}/{unit} · saat",
+    goalMet: "Hedef",
   },
   vault: {
     title: "The Vault",
@@ -126,6 +132,9 @@ const tr = {
     activate: "Masaya al",
     statusShelved: "Bekliyor",
     statusCompleted: "Tamamlandı",
+    filterAll: "Tümü",
+    sortUpdated: "Son güncelleme",
+    sortTitle: "Başlık",
   },
   add: {
     title: "Materyal ekle",
@@ -147,12 +156,18 @@ const tr = {
     added: '"{title}" eklendi.',
     titleLabel: "Başlık",
     authorLabel: "Yazar",
-    totalPagesLabel: "Toplam sayfa (opsiyonel)",
+    totalPagesLabel: "Toplam (opsiyonel)",
     descriptionLabel: "Açıklama (opsiyonel)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Ekle",
     openDetails: "İncele",
+    metricLabel: "Ölçüm",
+    metricPages: "Sayfa",
+    metricQuestions: "Soru",
+    metricChapters: "Bölüm",
+    tagsLabel: "Etiketler",
+    tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
   },
   book: {
     about: "Hakkında",
@@ -162,6 +177,21 @@ const tr = {
     backToDesk: "Masaya dön",
     backToVault: "Vault’a dön",
     onDesk: "Masada",
+    notes: "Notlar",
+    notesHint: "Markdown: **kalın**, *italik*, listeler.",
+    notesSave: "Notu kaydet",
+    notesSaved: "Kaydedildi.",
+    notesPlaceholder: "Formül, soru no, alıntı…",
+    notesPreview: "Önizle",
+    notesEdit: "Düzenle",
+  },
+  metric: {
+    page: "sayfa",
+    pages: "sayfa",
+    question: "soru",
+    questions: "soru",
+    chapter: "bölüm",
+    chapters: "bölüm",
   },
   errors: {
     deskFull:
@@ -218,6 +248,16 @@ const tr = {
     cookieAll: "Tümü",
     save: "Kaydet",
     saved: "Kaydedildi.",
+    appearanceTitle: "Görünüm",
+    accent: "Vurgu rengi",
+    accentEmerald: "Neon yeşil",
+    accentBlue: "Vercel mavi",
+    accentAmber: "Vault amber",
+    dailyGoal: "Günlük hedef",
+    dailyGoalHint:
+      "Boş = hedef yok. Heatmap’te hedefi geçen günler işaretlenir.",
+    focusMode: "Gizlilik / odak",
+    focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
   },
 } as const;
 
@@ -295,6 +335,7 @@ const en = {
     add: "Add",
     settings: "Settings",
     signOut: "Sign out",
+    focus: "Focus",
   },
   login: {
     title: "Focus terminal",
@@ -333,12 +374,17 @@ const en = {
     slotsStat: "on desk",
     todayStat: "today",
     streakStat: "day streak",
-    remainingPages: "{count} pages left",
-    remainingUnknown: "No page total",
-    todayEmpty: "No pages logged today",
+    remainingPages: "{count} {unit} left",
+    remainingUnknown: "No total",
+    todayEmpty: "Nothing logged today",
     todayLit: "Today’s cell is lit",
     slotLabel: "Slot {n}",
     pagesShort: "pp",
+    quickAdd: "+{n}",
+    timerStart: "Start",
+    timerStop: "Stop",
+    pace: "{rate}/{unit} · hour",
+    goalMet: "Goal",
   },
   vault: {
     title: "The Vault",
@@ -348,6 +394,9 @@ const en = {
     activate: "Activate",
     statusShelved: "Shelved",
     statusCompleted: "Completed",
+    filterAll: "All",
+    sortUpdated: "Last updated",
+    sortTitle: "Title",
   },
   add: {
     title: "Add material",
@@ -369,12 +418,18 @@ const en = {
     added: '"{title}" added.',
     titleLabel: "Title",
     authorLabel: "Author",
-    totalPagesLabel: "Total pages (optional)",
+    totalPagesLabel: "Total (optional)",
     descriptionLabel: "Description (optional)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Add",
     openDetails: "View",
+    metricLabel: "Metric",
+    metricPages: "Pages",
+    metricQuestions: "Questions",
+    metricChapters: "Chapters",
+    tagsLabel: "Tags",
+    tagsPlaceholder: "Software, Exam, Literature",
   },
   book: {
     about: "About",
@@ -384,6 +439,21 @@ const en = {
     backToDesk: "Back to desk",
     backToVault: "Back to Vault",
     onDesk: "On desk",
+    notes: "Notes",
+    notesHint: "Markdown: **bold**, *italic*, lists.",
+    notesSave: "Save note",
+    notesSaved: "Saved.",
+    notesPlaceholder: "Formula, question no, quote…",
+    notesPreview: "Preview",
+    notesEdit: "Edit",
+  },
+  metric: {
+    page: "page",
+    pages: "pages",
+    question: "question",
+    questions: "questions",
+    chapter: "chapter",
+    chapters: "chapters",
   },
   errors: {
     deskFull:
@@ -440,6 +510,16 @@ const en = {
     cookieAll: "All",
     save: "Save",
     saved: "Saved.",
+    appearanceTitle: "Appearance",
+    accent: "Accent color",
+    accentEmerald: "Neon green",
+    accentBlue: "Vercel blue",
+    accentAmber: "Vault amber",
+    dailyGoal: "Daily goal",
+    dailyGoalHint:
+      "Leave empty for no goal. Days that beat it get a mark on the heatmap.",
+    focusMode: "Privacy / focus",
+    focusModeHint: "Blurs titles and numbers.",
   },
 } as const;
 
@@ -504,6 +584,7 @@ export type Dictionary = {
     add: string;
     settings: string;
     signOut: string;
+    focus: string;
   };
   login: {
     title: string;
@@ -548,6 +629,11 @@ export type Dictionary = {
     todayLit: string;
     slotLabel: string;
     pagesShort: string;
+    quickAdd: string;
+    timerStart: string;
+    timerStop: string;
+    pace: string;
+    goalMet: string;
   };
   vault: {
     title: string;
@@ -557,6 +643,9 @@ export type Dictionary = {
     activate: string;
     statusShelved: string;
     statusCompleted: string;
+    filterAll: string;
+    sortUpdated: string;
+    sortTitle: string;
   };
   add: {
     title: string;
@@ -584,6 +673,12 @@ export type Dictionary = {
     statusVault: string;
     submit: string;
     openDetails: string;
+    metricLabel: string;
+    metricPages: string;
+    metricQuestions: string;
+    metricChapters: string;
+    tagsLabel: string;
+    tagsPlaceholder: string;
   };
   book: {
     about: string;
@@ -593,6 +688,21 @@ export type Dictionary = {
     backToDesk: string;
     backToVault: string;
     onDesk: string;
+    notes: string;
+    notesHint: string;
+    notesSave: string;
+    notesSaved: string;
+    notesPlaceholder: string;
+    notesPreview: string;
+    notesEdit: string;
+  };
+  metric: {
+    page: string;
+    pages: string;
+    question: string;
+    questions: string;
+    chapter: string;
+    chapters: string;
   };
   errors: {
     deskFull: string;
@@ -643,6 +753,15 @@ export type Dictionary = {
     cookieAll: string;
     save: string;
     saved: string;
+    appearanceTitle: string;
+    accent: string;
+    accentEmerald: string;
+    accentBlue: string;
+    accentAmber: string;
+    dailyGoal: string;
+    dailyGoalHint: string;
+    focusMode: string;
+    focusModeHint: string;
   };
 };
 

@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
 import { getLocale } from "@/i18n/get-dictionary";
+import { isMetricType, parseTags } from "@/lib/catalog";
 import {
   type GoogleBookResult,
   getGoogleBook,
@@ -13,7 +14,9 @@ import type {
   ActionErrorCode,
   ActionResult,
   Material,
+  MaterialNote,
   MaterialStatus,
+  MetricType,
 } from "@/lib/types";
 
 async function countActive(userId: string): Promise<number> {
@@ -80,6 +83,8 @@ export type AddMaterialInput = {
   publishedDate?: string | null;
   publisher?: string | null;
   categories?: string[] | null;
+  metricType?: MetricType;
+  tags?: string[] | string;
 };
 
 export async function addMaterial(
@@ -107,6 +112,10 @@ export async function addMaterial(
   }
 
   const description = input.description?.trim() ?? "";
+  const rawMetric = input.metricType ?? "pages";
+  const metricType: MetricType = isMetricType(rawMetric) ? rawMetric : "pages";
+  const tags =
+    typeof input.tags === "string" ? parseTags(input.tags) : (input.tags ?? []);
 
   const { data, error } = await supabase
     .from("materials")
@@ -123,6 +132,8 @@ export async function addMaterial(
       published_date: input.publishedDate?.trim() || null,
       publisher: input.publisher?.trim() || null,
       categories: categoriesOrNull(input.categories),
+      metric_type: metricType,
+      tags,
     })
     .select()
     .single();
@@ -141,6 +152,7 @@ export async function addMaterial(
 export async function addGoogleBook(
   googleId: string,
   status: Extract<MaterialStatus, "active" | "shelved">,
+  extras?: { metricType?: MetricType; tags?: string[] | string },
 ): Promise<ActionResult<Material>> {
   if (!isGoogleVolumeId(googleId)) {
     return { ok: false, error: "notFound" };
@@ -174,6 +186,8 @@ export async function addGoogleBook(
     publishedDate: book.publishedDate,
     publisher: book.publisher,
     categories: book.categories,
+    metricType: extras?.metricType ?? "pages",
+    tags: extras?.tags,
   });
 }
 
@@ -181,6 +195,8 @@ export async function logProgress(input: {
   materialId: string;
   pageAfter: number;
   loggedOn: string;
+  durationSeconds?: number;
+  unitsDelta?: number;
 }): Promise<ActionResult<Material>> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.loggedOn)) {
     return { ok: false, error: "generic" };
@@ -210,7 +226,27 @@ export async function logProgress(input: {
     return { ok: false, error: "generic" };
   }
 
+  const duration = input.durationSeconds;
+  if (duration && Number.isFinite(duration) && duration > 0) {
+    const ended = new Date();
+    const seconds = Math.floor(duration);
+    const started = new Date(ended.getTime() - seconds * 1000);
+    const units =
+      input.unitsDelta && input.unitsDelta > 0
+        ? Math.floor(input.unitsDelta)
+        : null;
+    await supabase.from("reading_sessions").insert({
+      user_id: user.id,
+      material_id: input.materialId,
+      started_at: started.toISOString(),
+      ended_at: ended.toISOString(),
+      duration_seconds: seconds,
+      units_delta: units,
+    });
+  }
+
   revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
 }
 
@@ -317,4 +353,99 @@ export async function getHeatmapTotals(
     totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
   }
   return totals;
+}
+
+export async function getMaterialNote(
+  materialId: string,
+): Promise<MaterialNote | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("material_notes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("material_id", materialId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertMaterialNote(input: {
+  materialId: string;
+  body: string;
+}): Promise<ActionResult<MaterialNote>> {
+  const body = input.body.slice(0, 20000);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing } = await supabase
+    .from("material_notes")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("material_id", input.materialId)
+    .maybeSingle();
+
+  const now = new Date().toISOString();
+  const query = existing
+    ? supabase
+        .from("material_notes")
+        .update({ body, updated_at: now })
+        .eq("id", existing.id)
+        .select()
+        .single()
+    : supabase
+        .from("material_notes")
+        .insert({
+          user_id: user.id,
+          material_id: input.materialId,
+          body,
+        })
+        .select()
+        .single();
+
+  const { data, error } = await query;
+  if (error || !data) {
+    return { ok: false, error: "generic" };
+  }
+
+  revalidateMaterialPaths(input.materialId);
+  return { ok: true, data };
+}
+
+export async function getMaterialPace(
+  materialId: string,
+): Promise<number | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("reading_sessions")
+    .select("duration_seconds, units_delta")
+    .eq("user_id", user.id)
+    .eq("material_id", materialId)
+    .not("units_delta", "is", null);
+
+  if (error) throw error;
+  let seconds = 0;
+  let units = 0;
+  for (const row of data ?? []) {
+    if (!row.units_delta) continue;
+    seconds += row.duration_seconds;
+    units += row.units_delta;
+  }
+  if (seconds <= 0 || units <= 0) return null;
+  return Math.round((units / seconds) * 3600);
 }

@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  getMaterialNote,
+  getMaterialPace,
+} from "@/app/(app)/materials-actions";
 import { BookRecord } from "@/components/books/book-record";
 import { LibraryActions } from "@/components/books/library-actions";
+import { MaterialNotes } from "@/components/books/material-notes";
+import { TagList } from "@/components/materials/tag-list";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { localizeDescription } from "@/lib/localize-description";
 import { getMaterial } from "@/lib/materials";
+import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {
   params: Promise<{ id: string }>;
@@ -32,6 +39,11 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
     notFound();
   }
 
+  const [note, pace] = await Promise.all([
+    getMaterialNote(material.id),
+    getMaterialPace(material.id),
+  ]);
+
   const statusLabel =
     material.status === "active"
       ? dictionary.book.onDesk
@@ -45,6 +57,15 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
       ? dictionary.book.backToDesk
       : dictionary.book.backToVault;
 
+  const unit = metricUnit(
+    dictionary,
+    material.metric_type,
+    material.total_pages ?? undefined,
+  );
+  const totalLabel = material.total_pages
+    ? `${material.total_pages} ${unit}`
+    : null;
+
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
       <Link
@@ -53,7 +74,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
       >
         {backLabel}
       </Link>
-      <p className="mb-3 font-mono text-[0.65rem] tracking-[0.22em] text-emerald-400/80 uppercase">
+      <p className="mb-3 font-mono text-[0.65rem] tracking-[0.22em] text-accent uppercase">
         {statusLabel}
       </p>
       <BookRecord
@@ -67,9 +88,16 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
           publisher: material.publisher,
           categories: material.categories,
           pageCount: material.total_pages,
+          totalLabel,
         }}
-        actions={<LibraryActions material={material} />}
+        actions={
+          <div className="flex flex-col gap-4">
+            <TagList tags={material.tags} />
+            <LibraryActions material={material} pace={pace} />
+          </div>
+        }
       />
+      <MaterialNotes materialId={material.id} initialBody={note?.body ?? ""} />
     </main>
   );
 }

@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { addGoogleBook } from "@/app/(app)/materials-actions";
+import { MetricFields } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
+import type { MetricType } from "@/lib/types";
 
 function translateError(
   dictionary: ReturnType<typeof useI18n>["dictionary"],
@@ -28,11 +30,16 @@ export function DiscoverActions({
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [metricType, setMetricType] = useState<MetricType>("pages");
+  const [tags, setTags] = useState("");
 
   function add(status: "active" | "shelved") {
     setMessage(null);
     startTransition(async () => {
-      const result = await addGoogleBook(googleId, status);
+      const result = await addGoogleBook(googleId, status, {
+        metricType,
+        tags,
+      });
       if (!result.ok) {
         setMessage(translateError(dictionary, result.error));
         return;
@@ -54,6 +61,12 @@ export function DiscoverActions({
 
   return (
     <div className="flex flex-col gap-3">
+      <MetricFields
+        metricType={metricType}
+        onMetricChange={setMetricType}
+        tags={tags}
+        onTagsChange={setTags}
+      />
       <div className="flex flex-wrap gap-2">
         <button
           type="button"

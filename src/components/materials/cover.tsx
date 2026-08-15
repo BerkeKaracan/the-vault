@@ -34,11 +34,17 @@ export function Cover({
       ) : (
         <div className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950 p-3">
           <span className="absolute inset-y-0 left-0 w-[3px] bg-black/40" />
-          <p className="line-clamp-4 text-[0.8rem] leading-snug font-medium tracking-tight text-zinc-100">
+          <p
+            className="line-clamp-4 text-[0.8rem] leading-snug font-medium tracking-tight text-zinc-100"
+            data-private
+          >
             {title}
           </p>
           {author ? (
-            <p className="truncate font-mono text-[0.6rem] tracking-wide text-zinc-500 uppercase">
+            <p
+              className="truncate font-mono text-[0.6rem] tracking-wide text-zinc-500 uppercase"
+              data-private
+            >
               {author}
             </p>
           ) : null}

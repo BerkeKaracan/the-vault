@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { getSessionProfile } from "@/app/(app)/settings-actions";
 import { AppNav } from "@/components/app-nav";
+import { FocusToggle } from "@/components/focus-toggle";
+import { PreferencesProvider } from "@/components/preferences";
 import { UserMenu } from "@/components/user-menu";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
+import { isAccentColor } from "@/lib/catalog";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const [dictionary, session] = await Promise.all([
@@ -22,8 +25,18 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     session.email ||
     dictionary.nav.settings;
 
+  const accent =
+    session.profile?.accent_color && isAccentColor(session.profile.accent_color)
+      ? session.profile.accent_color
+      : "emerald";
+
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-[#070708]">
+    <PreferencesProvider
+      accent={accent}
+      dailyGoal={session.profile?.daily_goal ?? null}
+      focusMode={session.profile?.focus_mode ?? false}
+      className="flex min-h-dvh flex-1 flex-col bg-[#070708]"
+    >
       <header className="sticky top-0 z-40 border-b border-white/6 bg-[#070708]/80 backdrop-blur-xl">
         <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
           <Link
@@ -34,12 +47,13 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-4">
             <AppNav items={nav} />
+            <FocusToggle />
             <LanguageSwitcher />
             <UserMenu label={userLabel} />
           </div>
         </div>
       </header>
       <div className="flex flex-1 flex-col">{children}</div>
-    </div>
+    </PreferencesProvider>
   );
 }

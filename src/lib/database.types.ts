@@ -19,10 +19,12 @@ export type Database = {
           description: string | null
           google_books_id: string | null
           id: string
+          metric_type: Database["public"]["Enums"]["metric_type"]
           published_date: string | null
           publisher: string | null
           source: Database["public"]["Enums"]["material_source"]
           status: Database["public"]["Enums"]["material_status"]
+          tags: string[]
           title: string
           total_pages: number | null
           updated_at: string
@@ -36,11 +38,13 @@ export type Database = {
           description?: string | null
           google_books_id?: string | null
           id?: string
+          metric_type?: Database["public"]["Enums"]["metric_type"]
           published_date?: string | null
           publisher?: string | null
           categories?: string[] | null
           source: Database["public"]["Enums"]["material_source"]
           status?: Database["public"]["Enums"]["material_status"]
+          tags?: string[]
           title: string
           total_pages?: number | null
           updated_at?: string
@@ -54,11 +58,13 @@ export type Database = {
           description?: string | null
           google_books_id?: string | null
           id?: string
+          metric_type?: Database["public"]["Enums"]["metric_type"]
           published_date?: string | null
           publisher?: string | null
           categories?: string[] | null
           source?: Database["public"]["Enums"]["material_source"]
           status?: Database["public"]["Enums"]["material_status"]
+          tags?: string[]
           title?: string
           total_pages?: number | null
           updated_at?: string
@@ -68,30 +74,115 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accent_color: Database["public"]["Enums"]["accent_color"]
           created_at: string
+          daily_goal: number | null
           display_name: string | null
+          focus_mode: boolean
           id: string
           timezone: string
           updated_at: string
           week_starts_on: Database["public"]["Enums"]["week_start"]
         }
         Insert: {
+          accent_color?: Database["public"]["Enums"]["accent_color"]
           created_at?: string
+          daily_goal?: number | null
           display_name?: string | null
+          focus_mode?: boolean
           id: string
           timezone?: string
           updated_at?: string
           week_starts_on?: Database["public"]["Enums"]["week_start"]
         }
         Update: {
+          accent_color?: Database["public"]["Enums"]["accent_color"]
           created_at?: string
+          daily_goal?: number | null
           display_name?: string | null
+          focus_mode?: boolean
           id?: string
           timezone?: string
           updated_at?: string
           week_starts_on?: Database["public"]["Enums"]["week_start"]
         }
         Relationships: []
+      }
+      material_notes: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          material_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          material_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          material_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_notes_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_sessions: {
+        Row: {
+          created_at: string
+          duration_seconds: number
+          ended_at: string
+          id: string
+          material_id: string
+          started_at: string
+          units_delta: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds: number
+          ended_at: string
+          id?: string
+          material_id: string
+          started_at: string
+          units_delta?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number
+          ended_at?: string
+          id?: string
+          material_id?: string
+          started_at?: string
+          units_delta?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_sessions_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       progress_entries: {
         Row: {
@@ -151,10 +242,12 @@ export type Database = {
           description: string | null
           google_books_id: string | null
           id: string
+          metric_type: Database["public"]["Enums"]["metric_type"]
           published_date: string | null
           publisher: string | null
           source: Database["public"]["Enums"]["material_source"]
           status: Database["public"]["Enums"]["material_status"]
+          tags: string[]
           title: string
           total_pages: number | null
           updated_at: string
@@ -169,8 +262,10 @@ export type Database = {
       }
     }
     Enums: {
+      accent_color: "emerald" | "blue" | "amber"
       material_source: "google" | "custom"
       material_status: "active" | "shelved" | "completed"
+      metric_type: "pages" | "questions" | "chapters"
       week_start: "monday" | "sunday"
     }
     CompositeTypes: {
@@ -299,8 +394,10 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      accent_color: ["emerald", "blue", "amber"],
       material_source: ["google", "custom"],
       material_status: ["active", "shelved", "completed"],
+      metric_type: ["pages", "questions", "chapters"],
       week_start: ["monday", "sunday"],
     },
   },

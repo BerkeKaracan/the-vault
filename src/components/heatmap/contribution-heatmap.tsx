@@ -10,14 +10,6 @@ import type { WeekStart } from "@/lib/types";
 const WEEKS = 26;
 const DAYS = WEEKS * 7;
 
-const LEVELS = [
-  "bg-white/[0.04]",
-  "bg-emerald-950",
-  "bg-emerald-800",
-  "bg-emerald-600",
-  "bg-emerald-400",
-] as const;
-
 function weekStartWeeksAgo(weeks: number, weekStartsOn: WeekStart): Date {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
@@ -45,10 +37,18 @@ function intensity(pages: number): number {
   return 4;
 }
 
+const HEAT = ["heat-0", "heat-1", "heat-2", "heat-3", "heat-4"] as const;
+
+function heatClass(pages: number): string {
+  return HEAT[intensity(pages)] ?? "heat-0";
+}
+
 export function ContributionHeatmap({
   weekStartsOn = "monday",
+  dailyGoal = null,
 }: {
   weekStartsOn?: WeekStart;
+  dailyGoal?: number | null;
 }) {
   const { dictionary } = useI18n();
   const fromDate = useMemo(
@@ -93,13 +93,26 @@ export function ContributionHeatmap({
           const pages = totals[date] ?? 0;
           const isToday = date === today;
           const isFuture = date > today;
+          const goalMet =
+            dailyGoal != null && dailyGoal > 0 && pages >= dailyGoal;
 
           return (
             <span
               key={date}
-              title={`${date}: ${pages}`}
-              className={`aspect-square rounded-xs ${LEVELS[intensity(pages)]} ${isToday ? "ring-1 ring-emerald-300/80" : ""} ${isFuture ? "opacity-30" : ""}`}
-            />
+              title={
+                goalMet
+                  ? `${date}: ${pages} · ${dictionary.desk.goalMet}`
+                  : `${date}: ${pages}`
+              }
+              className={`relative aspect-square rounded-xs ${heatClass(pages)} ${isToday ? "ring-1 ring-accent/80" : ""} ${isFuture ? "opacity-30" : ""}`}
+            >
+              {goalMet ? (
+                <span
+                  aria-hidden
+                  className="absolute -top-px -right-px size-1.5 rounded-full bg-white shadow-[0_0_6px_var(--accent)]"
+                />
+              ) : null}
+            </span>
           );
         })}
       </div>

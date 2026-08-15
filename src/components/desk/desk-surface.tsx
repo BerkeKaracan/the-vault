@@ -2,16 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import {
-  logProgress,
-  markCompleted,
-  shelveMaterial,
-} from "@/app/(app)/materials-actions";
+import { markCompleted, shelveMaterial } from "@/app/(app)/materials-actions";
 import { Cover } from "@/components/materials/cover";
+import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import { getLocalDateString } from "@/lib/local-date";
+import { metricUnit } from "@/lib/metric";
 import type { Material } from "@/lib/types";
 
 const DESK_LIMIT = 3;
@@ -61,7 +58,7 @@ function CoverSlot({
         type="button"
         onClick={onSelect}
         aria-pressed={selected}
-        className={`w-full max-w-56 ${selected ? "ring-1 ring-emerald-300/40" : ""}`}
+        className={`w-full max-w-56 ${selected ? "ring-1 ring-accent/40" : ""}`}
       >
         <Cover
           title={material.title}
@@ -74,13 +71,14 @@ function CoverSlot({
       <div className="mt-4 w-full max-w-56">
         <Link
           href={`/materials/${material.id}`}
+          data-private
           className="line-clamp-2 font-display text-[0.95rem] leading-snug font-semibold tracking-[-0.02em] text-zinc-100 hover:text-white"
         >
           {material.title}
         </Link>
         <div className="mt-3 h-px overflow-hidden bg-white/10">
           <div
-            className="h-full bg-emerald-400"
+            className="h-full bg-accent"
             style={{ width: `${percent ?? 8}%` }}
           />
         </div>
@@ -110,9 +108,6 @@ function EmptySlot({ slot }: { slot: number }) {
 
 function DeskDock({ material }: { material: Material }) {
   const { dictionary } = useI18n();
-  const [pageAfter, setPageAfter] = useState(
-    String(Math.max(material.current_page + 1, 1)),
-  );
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const percent = progressPercent(material);
@@ -120,11 +115,7 @@ function DeskDock({ material }: { material: Material }) {
     material.total_pages != null
       ? Math.max(0, material.total_pages - material.current_page)
       : null;
-
-  useEffect(() => {
-    setPageAfter(String(Math.max(material.current_page + 1, 1)));
-    setMessage(null);
-  }, [material.current_page]);
+  const unit = metricUnit(dictionary, material.metric_type, left ?? undefined);
 
   const progressLabel = material.total_pages
     ? t(dictionary.desk.pageOf, {
@@ -145,9 +136,12 @@ function DeskDock({ material }: { material: Material }) {
 
   return (
     <div className="border-t border-white/8 bg-[#070708]/90 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 lg:max-w-sm">
-          <p className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-zinc-50">
+          <p
+            data-private
+            className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-zinc-50"
+          >
             <Link
               href={`/materials/${material.id}`}
               className="hover:text-white"
@@ -155,65 +149,41 @@ function DeskDock({ material }: { material: Material }) {
               {material.title}
             </Link>
           </p>
-          <p className="mt-1 font-mono text-xs text-zinc-500">
+          <p data-private className="mt-1 font-mono text-xs text-zinc-500">
             {progressLabel}
             {left !== null
-              ? ` · ${t(dictionary.desk.remainingPages, { count: left })}`
+              ? ` · ${t(dictionary.desk.remainingPages, { count: left, unit })}`
               : ""}
           </p>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
             <div
-              className="h-full bg-emerald-400"
+              className="h-full bg-accent"
               style={{ width: `${percent ?? 8}%` }}
             />
           </div>
         </div>
 
-        <form
-          className="flex flex-wrap items-center gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            run(() =>
-              logProgress({
-                materialId: material.id,
-                pageAfter: Number(pageAfter),
-                loggedOn: getLocalDateString(),
-              }),
-            );
-          }}
-        >
-          <input
-            type="number"
-            min={material.current_page + 1}
-            value={pageAfter}
-            onChange={(e) => setPageAfter(e.target.value)}
-            aria-label={dictionary.desk.pageInput}
-            className="w-24 rounded-md border border-white/10 bg-black/50 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-emerald-400/50"
-          />
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-md bg-emerald-400 px-4 py-2 text-sm font-medium text-emerald-950 hover:bg-emerald-300 disabled:opacity-40"
-          >
-            {dictionary.desk.updateProgress}
-          </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => run(() => markCompleted(material.id))}
-            className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
-          >
-            {dictionary.desk.markCompleted}
-          </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => run(() => shelveMaterial(material.id))}
-            className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
-          >
-            {dictionary.desk.shelve}
-          </button>
-        </form>
+        <div className="flex min-w-0 flex-col gap-3">
+          <ProgressControls material={material} />
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => run(() => markCompleted(material.id))}
+              className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
+            >
+              {dictionary.desk.markCompleted}
+            </button>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => run(() => shelveMaterial(material.id))}
+              className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
+            >
+              {dictionary.desk.shelve}
+            </button>
+          </div>
+        </div>
       </div>
       {message ? (
         <output className="mx-auto block w-full max-w-5xl px-5 pb-3 font-mono text-xs text-zinc-500 sm:px-8">

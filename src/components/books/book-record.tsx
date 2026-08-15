@@ -13,6 +13,7 @@ export type BookRecordData = {
   publisher?: string | null;
   categories?: string[] | null;
   pageCount?: number | null;
+  totalLabel?: string | null;
 };
 
 export function BookRecord({
@@ -40,11 +41,16 @@ export function BookRecord({
           />
         </div>
         <div className="min-w-0">
-          <h1 className="font-display text-3xl font-semibold tracking-[-0.04em] text-zinc-50">
+          <h1
+            data-private
+            className="font-display text-3xl font-semibold tracking-[-0.04em] text-zinc-50"
+          >
             {book.title}
           </h1>
           {book.author ? (
-            <p className="mt-2 text-sm text-zinc-400">{book.author}</p>
+            <p data-private className="mt-2 text-sm text-zinc-400">
+              {book.author}
+            </p>
           ) : (
             <p className="mt-2 text-sm text-zinc-600">
               {dictionary.add.noAuthor}
@@ -52,8 +58,12 @@ export function BookRecord({
           )}
           <ul className="mt-5 flex flex-wrap gap-2 font-mono text-[0.7rem] tracking-wide text-zinc-500 uppercase">
             {book.pageCount ? (
-              <li className="rounded-full border border-white/10 px-2.5 py-1">
-                {t(dictionary.add.pages, { count: book.pageCount })}
+              <li
+                data-private
+                className="rounded-full border border-white/10 px-2.5 py-1"
+              >
+                {book.totalLabel ??
+                  t(dictionary.add.pages, { count: book.pageCount })}
               </li>
             ) : null}
             {book.publishedDate ? (
