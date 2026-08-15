@@ -167,11 +167,11 @@ export function ProgressControls({
               startedAt.current = Date.now() - elapsed * 1000;
               setRunning(true);
             }}
-            className="rounded-md border border-white/12 px-2.5 py-1 font-mono text-[0.7rem] tracking-wide text-zinc-300 uppercase hover:border-white/25"
+            className="rounded-md border border-border px-2.5 py-1 font-mono text-[0.7rem] tracking-wide text-foreground/80 uppercase hover:border-foreground/25"
           >
             {running ? dictionary.desk.timerStop : dictionary.desk.timerStart}
           </button>
-          <span className="font-mono text-xs text-zinc-500">
+          <span className="font-mono text-xs text-muted">
             {formatElapsed(elapsed)}
           </span>
         </div>
@@ -184,7 +184,7 @@ export function ProgressControls({
             type="button"
             disabled={pending}
             onClick={() => commit(material.current_page + step)}
-            className="rounded-md border border-white/12 px-2.5 py-1.5 font-mono text-xs text-zinc-300 hover:border-white/25 disabled:opacity-40"
+            className="rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-foreground/80 hover:border-foreground/25 disabled:opacity-40"
           >
             {t(dictionary.desk.quickAdd, { n: step })}
           </button>
@@ -204,7 +204,7 @@ export function ProgressControls({
           value={pageAfter}
           onChange={(e) => setPageAfter(e.target.value)}
           aria-label={t(dictionary.desk.pageInput, { unit })}
-          className="w-24 rounded-md border border-white/10 bg-black/50 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-accent/50"
+          className="w-24 rounded-md border border-border bg-black/50 px-3 py-2 font-mono text-sm text-foreground outline-none focus:border-accent/50"
         />
         <button
           type="submit"
@@ -213,12 +213,12 @@ export function ProgressControls({
         >
           {dictionary.desk.updateProgress}
         </button>
-        <span className="font-mono text-[0.65rem] text-zinc-600 uppercase">
+        <span className="font-mono text-[0.65rem] text-muted uppercase">
           {unit}
         </span>
       </form>
       {message ? (
-        <output className="font-mono text-xs text-zinc-500">{message}</output>
+        <output className="font-mono text-xs text-muted">{message}</output>
       ) : null}
     </div>
   );

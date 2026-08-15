@@ -6,10 +6,10 @@ export default async function AddPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
-      <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-zinc-50">
+      <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
         {dictionary.add.title}
       </h1>
-      <p className="mt-1.5 text-sm text-zinc-500">{dictionary.add.subtitle}</p>
+      <p className="mt-1.5 text-sm text-muted">{dictionary.add.subtitle}</p>
       <div className="mt-8">
         <AddMaterialPanel />
       </div>

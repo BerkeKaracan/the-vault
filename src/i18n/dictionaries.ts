@@ -252,6 +252,9 @@ const tr = {
     save: "Kaydet",
     saved: "Kaydedildi.",
     appearanceTitle: "Görünüm",
+    theme: "Tema",
+    themeDark: "Koyu",
+    themeLight: "Açık",
     accent: "Vurgu rengi",
     accentEmerald: "Neon yeşil",
     accentBlue: "Vercel mavi",
@@ -517,6 +520,9 @@ const en = {
     save: "Save",
     saved: "Saved.",
     appearanceTitle: "Appearance",
+    theme: "Theme",
+    themeDark: "Dark",
+    themeLight: "Light",
     accent: "Accent color",
     accentEmerald: "Neon green",
     accentBlue: "Vercel blue",
@@ -763,6 +769,9 @@ export type Dictionary = {
     save: string;
     saved: string;
     appearanceTitle: string;
+    theme: string;
+    themeDark: string;
+    themeLight: string;
     accent: string;
     accentEmerald: string;
     accentBlue: string;

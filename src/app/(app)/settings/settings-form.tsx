@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { updateProfile } from "@/app/(app)/settings-actions";
 import { AccentSwatches } from "@/components/materials/catalog-fields";
+import { usePreferences } from "@/components/preferences";
 import type { CookieConsent } from "@/i18n/config";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
@@ -13,7 +14,7 @@ import { TIMEZONES } from "@/lib/timezones";
 import type { AccentColor, Profile, WeekStart } from "@/lib/types";
 
 const fieldClass =
-  "mt-1.5 w-full rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-accent/50";
+  "mt-1.5 w-full rounded-md border border-border bg-elevated px-3 py-2 text-sm text-foreground outline-none focus:border-accent/50";
 
 export function SettingsForm({
   email,
@@ -25,6 +26,7 @@ export function SettingsForm({
   consent: CookieConsent | null;
 }) {
   const { dictionary } = useI18n();
+  const { colorScheme, setTheme } = usePreferences();
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [timezone, setTimezone] = useState(
     profile?.timezone ?? "Europe/Istanbul",
@@ -60,6 +62,7 @@ export function SettingsForm({
           weekStartsOn,
           accentColor,
           dailyGoal: parsedGoal,
+          colorScheme,
         }),
         setCookieConsent(cookiePref),
       ]);
@@ -81,10 +84,10 @@ export function SettingsForm({
   return (
     <form onSubmit={onSubmit} className="flex max-w-lg flex-col gap-12">
       <section>
-        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-zinc-50">
+        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-foreground">
           {dictionary.settings.profileTitle}
         </h2>
-        <label className="mt-6 block text-sm text-zinc-400">
+        <label className="mt-6 block text-sm text-muted">
           {dictionary.settings.displayName}
           <input
             value={displayName}
@@ -93,24 +96,49 @@ export function SettingsForm({
             className={fieldClass}
           />
         </label>
-        <label className="mt-4 block text-sm text-zinc-400">
+        <label className="mt-4 block text-sm text-muted">
           {dictionary.settings.email}
           <input
             value={email ?? ""}
             readOnly
-            className={`${fieldClass} text-zinc-500`}
+            className={`${fieldClass} text-muted`}
           />
         </label>
       </section>
 
       <section>
-        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-zinc-50">
+        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-foreground">
           {dictionary.settings.appearanceTitle}
         </h2>
+        <fieldset className="mt-6">
+          <legend className="text-sm text-muted">
+            {dictionary.settings.theme}
+          </legend>
+          <div className="mt-2 flex gap-4 text-sm text-foreground/80">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="color-scheme"
+                checked={colorScheme === "dark"}
+                onChange={() => setTheme("dark")}
+              />
+              {dictionary.settings.themeDark}
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="color-scheme"
+                checked={colorScheme === "light"}
+                onChange={() => setTheme("light")}
+              />
+              {dictionary.settings.themeLight}
+            </label>
+          </div>
+        </fieldset>
         <div className="mt-6">
           <AccentSwatches value={accentColor} onChange={setAccentColor} />
         </div>
-        <label className="mt-6 block text-sm text-zinc-400">
+        <label className="mt-6 block text-sm text-muted">
           {dictionary.settings.dailyGoal}
           <input
             type="number"
@@ -119,31 +147,31 @@ export function SettingsForm({
             onChange={(e) => setDailyGoal(e.target.value)}
             className={fieldClass}
           />
-          <span className="mt-1.5 block text-xs text-zinc-600">
+          <span className="mt-1.5 block text-xs text-muted">
             {dictionary.settings.dailyGoalHint}
           </span>
         </label>
-        <p className="mt-6 text-sm text-zinc-400">
+        <p className="mt-6 text-sm text-muted">
           {dictionary.settings.focusMode}
         </p>
-        <p className="mt-1 text-xs text-zinc-600">
+        <p className="mt-1 text-xs text-muted">
           {dictionary.settings.focusModeHint}
         </p>
       </section>
 
       <section>
-        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-zinc-50">
+        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-foreground">
           {dictionary.settings.generalTitle}
         </h2>
 
         <div className="mt-6">
-          <p className="text-sm text-zinc-400">{dictionary.language.label}</p>
+          <p className="text-sm text-muted">{dictionary.language.label}</p>
           <div className="mt-2">
             <LanguageSwitcher />
           </div>
         </div>
 
-        <label className="mt-4 block text-sm text-zinc-400">
+        <label className="mt-4 block text-sm text-muted">
           {dictionary.settings.timezone}
           <select
             value={timezone}
@@ -159,10 +187,10 @@ export function SettingsForm({
         </label>
 
         <fieldset className="mt-4">
-          <legend className="text-sm text-zinc-400">
+          <legend className="text-sm text-muted">
             {dictionary.settings.weekStart}
           </legend>
-          <div className="mt-2 flex gap-4 text-sm text-zinc-300">
+          <div className="mt-2 flex gap-4 text-sm text-foreground/80">
             <label className="flex items-center gap-2">
               <input
                 type="radio"
@@ -185,10 +213,10 @@ export function SettingsForm({
         </fieldset>
 
         <fieldset className="mt-4">
-          <legend className="text-sm text-zinc-400">
+          <legend className="text-sm text-muted">
             {dictionary.settings.cookiePref}
           </legend>
-          <div className="mt-2 flex gap-4 text-sm text-zinc-300">
+          <div className="mt-2 flex gap-4 text-sm text-foreground/80">
             <label className="flex items-center gap-2">
               <input
                 type="radio"
@@ -220,7 +248,7 @@ export function SettingsForm({
           {dictionary.settings.save}
         </button>
         {message ? (
-          <output className="text-sm text-zinc-500">{message}</output>
+          <output className="text-sm text-muted">{message}</output>
         ) : null}
       </div>
     </form>

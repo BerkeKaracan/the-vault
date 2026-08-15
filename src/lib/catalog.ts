@@ -32,12 +32,12 @@ export function parseTags(raw: string): string[] {
 }
 
 const TAG_TONES = [
-  "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-  "border-sky-400/30 bg-sky-400/10 text-sky-200",
-  "border-amber-400/30 bg-amber-400/10 text-amber-200",
-  "border-rose-400/30 bg-rose-400/10 text-rose-200",
-  "border-violet-400/30 bg-violet-400/10 text-violet-200",
-  "border-zinc-400/30 bg-zinc-400/10 text-zinc-200",
+  "border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-200",
+  "border-sky-400/30 bg-sky-400/10 text-sky-800 dark:text-sky-200",
+  "border-amber-400/30 bg-amber-400/10 text-amber-800 dark:text-amber-200",
+  "border-rose-400/30 bg-rose-400/10 text-rose-800 dark:text-rose-200",
+  "border-violet-400/30 bg-violet-400/10 text-violet-800 dark:text-violet-200",
+  "border-zinc-400/30 bg-zinc-400/10 text-zinc-800 dark:text-zinc-200",
 ] as const;
 
 export function tagTone(tag: string): string {

@@ -61,13 +61,13 @@ export function LoginForm() {
           }}
           className={
             mode === "login"
-              ? "text-zinc-100 underline underline-offset-4"
-              : "text-zinc-500 hover:text-zinc-300"
+              ? "text-foreground underline underline-offset-4"
+              : "text-muted hover:text-foreground/80"
           }
         >
           {dictionary.login.tabLogin}
         </button>
-        <span className="text-zinc-700">/</span>
+        <span className="text-muted">/</span>
         <button
           type="button"
           onClick={() => {
@@ -76,15 +76,15 @@ export function LoginForm() {
           }}
           className={
             mode === "signup"
-              ? "text-zinc-100 underline underline-offset-4"
-              : "text-zinc-500 hover:text-zinc-300"
+              ? "text-foreground underline underline-offset-4"
+              : "text-muted hover:text-foreground/80"
           }
         >
           {dictionary.login.tabSignup}
         </button>
       </div>
 
-      <label className="flex flex-col gap-1.5 text-sm text-zinc-400">
+      <label className="flex flex-col gap-1.5 text-sm text-muted">
         {dictionary.login.email}
         <input
           type="email"
@@ -92,11 +92,11 @@ export function LoginForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 outline-none focus:border-zinc-600"
+          className="rounded-md border border-border bg-elevated px-3 py-2 text-foreground outline-none focus:border-accent/50"
         />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm text-zinc-400">
+      <label className="flex flex-col gap-1.5 text-sm text-muted">
         {dictionary.login.password}
         <input
           type="password"
@@ -105,18 +105,18 @@ export function LoginForm() {
           autoComplete={mode === "login" ? "current-password" : "new-password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 outline-none focus:border-zinc-600"
+          className="rounded-md border border-border bg-elevated px-3 py-2 text-foreground outline-none focus:border-accent/50"
         />
       </label>
 
       {message ? (
-        <output className="text-sm text-zinc-400">{message}</output>
+        <output className="text-sm text-muted">{message}</output>
       ) : null}
 
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-950 transition hover:bg-white disabled:opacity-50"
+        className="rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background transition hover:bg-foreground disabled:opacity-50"
       >
         {pending
           ? dictionary.busy

@@ -21,7 +21,7 @@ export function LanguageSwitcher() {
 
   return (
     <nav
-      className="flex items-center gap-1 font-mono text-xs tracking-wide text-zinc-600"
+      className="flex items-center gap-1 font-mono text-xs tracking-wide text-muted"
       aria-label={dictionary.language.label}
     >
       <button
@@ -30,21 +30,21 @@ export function LanguageSwitcher() {
         onClick={() => switchTo("tr")}
         className={
           locale === "tr"
-            ? "text-zinc-200"
-            : "hover:text-zinc-400 disabled:opacity-40"
+            ? "text-foreground"
+            : "hover:text-muted disabled:opacity-40"
         }
       >
         {dictionary.language.tr}
       </button>
-      <span className="text-zinc-800">/</span>
+      <span className="text-border">/</span>
       <button
         type="button"
         disabled={pending}
         onClick={() => switchTo("en")}
         className={
           locale === "en"
-            ? "text-zinc-200"
-            : "hover:text-zinc-400 disabled:opacity-40"
+            ? "text-foreground"
+            : "hover:text-muted disabled:opacity-40"
         }
       >
         {dictionary.language.en}

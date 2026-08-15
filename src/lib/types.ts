@@ -11,6 +11,7 @@ export type MaterialStatus = Database["public"]["Enums"]["material_status"];
 export type AccentColor = Database["public"]["Enums"]["accent_color"];
 export type MetricType = Database["public"]["Enums"]["metric_type"];
 export type WeekStart = Database["public"]["Enums"]["week_start"];
+export type ColorScheme = Database["public"]["Enums"]["color_scheme"];
 export type MaterialNote =
   Database["public"]["Tables"]["material_notes"]["Row"];
 export type ReadingSession =

@@ -60,11 +60,11 @@ export function LibraryActions({
 
   return (
     <div className="flex flex-col gap-4">
-      <p data-private className="font-mono text-xs text-zinc-500">
+      <p data-private className="font-mono text-xs text-muted">
         {progressLabel}
       </p>
       {pace != null ? (
-        <p className="font-mono text-xs text-zinc-600">
+        <p className="font-mono text-xs text-muted">
           {t(dictionary.desk.pace, {
             rate: pace,
             unit: metricUnit(dictionary, material.metric_type),
@@ -80,7 +80,7 @@ export function LibraryActions({
               type="button"
               disabled={pending}
               onClick={() => run(() => markCompleted(material.id))}
-              className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
+              className="px-2 text-xs text-muted hover:text-foreground/80 disabled:opacity-40"
             >
               {dictionary.desk.markCompleted}
             </button>
@@ -88,7 +88,7 @@ export function LibraryActions({
               type="button"
               disabled={pending}
               onClick={() => run(() => shelveMaterial(material.id))}
-              className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
+              className="px-2 text-xs text-muted hover:text-foreground/80 disabled:opacity-40"
             >
               {dictionary.desk.shelve}
             </button>
@@ -99,14 +99,14 @@ export function LibraryActions({
           type="button"
           disabled={pending}
           onClick={() => run(() => activateMaterial(material.id))}
-          className="w-fit rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 disabled:opacity-40"
+          className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
         >
           {dictionary.vault.activate}
         </button>
       )}
 
       {message ? (
-        <output className="font-mono text-xs text-zinc-500">{message}</output>
+        <output className="font-mono text-xs text-muted">{message}</output>
       ) : null}
     </div>
   );

@@ -79,10 +79,10 @@ export function ContributionHeatmap({
   return (
     <div className="mx-auto w-full max-w-5xl">
       <div className="mb-2 flex items-center justify-between">
-        <p className="font-mono text-[0.58rem] tracking-[0.22em] text-zinc-600 uppercase">
+        <p className="font-mono text-[0.58rem] tracking-[0.22em] text-muted uppercase">
           {dictionary.desk.consistency}
         </p>
-        <p className="font-mono text-[0.58rem] text-zinc-600">
+        <p className="font-mono text-[0.58rem] text-muted">
           {t(dictionary.desk.heatmapStats, { days: activeDays })}
         </p>
       </div>
@@ -113,14 +113,14 @@ export function ContributionHeatmap({
               {goalMet ? (
                 <span
                   aria-hidden
-                  className="absolute -top-px -right-px size-1.5 rounded-full bg-white shadow-[0_0_6px_var(--accent)]"
+                  className="absolute -top-px -right-px size-1.5 rounded-full bg-foreground shadow-[0_0_6px_var(--accent)]"
                 />
               ) : null}
             </span>
           );
         })}
       </div>
-      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[0.58rem] text-zinc-600">
+      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[0.58rem] text-muted">
         <span>{dictionary.desk.heatmapLess}</span>
         <span className="heat-0 size-2.5 rounded-xs" />
         <span className="heat-1 size-2.5 rounded-xs" />

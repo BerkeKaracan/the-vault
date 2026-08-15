@@ -52,7 +52,7 @@ export function DiscoverActions({
     return (
       <Link
         href={ownedHref}
-        className="inline-flex rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950"
+        className="inline-flex rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
       >
         {dictionary.book.openInLibrary}
       </Link>
@@ -72,7 +72,7 @@ export function DiscoverActions({
           type="button"
           disabled={pending}
           onClick={() => add("active")}
-          className="rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 disabled:opacity-40"
+          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
         >
           {dictionary.add.addToDesk}
         </button>
@@ -80,13 +80,13 @@ export function DiscoverActions({
           type="button"
           disabled={pending}
           onClick={() => add("shelved")}
-          className="rounded-md border border-white/12 px-4 py-2 text-sm text-zinc-300 hover:border-white/25 disabled:opacity-40"
+          className="rounded-md border border-border px-4 py-2 text-sm text-foreground/80 hover:border-foreground/25 disabled:opacity-40"
         >
           {dictionary.add.addToVault}
         </button>
       </div>
       {message ? (
-        <output className="font-mono text-xs text-zinc-500">{message}</output>
+        <output className="font-mono text-xs text-muted">{message}</output>
       ) : null}
     </div>
   );

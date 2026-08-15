@@ -26,7 +26,7 @@ export function UserMenu({ label }: { label: string }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="max-w-36 truncate text-sm text-zinc-400 transition hover:text-zinc-200"
+        className="max-w-36 truncate text-sm text-muted transition hover:text-foreground"
         aria-expanded={open}
         aria-haspopup="menu"
       >
@@ -35,13 +35,13 @@ export function UserMenu({ label }: { label: string }) {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-50 mt-2 min-w-40 rounded-lg border border-white/10 bg-zinc-950 py-1 shadow-xl"
+          className="absolute right-0 z-50 mt-2 min-w-40 rounded-lg border border-border bg-elevated py-1 shadow-xl"
         >
           <Link
             href="/settings"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white"
+            className="block px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
           >
             {dictionary.nav.settings}
           </Link>
@@ -49,7 +49,7 @@ export function UserMenu({ label }: { label: string }) {
             <button
               type="submit"
               role="menuitem"
-              className="block w-full px-3 py-2 text-left text-sm text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+              className="block w-full px-3 py-2 text-left text-sm text-muted hover:bg-foreground/5 hover:text-foreground"
             >
               {dictionary.nav.signOut}
             </button>

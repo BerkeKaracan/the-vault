@@ -51,7 +51,7 @@ function CoverSlot({
     <div
       className={`group flex flex-col items-center text-left transition duration-500 ${selected ? "-translate-y-3" : "opacity-55 hover:opacity-85"}`}
     >
-      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-zinc-600 uppercase">
+      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
         {t(dictionary.desk.slotLabel, { n: slot })}
       </p>
       <button
@@ -72,11 +72,11 @@ function CoverSlot({
         <Link
           href={`/materials/${material.id}`}
           data-private
-          className="line-clamp-2 font-display text-[0.95rem] leading-snug font-semibold tracking-[-0.02em] text-zinc-100 hover:text-white"
+          className="line-clamp-2 font-display text-[0.95rem] leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
         >
           {material.title}
         </Link>
-        <div className="mt-3 h-px overflow-hidden bg-white/10">
+        <div className="mt-3 h-px overflow-hidden bg-border">
           <div
             className="h-full bg-accent"
             style={{ width: `${percent ?? 8}%` }}
@@ -95,13 +95,13 @@ function EmptySlot({ slot }: { slot: number }) {
       href="/add"
       className="flex flex-col items-center opacity-40 transition hover:opacity-80"
     >
-      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-zinc-600 uppercase">
+      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
         {t(dictionary.desk.slotLabel, { n: slot })}
       </p>
-      <div className="flex aspect-2/3 w-full max-w-56 items-center justify-center rounded-sm border border-dashed border-white/15">
-        <span className="font-display text-3xl text-zinc-600">+</span>
+      <div className="flex aspect-2/3 w-full max-w-56 items-center justify-center rounded-sm border border-dashed border-border">
+        <span className="font-display text-3xl text-muted">+</span>
       </div>
-      <p className="mt-4 text-sm text-zinc-500">{dictionary.desk.emptySlot}</p>
+      <p className="mt-4 text-sm text-muted">{dictionary.desk.emptySlot}</p>
     </Link>
   );
 }
@@ -142,27 +142,27 @@ function DeskDock({ material }: { material: Material }) {
   }
 
   return (
-    <div className="border-t border-white/8 bg-[#070708]/90 backdrop-blur-xl">
+    <div className="border-t border-border bg-surface/90 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 lg:max-w-sm">
           <p
             data-private
-            className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-zinc-50"
+            className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-foreground"
           >
             <Link
               href={`/materials/${material.id}`}
-              className="hover:text-white"
+              className="hover:text-foreground"
             >
               {material.title}
             </Link>
           </p>
-          <p data-private className="mt-1 font-mono text-xs text-zinc-500">
+          <p data-private className="mt-1 font-mono text-xs text-muted">
             {progressLabel}
             {left !== null
               ? ` · ${t(dictionary.desk.remainingPages, { count: left, unit })}`
               : ""}
           </p>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/8">
+          <div className="mt-2 h-1 overflow-hidden rounded-full bg-foreground/10">
             <div
               className="h-full bg-accent"
               style={{ width: `${percent ?? 8}%` }}
@@ -177,7 +177,7 @@ function DeskDock({ material }: { material: Material }) {
               type="button"
               disabled={pending}
               onClick={() => run(() => markCompleted(material.id))}
-              className="px-2 text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-40"
+              className="px-2 text-xs text-muted hover:text-foreground disabled:opacity-40"
             >
               {dictionary.desk.markCompleted}
             </button>
@@ -185,7 +185,7 @@ function DeskDock({ material }: { material: Material }) {
               type="button"
               disabled={pending}
               onClick={() => run(() => shelveMaterial(material.id))}
-              className="px-2 text-xs text-zinc-600 hover:text-zinc-300 disabled:opacity-40"
+              className="px-2 text-xs text-muted hover:text-foreground disabled:opacity-40"
             >
               {dictionary.desk.shelve}
             </button>
@@ -193,7 +193,7 @@ function DeskDock({ material }: { material: Material }) {
         </div>
       </div>
       {message ? (
-        <output className="mx-auto block w-full max-w-5xl px-5 pb-3 font-mono text-xs text-zinc-500 sm:px-8">
+        <output className="mx-auto block w-full max-w-5xl px-5 pb-3 font-mono text-xs text-muted sm:px-8">
           {message}
         </output>
       ) : null}
@@ -219,11 +219,11 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
       <div className="relative flex flex-1 items-end px-5 pb-2 sm:px-8">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-white/15 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-black/50 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
         />
         <div className="relative mx-auto grid w-full max-w-5xl grid-cols-3 items-end gap-3 sm:gap-8">
           {materials.map((material, index) => (

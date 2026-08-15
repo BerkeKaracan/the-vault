@@ -26,7 +26,7 @@ export function AccentSwatches({
 
   return (
     <fieldset>
-      <legend className="text-sm text-zinc-400">
+      <legend className="text-sm text-muted">
         {dictionary.settings.accent}
       </legend>
       <div className="mt-2 flex flex-wrap gap-2">
@@ -38,8 +38,8 @@ export function AccentSwatches({
             aria-pressed={value === accent}
             className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${
               value === accent
-                ? "border-white/30 bg-white/8 text-zinc-100"
-                : "border-white/10 text-zinc-400 hover:border-white/20"
+                ? "border-foreground/30 bg-foreground/8 text-foreground"
+                : "border-border text-muted hover:border-foreground/20"
             }`}
           >
             <span className={`size-3 rounded-full ${SWATCH[accent]}`} />
@@ -67,10 +67,10 @@ export function MetricFields({
   return (
     <div className="flex flex-col gap-4">
       <fieldset>
-        <legend className="text-sm text-zinc-400">
+        <legend className="text-sm text-muted">
           {dictionary.add.metricLabel}
         </legend>
-        <div className="mt-2 flex flex-wrap gap-3 text-sm text-zinc-300">
+        <div className="mt-2 flex flex-wrap gap-3 text-sm text-foreground/80">
           {(
             [
               ["pages", dictionary.add.metricPages],
@@ -90,13 +90,13 @@ export function MetricFields({
           ))}
         </div>
       </fieldset>
-      <label className="flex flex-col gap-1.5 text-sm text-zinc-400">
+      <label className="flex flex-col gap-1.5 text-sm text-muted">
         {dictionary.add.tagsLabel}
         <input
           value={tags}
           onChange={(e) => onTagsChange(e.target.value)}
           placeholder={dictionary.add.tagsPlaceholder}
-          className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 outline-none focus:border-accent/50"
+          className="rounded-md border border-border bg-elevated px-3 py-2 text-foreground outline-none focus:border-accent/50"
         />
       </label>
     </div>

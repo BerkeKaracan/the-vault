@@ -8,13 +8,7 @@ const COVER_TONES: Record<Kind, string> = {
   docs: "from-sky-950/80 via-zinc-900 to-zinc-950",
 };
 
-const HEAT_LEVELS = [
-  "bg-white/[0.04]",
-  "bg-emerald-500/20",
-  "bg-emerald-500/40",
-  "bg-emerald-400/65",
-  "bg-emerald-300/90",
-] as const;
+const HEAT_LEVELS = ["heat-0", "heat-1", "heat-2", "heat-3", "heat-4"] as const;
 
 /** Stable pseudo-random level so server and client render identical markup. */
 function heatLevel(index: number, total: number) {
@@ -95,7 +89,7 @@ function DeskRow({
   pages: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-white/6 bg-white/2 p-2.5">
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-foreground/3 p-2.5">
       <CoverPlate
         title={title}
         kindLabel={kindLabel}
@@ -104,18 +98,18 @@ function DeskRow({
         className="h-14 w-10 shrink-0"
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[0.78rem] font-medium text-zinc-200">
+        <p className="truncate text-[0.78rem] font-medium text-foreground">
           {title}
         </p>
-        <p className="truncate text-[0.68rem] text-zinc-500">{meta}</p>
+        <p className="truncate text-[0.68rem] text-muted">{meta}</p>
         <div className="mt-2 flex items-center gap-2">
-          <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/7">
+          <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-foreground/10">
             <div
-              className="h-full rounded-full bg-emerald-400/90"
+              className="h-full rounded-full bg-accent"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <span className="font-mono text-[0.6rem] text-zinc-500">{pages}</span>
+          <span className="font-mono text-[0.6rem] text-muted">{pages}</span>
         </div>
       </div>
     </div>
@@ -124,25 +118,25 @@ function DeskRow({
 
 function LockedSlot({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-dashed border-white/10 p-2.5">
-      <div className="flex h-14 w-10 shrink-0 items-center justify-center rounded-[3px] border border-dashed border-white/10">
+    <div className="flex items-center gap-3 rounded-lg border border-dashed border-border p-2.5">
+      <div className="flex h-14 w-10 shrink-0 items-center justify-center rounded-[3px] border border-dashed border-border">
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.6"
-          className="size-4 text-zinc-600"
+          className="size-4 text-muted"
         >
           <rect x="4" y="10.5" width="16" height="10" rx="2" />
           <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
         </svg>
       </div>
       <div className="flex-1 space-y-2">
-        <div className="h-2 w-28 rounded-full bg-white/6" />
-        <div className="h-2 w-16 rounded-full bg-white/[0.035]" />
+        <div className="h-2 w-28 rounded-full bg-foreground/8" />
+        <div className="h-2 w-16 rounded-full bg-foreground/5" />
       </div>
-      <span className="font-mono text-[0.55rem] tracking-[0.2em] text-zinc-600 uppercase">
+      <span className="font-mono text-[0.55rem] tracking-[0.2em] text-muted uppercase">
         {label}
       </span>
     </div>
@@ -159,16 +153,16 @@ function PanelChrome({
   trailing: string;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-white/6 pb-3">
+    <div className="flex items-center justify-between border-b border-border pb-3">
       <div className="flex items-center gap-2">
-        <span className="font-mono text-[0.6rem] tracking-[0.25em] text-zinc-500 uppercase">
+        <span className="font-mono text-[0.6rem] tracking-[0.25em] text-muted uppercase">
           {label}
         </span>
-        <span className="rounded-full border border-white/8 px-1.5 py-0.5 font-mono text-[0.5rem] tracking-[0.16em] text-zinc-600 uppercase">
+        <span className="rounded-full border border-border px-1.5 py-0.5 font-mono text-[0.5rem] tracking-[0.16em] text-muted uppercase">
           {sample}
         </span>
       </div>
-      <span className="font-mono text-[0.6rem] text-zinc-600">{trailing}</span>
+      <span className="font-mono text-[0.6rem] text-muted">{trailing}</span>
     </div>
   );
 }
@@ -183,7 +177,7 @@ export function DeskPanel({
   const { landing } = dictionary;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-zinc-950/70 p-4 shadow-[0_50px_120px_-50px_rgba(0,0,0,0.95)] backdrop-blur-xl">
+    <div className="rounded-2xl border border-border bg-elevated/90 p-4 shadow-[0_50px_120px_-50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       <PanelChrome
         label={landing.deskMockLabel}
         sample={landing.mockSample}
@@ -217,14 +211,12 @@ export function DeskPanel({
         {variant === "limit" ? <LockedSlot label={landing.mockLimit} /> : null}
       </div>
       {variant === "hero" ? (
-        <div className="mt-4 border-t border-white/6 pt-3">
+        <div className="mt-4 border-t border-border pt-3">
           <div className="flex items-center justify-between pb-2">
-            <span className="font-mono text-[0.6rem] tracking-[0.25em] text-zinc-500 uppercase">
+            <span className="font-mono text-[0.6rem] tracking-[0.25em] text-muted uppercase">
               {landing.heatMockLabel}
             </span>
-            <span className="font-mono text-[0.6rem] text-emerald-400/80">
-              +1
-            </span>
+            <span className="font-mono text-[0.6rem] text-accent">+1</span>
           </div>
           <HeatGrid compact />
         </div>
@@ -243,7 +235,7 @@ export function HeatGrid({ compact = false }: { compact?: boolean }) {
       {cells.map((cell) => (
         <span
           key={cell.id}
-          className={`aspect-square rounded-[2px] ${HEAT_LEVELS[cell.level]} ${cell.today ? "ring-1 ring-emerald-300/80" : ""}`}
+          className={`aspect-square rounded-[2px] ${HEAT_LEVELS[cell.level]} ${cell.today ? "ring-1 ring-accent/80" : ""}`}
         />
       ))}
     </div>
@@ -254,7 +246,7 @@ export function HeatPanel({ dictionary }: { dictionary: Dictionary }) {
   const { landing } = dictionary;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-zinc-950/60 p-5 backdrop-blur-xl">
+    <div className="rounded-2xl border border-border bg-elevated/90 p-5 shadow-[0_50px_120px_-50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       <PanelChrome
         label={landing.heatMockLabelYear}
         sample={landing.mockSample}
@@ -291,7 +283,7 @@ export function VaultPanel({ dictionary }: { dictionary: Dictionary }) {
         : landing.kindDocs;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-zinc-950/60 p-5 backdrop-blur-xl">
+    <div className="rounded-2xl border border-border bg-elevated/90 p-5 shadow-[0_50px_120px_-50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       <PanelChrome
         label={landing.vaultMockLabel}
         sample={landing.mockSample}
@@ -304,7 +296,7 @@ export function VaultPanel({ dictionary }: { dictionary: Dictionary }) {
             title={cover.title}
             kindLabel={kindLabel(cover.kind)}
             kind={cover.kind}
-            className="aspect-[2/3] transition duration-500 hover:-translate-y-1 hover:border-white/25"
+            className="aspect-[2/3] transition duration-500 hover:-translate-y-1 hover:border-foreground/25"
           />
         ))}
       </div>

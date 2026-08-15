@@ -13,7 +13,7 @@ export default async function DeskPage() {
     <main className="relative flex min-h-[calc(100dvh-3.75rem)] flex-1 flex-col">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,var(--accent-glow),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_100%,rgba(0,0,0,0.55),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_100%,var(--desk-fade),transparent_70%)]" />
       </div>
 
       <DeskSurface materials={materials} />

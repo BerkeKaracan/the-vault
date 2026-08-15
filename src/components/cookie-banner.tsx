@@ -15,13 +15,13 @@ export function CookieBanner() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/8 bg-[#08080a]/95 px-6 py-4 backdrop-blur-xl">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface/95 px-6 py-4 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-xl">
-          <p className="text-sm font-medium text-zinc-100">
+          <p className="text-sm font-medium text-foreground">
             {dictionary.cookies.title}
           </p>
-          <p className="mt-1 text-sm leading-relaxed text-zinc-500">
+          <p className="mt-1 text-sm leading-relaxed text-muted">
             {dictionary.cookies.body}
           </p>
         </div>
@@ -30,7 +30,7 @@ export function CookieBanner() {
             type="button"
             disabled={pending}
             onClick={() => choose("necessary")}
-            className="rounded-full border border-white/12 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/25 hover:text-white disabled:opacity-40"
+            className="rounded-full border border-border px-4 py-2 text-sm text-foreground/80 transition hover:border-foreground/25 hover:text-foreground disabled:opacity-40"
           >
             {dictionary.cookies.necessary}
           </button>
@@ -38,7 +38,7 @@ export function CookieBanner() {
             type="button"
             disabled={pending}
             onClick={() => choose("all")}
-            className="rounded-full bg-emerald-400 px-4 py-2 text-sm font-medium text-emerald-950 transition hover:bg-emerald-300 disabled:opacity-40"
+            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
           >
             {dictionary.cookies.acceptAll}
           </button>

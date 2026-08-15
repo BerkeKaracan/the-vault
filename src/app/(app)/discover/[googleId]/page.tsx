@@ -53,7 +53,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
       (error.status === 429 || error.status === 503 || error.status >= 500);
     return (
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted">
           {unavailable
             ? dictionary.errors.booksUnavailable
             : dictionary.errors.booksFailed}
@@ -72,7 +72,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
       <Link
         href="/add"
-        className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-zinc-500 uppercase transition hover:text-zinc-300"
+        className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"
       >
         {dictionary.book.backToAdd}
       </Link>

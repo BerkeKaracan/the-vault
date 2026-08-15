@@ -83,6 +83,7 @@ export type Database = {
           timezone: string
           updated_at: string
           week_starts_on: Database["public"]["Enums"]["week_start"]
+          color_scheme: Database["public"]["Enums"]["color_scheme"]
         }
         Insert: {
           accent_color?: Database["public"]["Enums"]["accent_color"]
@@ -94,6 +95,7 @@ export type Database = {
           timezone?: string
           updated_at?: string
           week_starts_on?: Database["public"]["Enums"]["week_start"]
+          color_scheme?: Database["public"]["Enums"]["color_scheme"]
         }
         Update: {
           accent_color?: Database["public"]["Enums"]["accent_color"]
@@ -105,6 +107,7 @@ export type Database = {
           timezone?: string
           updated_at?: string
           week_starts_on?: Database["public"]["Enums"]["week_start"]
+          color_scheme?: Database["public"]["Enums"]["color_scheme"]
         }
         Relationships: []
       }
@@ -263,6 +266,7 @@ export type Database = {
     }
     Enums: {
       accent_color: "emerald" | "blue" | "amber"
+      color_scheme: "dark" | "light"
       material_source: "google" | "custom"
       material_status: "active" | "shelved" | "completed"
       metric_type: "pages" | "questions" | "chapters"
@@ -395,6 +399,7 @@ export const Constants = {
   public: {
     Enums: {
       accent_color: ["emerald", "blue", "amber"],
+      color_scheme: ["dark", "light"],
       material_source: ["google", "custom"],
       material_status: ["active", "shelved", "completed"],
       metric_type: ["pages", "questions", "chapters"],

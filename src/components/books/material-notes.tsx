@@ -20,20 +20,18 @@ export function MaterialNotes({
   const [pending, startTransition] = useTransition();
 
   return (
-    <section className="mt-12 border-t border-white/8 pt-8">
+    <section className="mt-12 border-t border-border pt-8">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h2 className="font-mono text-[0.65rem] tracking-[0.22em] text-zinc-500 uppercase">
+          <h2 className="font-mono text-[0.65rem] tracking-[0.22em] text-muted uppercase">
             {dictionary.book.notes}
           </h2>
-          <p className="mt-1 text-xs text-zinc-600">
-            {dictionary.book.notesHint}
-          </p>
+          <p className="mt-1 text-xs text-muted">{dictionary.book.notesHint}</p>
         </div>
         <button
           type="button"
           onClick={() => setPreview((value) => !value)}
-          className="font-mono text-[0.62rem] tracking-wide text-zinc-500 uppercase hover:text-zinc-300"
+          className="font-mono text-[0.62rem] tracking-wide text-muted uppercase hover:text-foreground/80"
         >
           {preview ? dictionary.book.notesEdit : dictionary.book.notesPreview}
         </button>
@@ -41,7 +39,7 @@ export function MaterialNotes({
 
       {preview ? (
         <div
-          className="note-body mt-4 max-w-3xl text-sm leading-relaxed text-zinc-300"
+          className="note-body mt-4 max-w-3xl text-sm leading-relaxed text-foreground/80"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: renderMarkdown escapes HTML first
           dangerouslySetInnerHTML={{ __html: renderMarkdown(body) }}
         />
@@ -51,7 +49,7 @@ export function MaterialNotes({
           onChange={(e) => setBody(e.target.value)}
           rows={10}
           placeholder={dictionary.book.notesPlaceholder}
-          className="mt-4 w-full max-w-3xl rounded-md border border-white/10 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-accent/50"
+          className="mt-4 w-full max-w-3xl rounded-md border border-border bg-elevated px-3 py-2 font-mono text-sm text-foreground outline-none focus:border-accent/50"
         />
       )}
 
@@ -82,7 +80,7 @@ export function MaterialNotes({
           {dictionary.book.notesSave}
         </button>
         {message ? (
-          <output className="text-sm text-zinc-500">{message}</output>
+          <output className="text-sm text-muted">{message}</output>
         ) : null}
       </div>
     </section>

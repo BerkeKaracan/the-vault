@@ -3,22 +3,23 @@
 import { usePreferences } from "@/components/preferences";
 import { useI18n } from "@/i18n/provider";
 
-export function FocusToggle() {
+export function ThemeToggle() {
   const { dictionary } = useI18n();
-  const { focusMode, toggleFocus } = usePreferences();
+  const { colorScheme, toggleTheme } = usePreferences();
+  const light = colorScheme === "light";
 
   return (
     <button
       type="button"
-      onClick={toggleFocus}
-      aria-pressed={focusMode}
+      onClick={toggleTheme}
+      aria-pressed={light}
       className={`rounded-full px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.18em] uppercase transition ${
-        focusMode
+        light
           ? "bg-foreground/8 text-foreground"
           : "text-muted hover:text-foreground"
       }`}
     >
-      {dictionary.nav.focus}
+      {light ? dictionary.settings.themeLight : dictionary.settings.themeDark}
     </button>
   );
 }

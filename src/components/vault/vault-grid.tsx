@@ -62,7 +62,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
 
   if (materials.length === 0) {
     return (
-      <div className="mt-8 rounded-lg border border-dashed border-zinc-800 px-6 py-16 text-center text-sm text-zinc-600">
+      <div className="mt-8 rounded-lg border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
         {dictionary.vault.empty}
       </div>
     );
@@ -77,8 +77,8 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
             onClick={() => setTagFilter(null)}
             className={`rounded-full border px-2.5 py-1 font-mono text-[0.62rem] tracking-wide uppercase ${
               tagFilter === null
-                ? "border-white/25 bg-white/8 text-zinc-100"
-                : "border-white/10 text-zinc-500 hover:text-zinc-300"
+                ? "border-foreground/25 bg-foreground/8 text-foreground"
+                : "border-border text-muted hover:text-foreground/80"
             }`}
           >
             {dictionary.vault.filterAll}
@@ -90,19 +90,19 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
               onClick={() => setTagFilter(tag)}
               className={`rounded-full border px-2.5 py-1 font-mono text-[0.62rem] tracking-wide ${
                 tagFilter === tag
-                  ? "border-white/25 bg-white/8 text-zinc-100"
-                  : "border-white/10 text-zinc-500 hover:text-zinc-300"
+                  ? "border-foreground/25 bg-foreground/8 text-foreground"
+                  : "border-border text-muted hover:text-foreground/80"
               }`}
             >
               {tag}
             </button>
           ))}
         </div>
-        <label className="flex items-center gap-2 font-mono text-[0.62rem] tracking-wide text-zinc-500 uppercase">
+        <label className="flex items-center gap-2 font-mono text-[0.62rem] tracking-wide text-muted uppercase">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="rounded-md border border-white/10 bg-zinc-950 px-2 py-1 text-zinc-300 outline-none"
+            className="rounded-md border border-border bg-elevated px-2 py-1 text-foreground/80 outline-none"
           >
             <option value="updated">{dictionary.vault.sortUpdated}</option>
             <option value="title">{dictionary.vault.sortTitle}</option>
@@ -111,7 +111,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
       </div>
 
       {message ? (
-        <output className="mt-4 block text-sm text-zinc-500">{message}</output>
+        <output className="mt-4 block text-sm text-muted">{message}</output>
       ) : null}
       <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {visible.map((material) => (
@@ -127,11 +127,11 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
               <Link
                 href={`/materials/${material.id}`}
                 data-private
-                className="line-clamp-2 text-sm font-medium text-zinc-100 hover:text-white"
+                className="line-clamp-2 text-sm font-medium text-white hover:text-white"
               >
                 {material.title}
               </Link>
-              <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-zinc-400 uppercase">
+              <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-white/70 uppercase">
                 {material.status === "completed"
                   ? dictionary.vault.statusCompleted
                   : dictionary.vault.statusShelved}
@@ -153,7 +153,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
                     }
                   });
                 }}
-                className="mt-2 rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-950 disabled:opacity-40"
+                className="mt-2 rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background disabled:opacity-40"
               >
                 {pending && pendingId === material.id
                   ? dictionary.busy
