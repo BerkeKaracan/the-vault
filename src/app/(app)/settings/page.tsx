@@ -1,5 +1,5 @@
 import { SettingsForm } from "@/app/(app)/settings/settings-form";
-import { getSessionProfile } from "@/app/(app)/settings-actions";
+import { getSessionProfile } from "@/lib/profile";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCookieConsent } from "@/lib/consent";
 

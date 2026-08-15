@@ -9,6 +9,7 @@ import { MetricTypeRadios } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
+import { isMetricType } from "@/lib/catalog";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import type { Material, MetricType } from "@/lib/types";
@@ -126,9 +127,12 @@ export function ProgressControls({
     return () => window.clearInterval(id);
   }, [running]);
 
-  const unit = metricUnit(dictionary, material.metric_type);
+  const metric = isMetricType(material.metric_type)
+    ? material.metric_type
+    : "pages";
+  const unit = metricUnit(dictionary, metric);
   const maxPage = material.total_pages;
-  const steps = QUICK[material.metric_type];
+  const steps = QUICK[metric];
 
   function resetTimer() {
     startedAt.current = null;
@@ -213,7 +217,7 @@ export function ProgressControls({
       ) : null}
 
       <MetricTypeRadios
-        value={material.metric_type}
+        value={metric}
         onChange={changeMetric}
         name={`metric-${material.id}`}
       />

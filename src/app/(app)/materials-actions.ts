@@ -386,55 +386,63 @@ export async function getHeatmapData(fromDate: string): Promise<HeatmapData> {
     return { totals: {}, entries: {} };
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { totals: {}, entries: {} };
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { totals: {}, entries: {} };
 
-  const { data, error } = await supabase
-    .from("progress_entries")
-    .select(
-      "logged_on, pages_delta, material_id, materials(title, metric_type)",
-    )
-    .eq("user_id", user.id)
-    .gte("logged_on", fromDate)
-    .order("created_at", { ascending: true });
+    const { data, error } = await supabase
+      .from("progress_entries")
+      .select(
+        "logged_on, pages_delta, material_id, materials(title, metric_type)",
+      )
+      .eq("user_id", user.id)
+      .gte("logged_on", fromDate)
+      .order("created_at", { ascending: true });
 
-  if (error) throw error;
-
-  const totals: Record<string, number> = {};
-  const grouped = new Map<string, Map<string, HeatmapDayEntry>>();
-
-  for (const row of data ?? []) {
-    totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
-    const material = nestedMaterial(row.materials);
-    const byMaterial = grouped.get(row.logged_on) ?? new Map();
-    const existing = byMaterial.get(row.material_id);
-    if (existing) {
-      existing.delta += row.pages_delta;
-    } else {
-      byMaterial.set(row.material_id, {
-        materialId: row.material_id,
-        title: material?.title?.trim() || "—",
-        metricType:
-          material?.metric_type && isMetricType(material.metric_type)
-            ? material.metric_type
-            : "pages",
-        delta: row.pages_delta,
-      });
+    if (error) {
+      console.error("[getHeatmapData]", error.message);
+      return { totals: {}, entries: {} };
     }
-    grouped.set(row.logged_on, byMaterial);
-  }
 
-  const entries: Record<string, HeatmapDayEntry[]> = {};
-  for (const [date, byMaterial] of grouped) {
-    entries[date] = [...byMaterial.values()]
-      .filter((item) => item.delta !== 0)
-      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-  }
+    const totals: Record<string, number> = {};
+    const grouped = new Map<string, Map<string, HeatmapDayEntry>>();
 
-  return { totals, entries };
+    for (const row of data ?? []) {
+      totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
+      const material = nestedMaterial(row.materials);
+      const byMaterial = grouped.get(row.logged_on) ?? new Map();
+      const existing = byMaterial.get(row.material_id);
+      if (existing) {
+        existing.delta += row.pages_delta;
+      } else {
+        byMaterial.set(row.material_id, {
+          materialId: row.material_id,
+          title: material?.title?.trim() || "—",
+          metricType:
+            material?.metric_type && isMetricType(material.metric_type)
+              ? material.metric_type
+              : "pages",
+          delta: row.pages_delta,
+        });
+      }
+      grouped.set(row.logged_on, byMaterial);
+    }
+
+    const entries: Record<string, HeatmapDayEntry[]> = {};
+    for (const [date, byMaterial] of grouped) {
+      entries[date] = [...byMaterial.values()]
+        .filter((item) => item.delta !== 0)
+        .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    }
+
+    return { totals, entries };
+  } catch (error) {
+    console.error("[getHeatmapData]", error);
+    return { totals: {}, entries: {} };
+  }
 }
 
 function nestedMaterial(
@@ -449,26 +457,6 @@ function nestedMaterial(
     title: typeof title === "string" ? title : null,
     metric_type: typeof metricType === "string" ? metricType : null,
   };
-}
-
-export async function getMaterialNote(
-  materialId: string,
-): Promise<MaterialNote | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data, error } = await supabase
-    .from("material_notes")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("material_id", materialId)
-    .maybeSingle();
-
-  if (error) throw error;
-  return data;
 }
 
 export async function upsertMaterialNote(input: {
@@ -516,32 +504,4 @@ export async function upsertMaterialNote(input: {
 
   revalidateMaterialPaths(input.materialId);
   return { ok: true, data };
-}
-
-export async function getMaterialPace(
-  materialId: string,
-): Promise<number | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data, error } = await supabase
-    .from("reading_sessions")
-    .select("duration_seconds, units_delta")
-    .eq("user_id", user.id)
-    .eq("material_id", materialId)
-    .not("units_delta", "is", null);
-
-  if (error) throw error;
-  let seconds = 0;
-  let units = 0;
-  for (const row of data ?? []) {
-    if (!row.units_delta) continue;
-    seconds += row.duration_seconds;
-    units += row.units_delta;
-  }
-  if (seconds <= 0 || units <= 0) return null;
-  return Math.round((units / seconds) * 3600);
 }

@@ -136,13 +136,17 @@ export function ContributionHeatmap({
 
   useEffect(() => {
     let cancelled = false;
-    getHeatmapData(from).then((data) => {
-      if (!cancelled) {
-        setTotals(data.totals);
-        setEntries(data.entries);
-        setLoaded(true);
-      }
-    });
+    getHeatmapData(from)
+      .then((data) => {
+        if (!cancelled) {
+          setTotals(data.totals);
+          setEntries(data.entries);
+          setLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLoaded(true);
+      });
     return () => {
       cancelled = true;
     };

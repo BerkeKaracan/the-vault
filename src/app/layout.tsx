@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
-import { getSessionProfile } from "@/app/(app)/settings-actions";
+import { getSessionProfile } from "@/lib/profile";
 import { CookieBanner } from "@/components/cookie-banner";
 import { PreferencesProvider } from "@/components/preferences";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
