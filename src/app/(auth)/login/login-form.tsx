@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup";
 
-export function LoginForm() {
+export function LoginForm({ next = "/desk" }: { next?: string }) {
   const { dictionary } = useI18n();
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ export function LoginForm() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
           },
         });
         if (error) {
@@ -46,7 +46,7 @@ export function LoginForm() {
         setMessage(error.message);
         return;
       }
-      window.location.href = "/desk";
+      window.location.href = next;
     });
   }
 

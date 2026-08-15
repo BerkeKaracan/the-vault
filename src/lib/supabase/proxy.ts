@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import type { Database } from "@/lib/database.types";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/env";
+import { safeNextPath } from "@/lib/paths";
 
 function isPublicPath(path: string) {
   return (
@@ -10,6 +11,30 @@ function isPublicPath(path: string) {
     path.startsWith("/auth") ||
     path.startsWith("/setup")
   );
+}
+
+function applyCookies(from: NextResponse, to: NextResponse) {
+  for (const cookie of from.cookies.getAll()) {
+    to.cookies.set(cookie);
+  }
+  return to;
+}
+
+function redirectWithCookies(
+  request: NextRequest,
+  sessionResponse: NextResponse,
+  pathname: string,
+  search?: Record<string, string>,
+) {
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  url.search = "";
+  if (search) {
+    for (const [key, value] of Object.entries(search)) {
+      url.searchParams.set(key, value);
+    }
+  }
+  return applyCookies(sessionResponse, NextResponse.redirect(url));
 }
 
 export async function updateSession(request: NextRequest) {
@@ -21,6 +46,7 @@ export async function updateSession(request: NextRequest) {
     }
     const url = request.nextUrl.clone();
     url.pathname = "/setup";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 
@@ -57,21 +83,28 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (path.startsWith("/setup")) {
-    const url = request.nextUrl.clone();
-    url.pathname = user ? "/desk" : "/";
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, user ? "/desk" : "/");
   }
 
   if (!user && !isPublicPath(path)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    if (path.startsWith("/api/")) {
+      return applyCookies(
+        supabaseResponse,
+        NextResponse.json({ error: "authRequired" }, { status: 401 }),
+      );
+    }
+    return redirectWithCookies(request, supabaseResponse, "/login", {
+      next: safeNextPath(`${path}${request.nextUrl.search}`),
+    });
   }
 
-  if (user && (path.startsWith("/login") || path === "/")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/desk";
-    return NextResponse.redirect(url);
+  if (user && path.startsWith("/login")) {
+    const next = safeNextPath(request.nextUrl.searchParams.get("next"));
+    return redirectWithCookies(request, supabaseResponse, next);
+  }
+
+  if (user && path === "/") {
+    return redirectWithCookies(request, supabaseResponse, "/desk");
   }
 
   return supabaseResponse;
