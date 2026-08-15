@@ -12,11 +12,15 @@ export type Database = {
       materials: {
         Row: {
           author: string | null
+          categories: string[] | null
           cover_url: string | null
           created_at: string
           current_page: number
+          description: string | null
           google_books_id: string | null
           id: string
+          published_date: string | null
+          publisher: string | null
           source: Database["public"]["Enums"]["material_source"]
           status: Database["public"]["Enums"]["material_status"]
           title: string
@@ -29,8 +33,12 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           current_page?: number
+          description?: string | null
           google_books_id?: string | null
           id?: string
+          published_date?: string | null
+          publisher?: string | null
+          categories?: string[] | null
           source: Database["public"]["Enums"]["material_source"]
           status?: Database["public"]["Enums"]["material_status"]
           title: string
@@ -43,8 +51,12 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           current_page?: number
+          description?: string | null
           google_books_id?: string | null
           id?: string
+          published_date?: string | null
+          publisher?: string | null
+          categories?: string[] | null
           source?: Database["public"]["Enums"]["material_source"]
           status?: Database["public"]["Enums"]["material_status"]
           title?: string
@@ -132,11 +144,15 @@ export type Database = {
         }
         Returns: {
           author: string | null
+          categories: string[] | null
           cover_url: string | null
           created_at: string
           current_page: number
+          description: string | null
           google_books_id: string | null
           id: string
+          published_date: string | null
+          publisher: string | null
           source: Database["public"]["Enums"]["material_source"]
           status: Database["public"]["Enums"]["material_status"]
           title: string

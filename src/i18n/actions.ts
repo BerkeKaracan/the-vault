@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { cookies } from "next/headers";
 import { isLocale, type Locale, localeCookieName } from "./config";
 
@@ -14,5 +14,5 @@ export async function setLocale(locale: Locale) {
     sameSite: "lax",
   });
 
-  revalidatePath("/", "layout");
+  refresh();
 }

@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import {
-  consentCookieName,
   type CookieConsent,
+  consentCookieName,
   isCookieConsent,
 } from "@/i18n/config";
 

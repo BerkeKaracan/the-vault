@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { activateMaterial } from "@/app/(app)/materials-actions";
 import { Cover } from "@/components/materials/cover";
@@ -39,15 +40,20 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {materials.map((material) => (
           <li key={material.id} className="group relative">
-            <Cover
-              title={material.title}
-              author={material.author}
-              coverUrl={material.cover_url}
-            />
+            <Link href={`/materials/${material.id}`} className="block">
+              <Cover
+                title={material.title}
+                author={material.author}
+                coverUrl={material.cover_url}
+              />
+            </Link>
             <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100">
-              <p className="line-clamp-2 text-sm font-medium text-zinc-100">
+              <Link
+                href={`/materials/${material.id}`}
+                className="line-clamp-2 text-sm font-medium text-zinc-100 hover:text-white"
+              >
                 {material.title}
-              </p>
+              </Link>
               <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-zinc-400 uppercase">
                 {material.status === "completed"
                   ? dictionary.vault.statusCompleted

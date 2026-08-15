@@ -1,7 +1,8 @@
 import type { Database } from "@/lib/database.types";
 
 export type Material = Database["public"]["Tables"]["materials"]["Row"];
-export type MaterialInsert = Database["public"]["Tables"]["materials"]["Insert"];
+export type MaterialInsert =
+  Database["public"]["Tables"]["materials"]["Insert"];
 export type ProgressEntry =
   Database["public"]["Tables"]["progress_entries"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -20,4 +21,5 @@ export type ActionErrorCode =
   | "authRequired"
   | "invalidPage"
   | "notFound"
+  | "alreadyOwned"
   | "generic";

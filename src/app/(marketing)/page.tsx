@@ -138,10 +138,7 @@ export default async function LandingPage() {
                 { title: landing.kindSet, hint: landing.kindSetHint },
                 { title: landing.kindDocs, hint: landing.kindDocsHint },
               ].map((kind) => (
-                <li
-                  key={kind.title}
-                  className="border-t border-white/8 pt-3"
-                >
+                <li key={kind.title} className="border-t border-white/8 pt-3">
                   <p className="font-mono text-[0.58rem] tracking-[0.22em] text-zinc-400 uppercase">
                     {kind.title}
                   </p>

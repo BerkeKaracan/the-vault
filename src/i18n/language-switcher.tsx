@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { setLocale } from "./actions";
 import type { Locale } from "./config";
@@ -7,12 +8,14 @@ import { useI18n } from "./provider";
 
 export function LanguageSwitcher() {
   const { locale, dictionary } = useI18n();
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   function switchTo(next: Locale) {
     if (next === locale) return;
     startTransition(async () => {
       await setLocale(next);
+      router.refresh();
     });
   }
 

@@ -23,25 +23,23 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     dictionary.nav.settings;
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-[#08080a]">
-      <header className="sticky top-0 z-40 border-b border-white/6 bg-[#08080a]/80 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
+    <div className="flex min-h-dvh flex-1 flex-col bg-[#070708]">
+      <header className="sticky top-0 z-40 border-b border-white/6 bg-[#070708]/80 backdrop-blur-xl">
+        <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
           <Link
             href="/desk"
             className="font-mono text-[0.7rem] tracking-[0.28em] text-zinc-400 uppercase transition hover:text-zinc-200"
           >
             {dictionary.brand}
           </Link>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4">
             <AppNav items={nav} />
             <LanguageSwitcher />
             <UserMenu label={userLabel} />
           </div>
         </div>
       </header>
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
-        {children}
-      </div>
+      <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );
 }

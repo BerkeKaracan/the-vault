@@ -1,6 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getLocale } from "@/i18n/get-dictionary";
+import {
+  type GoogleBookResult,
+  getGoogleBook,
+  isGoogleVolumeId,
+} from "@/lib/google-books";
+import { findMaterialByGoogleId } from "@/lib/materials";
 import { createClient } from "@/lib/supabase/server";
 import type {
   ActionErrorCode,
@@ -27,13 +34,38 @@ function mapDbError(message: string | undefined): ActionErrorCode {
   if (message.includes("page_after must be greater")) return "invalidPage";
   if (message.includes("Material not found")) return "notFound";
   if (message.includes("Not authenticated")) return "authRequired";
+  if (
+    message.includes("duplicate key") ||
+    message.includes("materials_user_google_books_id")
+  ) {
+    return "alreadyOwned";
+  }
   return "generic";
 }
 
-function revalidateMaterialPaths() {
+function revalidateMaterialPaths(
+  materialId?: string,
+  googleId?: string | null,
+) {
   revalidatePath("/desk");
   revalidatePath("/vault");
   revalidatePath("/add");
+  revalidatePath("/materials", "layout");
+  revalidatePath("/discover", "layout");
+  if (materialId) {
+    revalidatePath(`/materials/${materialId}`);
+  }
+  if (googleId) {
+    revalidatePath(`/discover/${googleId}`);
+  }
+}
+
+function categoriesOrNull(
+  categories: string[] | null | undefined,
+): string[] | null {
+  if (!categories || categories.length === 0) return null;
+  const cleaned = categories.map((item) => item.trim()).filter(Boolean);
+  return cleaned.length > 0 ? cleaned : null;
 }
 
 export type AddMaterialInput = {
@@ -44,6 +76,10 @@ export type AddMaterialInput = {
   googleBooksId?: string | null;
   source: "google" | "custom";
   status: Extract<MaterialStatus, "active" | "shelved">;
+  description?: string | null;
+  publishedDate?: string | null;
+  publisher?: string | null;
+  categories?: string[] | null;
 };
 
 export async function addMaterial(
@@ -70,6 +106,8 @@ export async function addMaterial(
     }
   }
 
+  const description = input.description?.trim() ?? "";
+
   const { data, error } = await supabase
     .from("materials")
     .insert({
@@ -81,6 +119,10 @@ export async function addMaterial(
       google_books_id: input.googleBooksId ?? null,
       source: input.source,
       status: input.status,
+      description: description.length > 0 ? description : null,
+      published_date: input.publishedDate?.trim() || null,
+      publisher: input.publisher?.trim() || null,
+      categories: categoriesOrNull(input.categories),
     })
     .select()
     .single();
@@ -92,8 +134,47 @@ export async function addMaterial(
     return { ok: false, error: "generic" };
   }
 
-  revalidateMaterialPaths();
+  revalidateMaterialPaths(data.id, data.google_books_id);
   return { ok: true, data };
+}
+
+export async function addGoogleBook(
+  googleId: string,
+  status: Extract<MaterialStatus, "active" | "shelved">,
+): Promise<ActionResult<Material>> {
+  if (!isGoogleVolumeId(googleId)) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const existing = await findMaterialByGoogleId(googleId);
+  if (existing) {
+    return { ok: false, error: "alreadyOwned" };
+  }
+
+  let book: GoogleBookResult | null;
+  try {
+    book = await getGoogleBook(googleId, await getLocale());
+  } catch {
+    return { ok: false, error: "generic" };
+  }
+
+  if (!book) {
+    return { ok: false, error: "notFound" };
+  }
+
+  return addMaterial({
+    title: book.title,
+    author: book.authors.join(", ") || null,
+    totalPages: book.pageCount,
+    coverUrl: book.coverUrl,
+    googleBooksId: book.id,
+    source: "google",
+    status,
+    description: book.description,
+    publishedDate: book.publishedDate,
+    publisher: book.publisher,
+    categories: book.categories,
+  });
 }
 
 export async function logProgress(input: {
@@ -129,7 +210,7 @@ export async function logProgress(input: {
     return { ok: false, error: "generic" };
   }
 
-  revalidateMaterialPaths();
+  revalidateMaterialPaths(data.id, data.google_books_id);
   return { ok: true, data };
 }
 
@@ -176,7 +257,7 @@ export async function activateMaterial(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths();
+  revalidateMaterialPaths(data.id, data.google_books_id);
   return { ok: true, data };
 }
 
@@ -207,44 +288,8 @@ async function updateMaterialStatus(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths();
+  revalidateMaterialPaths(data.id, data.google_books_id);
   return { ok: true, data };
-}
-
-export async function getActiveMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("status", "active")
-    .order("updated_at", { ascending: false });
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function getVaultMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .in("status", ["shelved", "completed"])
-    .order("updated_at", { ascending: false });
-
-  if (error) throw error;
-  return data ?? [];
 }
 
 /** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */

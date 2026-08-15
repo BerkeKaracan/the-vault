@@ -34,8 +34,7 @@ export async function getSessionProfile(): Promise<{
   if (error) throw error;
 
   if (!data) {
-    const fallbackName =
-      user.email?.split("@")[0]?.trim() || null;
+    const fallbackName = user.email?.split("@")[0]?.trim() || null;
     const { data: created, error: insertError } = await supabase
       .from("profiles")
       .insert({

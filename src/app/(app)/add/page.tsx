@@ -5,7 +5,7 @@ export default async function AddPage() {
   const dictionary = await getDictionary();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
       <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-zinc-50">
         {dictionary.add.title}
       </h1>

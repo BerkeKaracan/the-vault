@@ -1,10 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { cookies } from "next/headers";
 import {
-  consentCookieName,
   type CookieConsent,
+  consentCookieName,
   isCookieConsent,
 } from "@/i18n/config";
 
@@ -18,5 +18,5 @@ export async function setCookieConsent(value: CookieConsent) {
     sameSite: "lax",
   });
 
-  revalidatePath("/", "layout");
+  refresh();
 }

@@ -33,11 +33,7 @@ const tr = {
       "Rozetler ve reklamlar",
     ],
     keptTitle: "Kaldı",
-    kept: [
-      "Masandaki üç materyal",
-      "Girdiğin her sayfa",
-      "Bugünün kutusu",
-    ],
+    kept: ["Masandaki üç materyal", "Girdiğin her sayfa", "Bugünün kutusu"],
     deskTitle: "Active Desk",
     deskBody:
       "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Vault’a kaldırırsın — sınırın kendisi odaktır.",
@@ -94,7 +90,7 @@ const tr = {
     subtitle: "Şu an masanda · {count}/3",
     empty: "Masa boş.",
     emptySlot: "Boş yer",
-    emptySlotCta: "Ekle",
+    emptySlotCta: "Materyal ekle",
     addMaterial: "Materyal ekle",
     fullHint: "Masa dolu. Yeni bir şey için önce birini Vault’a kaldır.",
     pageOnly: "Sayfa {page}",
@@ -108,6 +104,19 @@ const tr = {
     heatmapStats: "{days} aktif gün",
     heatmapLess: "Az",
     heatmapMore: "Çok",
+    greetingMorning: "Günaydın",
+    greetingAfternoon: "İyi günler",
+    greetingEvening: "İyi akşamlar",
+    remainingStat: "kalan sayfa",
+    slotsStat: "masa",
+    todayStat: "bugün",
+    streakStat: "gün seri",
+    remainingPages: "{count} sayfa kaldı",
+    remainingUnknown: "Toplam sayfa yok",
+    todayEmpty: "Bugün henüz sayfa yok",
+    todayLit: "Bugünün kutusu yandı",
+    slotLabel: "Yer {n}",
+    pagesShort: "syf",
   },
   vault: {
     title: "The Vault",
@@ -139,9 +148,20 @@ const tr = {
     titleLabel: "Başlık",
     authorLabel: "Yazar",
     totalPagesLabel: "Toplam sayfa (opsiyonel)",
+    descriptionLabel: "Açıklama (opsiyonel)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Ekle",
+    openDetails: "İncele",
+  },
+  book: {
+    about: "Hakkında",
+    noDescription: "Bu kitap için açıklama yok.",
+    openInLibrary: "Kütüphanede aç",
+    backToAdd: "Aramaya dön",
+    backToDesk: "Masaya dön",
+    backToVault: "Vault’a dön",
+    onDesk: "Masada",
   },
   errors: {
     deskFull:
@@ -150,6 +170,7 @@ const tr = {
     authRequired: "Oturum gerekli.",
     invalidPage: "Yeni sayfa, mevcut sayfadan büyük olmalı.",
     notFound: "Materyal bulunamadı.",
+    alreadyOwned: "Bu kitap zaten kütüphanende.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -167,7 +188,8 @@ const tr = {
     step1: ".env.example dosyasını .env.local olarak kopyala",
     step2:
       "Supabase → Project Settings → API’den Project URL ve anon public key’i yapıştır",
-    step3: "SQL Editor’de supabase/migrations/001_init.sql çalıştır",
+    step3:
+      "SQL Editor’de supabase/migrations içindeki .sql dosyalarını sırayla çalıştır",
     step4: "Auth → Redirect URLs: http://localhost:3000/auth/callback",
   },
   language: {
@@ -232,11 +254,7 @@ const en = {
       "Badges and ads",
     ],
     keptTitle: "Kept",
-    kept: [
-      "Three materials on the desk",
-      "Every page you log",
-      "Today’s cell",
-    ],
+    kept: ["Three materials on the desk", "Every page you log", "Today’s cell"],
     deskTitle: "Active Desk",
     deskBody:
       "Three materials at most. To add a fourth you move one to the Vault first — the limit is the focus.",
@@ -294,7 +312,7 @@ const en = {
     subtitle: "On your desk · {count}/3",
     empty: "Desk is empty.",
     emptySlot: "Open slot",
-    emptySlotCta: "Add",
+    emptySlotCta: "Add a material",
     addMaterial: "Add material",
     fullHint: "Desk is full. Shelve one to the Vault before adding another.",
     pageOnly: "Page {page}",
@@ -308,6 +326,19 @@ const en = {
     heatmapStats: "{days} active days",
     heatmapLess: "Less",
     heatmapMore: "More",
+    greetingMorning: "Good morning",
+    greetingAfternoon: "Good afternoon",
+    greetingEvening: "Good evening",
+    remainingStat: "pages left",
+    slotsStat: "on desk",
+    todayStat: "today",
+    streakStat: "day streak",
+    remainingPages: "{count} pages left",
+    remainingUnknown: "No page total",
+    todayEmpty: "No pages logged today",
+    todayLit: "Today’s cell is lit",
+    slotLabel: "Slot {n}",
+    pagesShort: "pp",
   },
   vault: {
     title: "The Vault",
@@ -339,9 +370,20 @@ const en = {
     titleLabel: "Title",
     authorLabel: "Author",
     totalPagesLabel: "Total pages (optional)",
+    descriptionLabel: "Description (optional)",
     statusActive: "Active Desk",
     statusVault: "Vault",
     submit: "Add",
+    openDetails: "View",
+  },
+  book: {
+    about: "About",
+    noDescription: "No description for this book.",
+    openInLibrary: "Open in library",
+    backToAdd: "Back to search",
+    backToDesk: "Back to desk",
+    backToVault: "Back to Vault",
+    onDesk: "On desk",
   },
   errors: {
     deskFull:
@@ -350,6 +392,7 @@ const en = {
     authRequired: "Sign in required.",
     invalidPage: "New page must be greater than the current page.",
     notFound: "Material not found.",
+    alreadyOwned: "This book is already in your library.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -367,7 +410,8 @@ const en = {
     step1: "Copy .env.example to .env.local",
     step2:
       "Paste Project URL and anon public key from Supabase → Project Settings → API",
-    step3: "Run supabase/migrations/001_init.sql in the SQL Editor",
+    step3:
+      "Run the SQL files in supabase/migrations (in order) in the SQL Editor",
     step4: "Auth → Redirect URLs: http://localhost:3000/auth/callback",
   },
   language: {
@@ -491,6 +535,19 @@ export type Dictionary = {
     heatmapStats: string;
     heatmapLess: string;
     heatmapMore: string;
+    greetingMorning: string;
+    greetingAfternoon: string;
+    greetingEvening: string;
+    remainingStat: string;
+    slotsStat: string;
+    todayStat: string;
+    streakStat: string;
+    remainingPages: string;
+    remainingUnknown: string;
+    todayEmpty: string;
+    todayLit: string;
+    slotLabel: string;
+    pagesShort: string;
   };
   vault: {
     title: string;
@@ -522,9 +579,20 @@ export type Dictionary = {
     titleLabel: string;
     authorLabel: string;
     totalPagesLabel: string;
+    descriptionLabel: string;
     statusActive: string;
     statusVault: string;
     submit: string;
+    openDetails: string;
+  };
+  book: {
+    about: string;
+    noDescription: string;
+    openInLibrary: string;
+    backToAdd: string;
+    backToDesk: string;
+    backToVault: string;
+    onDesk: string;
   };
   errors: {
     deskFull: string;
@@ -532,6 +600,7 @@ export type Dictionary = {
     authRequired: string;
     invalidPage: string;
     notFound: string;
+    alreadyOwned: string;
     generic: string;
     queryTooShort: string;
     booksRateLimit: string;

@@ -22,8 +22,7 @@ function weekStartWeeksAgo(weeks: number, weekStartsOn: WeekStart): Date {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
   const weekday = date.getDay();
-  const offset =
-    weekStartsOn === "sunday" ? weekday : (weekday + 6) % 7;
+  const offset = weekStartsOn === "sunday" ? weekday : (weekday + 6) % 7;
   date.setDate(date.getDate() - offset - (weeks - 1) * 7);
   return date;
 }
@@ -78,7 +77,15 @@ export function ContributionHeatmap({
   const activeDays = Object.values(totals).filter((n) => n > 0).length;
 
   return (
-    <div className="rounded-xl border border-white/8 bg-zinc-950/50 p-4 sm:p-5">
+    <div className="mx-auto w-full max-w-5xl">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="font-mono text-[0.58rem] tracking-[0.22em] text-zinc-600 uppercase">
+          {dictionary.desk.consistency}
+        </p>
+        <p className="font-mono text-[0.58rem] text-zinc-600">
+          {t(dictionary.desk.heatmapStats, { days: activeDays })}
+        </p>
+      </div>
       <div
         className={`grid w-full grid-flow-col grid-rows-7 gap-0.75 ${loaded ? "" : "opacity-40"}`}
       >
@@ -95,22 +102,6 @@ export function ContributionHeatmap({
             />
           );
         })}
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <p className="font-mono text-xs text-zinc-600">
-          {t(dictionary.desk.heatmapStats, { days: activeDays })}
-        </p>
-        <div className="flex items-center gap-1.5">
-          <span className="font-mono text-[0.6rem] text-zinc-600">
-            {dictionary.desk.heatmapLess}
-          </span>
-          {LEVELS.map((level) => (
-            <span key={level} className={`size-2.5 rounded-xs ${level}`} />
-          ))}
-          <span className="font-mono text-[0.6rem] text-zinc-600">
-            {dictionary.desk.heatmapMore}
-          </span>
-        </div>
       </div>
     </div>
   );
