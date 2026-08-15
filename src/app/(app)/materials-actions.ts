@@ -33,7 +33,12 @@ async function countActive(userId: string): Promise<number> {
 function mapDbError(message: string | undefined): ActionErrorCode {
   if (!message) return "generic";
   if (message.includes("ACTIVE_DESK_FULL")) return "deskFull";
-  if (message.includes("page_after must be greater")) return "invalidPage";
+  if (
+    message.includes("page_after must be greater") ||
+    message.includes("page_after must be >=")
+  ) {
+    return "invalidPage";
+  }
   if (message.includes("Material not found")) return "notFound";
   if (message.includes("Not authenticated")) return "authRequired";
   if (
@@ -200,7 +205,7 @@ export async function logProgress(input: {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.loggedOn)) {
     return { ok: false, error: "generic" };
   }
-  if (!Number.isFinite(input.pageAfter) || input.pageAfter <= 0) {
+  if (!Number.isFinite(input.pageAfter) || input.pageAfter < 0) {
     return { ok: false, error: "invalidPage" };
   }
 
@@ -226,21 +231,18 @@ export async function logProgress(input: {
   }
 
   const duration = input.durationSeconds;
-  if (duration && Number.isFinite(duration) && duration > 0) {
+  const unitsDelta = input.unitsDelta ?? 0;
+  if (duration && Number.isFinite(duration) && duration > 0 && unitsDelta > 0) {
     const ended = new Date();
     const seconds = Math.floor(duration);
     const started = new Date(ended.getTime() - seconds * 1000);
-    const units =
-      input.unitsDelta && input.unitsDelta > 0
-        ? Math.floor(input.unitsDelta)
-        : null;
     await supabase.from("reading_sessions").insert({
       user_id: user.id,
       material_id: input.materialId,
       started_at: started.toISOString(),
       ended_at: ended.toISOString(),
       duration_seconds: seconds,
-      units_delta: units,
+      units_delta: Math.floor(unitsDelta),
     });
   }
 
@@ -327,31 +329,126 @@ async function updateMaterialStatus(
   return { ok: true, data };
 }
 
-/** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
-export async function getHeatmapTotals(
-  fromDate: string,
-): Promise<Record<string, number>> {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fromDate)) return {};
+export async function updateMaterialMetric(
+  materialId: string,
+  metricType: MetricType,
+): Promise<ActionResult<Material>> {
+  if (!isMetricType(metricType)) {
+    return { ok: false, error: "generic" };
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return {};
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data, error } = await supabase
+    .from("materials")
+    .update({
+      metric_type: metricType,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
+
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
+  return { ok: true, data };
+}
+
+/** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
+export type HeatmapDayEntry = {
+  materialId: string;
+  title: string;
+  metricType: MetricType;
+  delta: number;
+};
+
+export type HeatmapData = {
+  totals: Record<string, number>;
+  entries: Record<string, HeatmapDayEntry[]>;
+};
+
+export async function getHeatmapData(fromDate: string): Promise<HeatmapData> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fromDate)) {
+    return { totals: {}, entries: {} };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { totals: {}, entries: {} };
 
   const { data, error } = await supabase
     .from("progress_entries")
-    .select("logged_on, pages_delta")
+    .select(
+      "logged_on, pages_delta, material_id, materials(title, metric_type)",
+    )
     .eq("user_id", user.id)
-    .gte("logged_on", fromDate);
+    .gte("logged_on", fromDate)
+    .order("created_at", { ascending: true });
 
   if (error) throw error;
 
   const totals: Record<string, number> = {};
+  const grouped = new Map<string, Map<string, HeatmapDayEntry>>();
+
   for (const row of data ?? []) {
     totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
+    const material = nestedMaterial(row.materials);
+    const byMaterial = grouped.get(row.logged_on) ?? new Map();
+    const existing = byMaterial.get(row.material_id);
+    if (existing) {
+      existing.delta += row.pages_delta;
+    } else {
+      byMaterial.set(row.material_id, {
+        materialId: row.material_id,
+        title: material?.title?.trim() || "—",
+        metricType:
+          material?.metric_type && isMetricType(material.metric_type)
+            ? material.metric_type
+            : "pages",
+        delta: row.pages_delta,
+      });
+    }
+    grouped.set(row.logged_on, byMaterial);
   }
-  return totals;
+
+  const entries: Record<string, HeatmapDayEntry[]> = {};
+  for (const [date, byMaterial] of grouped) {
+    entries[date] = [...byMaterial.values()]
+      .filter((item) => item.delta !== 0)
+      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  }
+
+  return { totals, entries };
+}
+
+function nestedMaterial(
+  value: unknown,
+): { title: string | null; metric_type: string | null } | null {
+  if (!value || typeof value !== "object") return null;
+  const row = Array.isArray(value) ? value[0] : value;
+  if (!row || typeof row !== "object") return null;
+  const title = "title" in row ? row.title : null;
+  const metricType = "metric_type" in row ? row.metric_type : null;
+  return {
+    title: typeof title === "string" ? title : null,
+    metric_type: typeof metricType === "string" ? metricType : null,
+  };
 }
 
 export async function getMaterialNote(

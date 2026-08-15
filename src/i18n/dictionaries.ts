@@ -106,8 +106,11 @@ const tr = {
     heatmapStats: "{days} aktif gün",
     heatmapLess: "Az",
     heatmapMore: "Çok",
-    heatmapCell: "{date}: {count}",
-    heatmapCellGoal: "{date}: {count} · {goal}",
+    heatmapCell: "{date}: {count} kayıt",
+    heatmapCellEmpty: "{date}: kayıt yok",
+    heatmapCellGoal: "{date}: {count} kayıt · {goal}",
+    heatmapCellFuture: "{date}: henüz değil",
+    heatmapEntry: "{count} {unit} {title}",
     greetingMorning: "Günaydın",
     greetingAfternoon: "İyi günler",
     greetingEvening: "İyi akşamlar",
@@ -122,8 +125,10 @@ const tr = {
     slotLabel: "Yer {n}",
     pagesShort: "syf",
     quickAdd: "+{n}",
+    quickSub: "-{n}",
     timerStart: "Başlat",
     timerStop: "Durdur",
+    timerReset: "Sıfırla",
     pace: "{rate}/{unit} · saat",
     goalMet: "Hedef",
   },
@@ -201,7 +206,7 @@ const tr = {
       "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Vault'a kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
-    invalidPage: "Yeni değer, mevcut olandan büyük olmalı.",
+    invalidPage: "Değer 0 veya üzeri olmalı.",
     notFound: "Materyal bulunamadı.",
     alreadyOwned: "Bu kitap zaten kütüphanende.",
     generic: "Bir hata oluştu.",
@@ -374,8 +379,11 @@ const en = {
     heatmapStats: "{days} active days",
     heatmapLess: "Less",
     heatmapMore: "More",
-    heatmapCell: "{date}: {count}",
-    heatmapCellGoal: "{date}: {count} · {goal}",
+    heatmapCell: "{count} logged on {date}",
+    heatmapCellEmpty: "No activity on {date}",
+    heatmapCellGoal: "{count} logged on {date} · {goal}",
+    heatmapCellFuture: "Not yet · {date}",
+    heatmapEntry: "{count} {unit} {title}",
     greetingMorning: "Good morning",
     greetingAfternoon: "Good afternoon",
     greetingEvening: "Good evening",
@@ -390,8 +398,10 @@ const en = {
     slotLabel: "Slot {n}",
     pagesShort: "pp",
     quickAdd: "+{n}",
+    quickSub: "-{n}",
     timerStart: "Start",
     timerStop: "Stop",
+    timerReset: "Reset",
     pace: "{rate}/{unit} · hour",
     goalMet: "Goal",
   },
@@ -469,7 +479,7 @@ const en = {
       "Your desk is full. Move a book to the Vault before activating another.",
     titleRequired: "Title is required.",
     authRequired: "Sign in required.",
-    invalidPage: "New value must be greater than the current one.",
+    invalidPage: "Value must be 0 or greater.",
     notFound: "Material not found.",
     alreadyOwned: "This book is already in your library.",
     generic: "Something went wrong.",
@@ -630,7 +640,10 @@ export type Dictionary = {
     heatmapLess: string;
     heatmapMore: string;
     heatmapCell: string;
+    heatmapCellEmpty: string;
     heatmapCellGoal: string;
+    heatmapCellFuture: string;
+    heatmapEntry: string;
     greetingMorning: string;
     greetingAfternoon: string;
     greetingEvening: string;
@@ -645,8 +658,10 @@ export type Dictionary = {
     slotLabel: string;
     pagesShort: string;
     quickAdd: string;
+    quickSub: string;
     timerStart: string;
     timerStop: string;
+    timerReset: string;
     pace: string;
     goalMet: string;
   };

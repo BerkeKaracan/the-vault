@@ -20,6 +20,9 @@ export default async function DeskPage() {
 
       <div className="relative px-5 pb-5 sm:px-8">
         <ContributionHeatmap
+          key={materials
+            .map((item) => `${item.id}:${item.current_page}:${item.updated_at}`)
+            .join("|")}
           weekStartsOn={session.profile?.week_starts_on ?? "monday"}
           dailyGoal={session.profile?.daily_goal ?? null}
         />

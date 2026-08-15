@@ -51,6 +51,45 @@ export function AccentSwatches({
   );
 }
 
+export function MetricTypeRadios({
+  value,
+  onChange,
+  name = "metric-type",
+}: {
+  value: MetricType;
+  onChange: (metric: MetricType) => void;
+  name?: string;
+}) {
+  const { dictionary } = useI18n();
+
+  return (
+    <fieldset>
+      <legend className="text-sm text-muted">
+        {dictionary.add.metricLabel}
+      </legend>
+      <div className="mt-2 flex flex-wrap gap-3 text-sm text-foreground/80">
+        {(
+          [
+            ["pages", dictionary.add.metricPages],
+            ["questions", dictionary.add.metricQuestions],
+            ["chapters", dictionary.add.metricChapters],
+          ] as const
+        ).map(([metric, label]) => (
+          <label key={metric} className="flex items-center gap-2">
+            <input
+              type="radio"
+              name={name}
+              checked={value === metric}
+              onChange={() => onChange(metric)}
+            />
+            {label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 export function MetricFields({
   metricType,
   onMetricChange,
@@ -66,30 +105,7 @@ export function MetricFields({
 
   return (
     <div className="flex flex-col gap-4">
-      <fieldset>
-        <legend className="text-sm text-muted">
-          {dictionary.add.metricLabel}
-        </legend>
-        <div className="mt-2 flex flex-wrap gap-3 text-sm text-foreground/80">
-          {(
-            [
-              ["pages", dictionary.add.metricPages],
-              ["questions", dictionary.add.metricQuestions],
-              ["chapters", dictionary.add.metricChapters],
-            ] as const
-          ).map(([value, label]) => (
-            <label key={value} className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="metric-type"
-                checked={metricType === value}
-                onChange={() => onMetricChange(value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <MetricTypeRadios value={metricType} onChange={onMetricChange} />
       <label className="flex flex-col gap-1.5 text-sm text-muted">
         {dictionary.add.tagsLabel}
         <input
