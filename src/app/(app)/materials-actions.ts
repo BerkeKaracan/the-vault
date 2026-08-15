@@ -369,30 +369,86 @@ export async function updateMaterialMetric(
 }
 
 /** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
-export async function getHeatmapTotals(
-  fromDate: string,
-): Promise<Record<string, number>> {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fromDate)) return {};
+export type HeatmapDayEntry = {
+  materialId: string;
+  title: string;
+  metricType: MetricType;
+  delta: number;
+};
+
+export type HeatmapData = {
+  totals: Record<string, number>;
+  entries: Record<string, HeatmapDayEntry[]>;
+};
+
+export async function getHeatmapData(fromDate: string): Promise<HeatmapData> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fromDate)) {
+    return { totals: {}, entries: {} };
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return {};
+  if (!user) return { totals: {}, entries: {} };
 
   const { data, error } = await supabase
     .from("progress_entries")
-    .select("logged_on, pages_delta")
+    .select(
+      "logged_on, pages_delta, material_id, materials(title, metric_type)",
+    )
     .eq("user_id", user.id)
-    .gte("logged_on", fromDate);
+    .gte("logged_on", fromDate)
+    .order("created_at", { ascending: true });
 
   if (error) throw error;
 
   const totals: Record<string, number> = {};
+  const grouped = new Map<string, Map<string, HeatmapDayEntry>>();
+
   for (const row of data ?? []) {
     totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
+    const material = nestedMaterial(row.materials);
+    const byMaterial = grouped.get(row.logged_on) ?? new Map();
+    const existing = byMaterial.get(row.material_id);
+    if (existing) {
+      existing.delta += row.pages_delta;
+    } else {
+      byMaterial.set(row.material_id, {
+        materialId: row.material_id,
+        title: material?.title?.trim() || "—",
+        metricType:
+          material?.metric_type && isMetricType(material.metric_type)
+            ? material.metric_type
+            : "pages",
+        delta: row.pages_delta,
+      });
+    }
+    grouped.set(row.logged_on, byMaterial);
   }
-  return totals;
+
+  const entries: Record<string, HeatmapDayEntry[]> = {};
+  for (const [date, byMaterial] of grouped) {
+    entries[date] = [...byMaterial.values()]
+      .filter((item) => item.delta !== 0)
+      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  }
+
+  return { totals, entries };
+}
+
+function nestedMaterial(
+  value: unknown,
+): { title: string | null; metric_type: string | null } | null {
+  if (!value || typeof value !== "object") return null;
+  const row = Array.isArray(value) ? value[0] : value;
+  if (!row || typeof row !== "object") return null;
+  const title = "title" in row ? row.title : null;
+  const metricType = "metric_type" in row ? row.metric_type : null;
+  return {
+    title: typeof title === "string" ? title : null,
+    metric_type: typeof metricType === "string" ? metricType : null,
+  };
 }
 
 export async function getMaterialNote(

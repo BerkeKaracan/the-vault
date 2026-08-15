@@ -106,8 +106,11 @@ const tr = {
     heatmapStats: "{days} aktif gün",
     heatmapLess: "Az",
     heatmapMore: "Çok",
-    heatmapCell: "{date}: {count}",
-    heatmapCellGoal: "{date}: {count} · {goal}",
+    heatmapCell: "{date}: {count} kayıt",
+    heatmapCellEmpty: "{date}: kayıt yok",
+    heatmapCellGoal: "{date}: {count} kayıt · {goal}",
+    heatmapCellFuture: "{date}: henüz değil",
+    heatmapEntry: "{count} {unit} {title}",
     greetingMorning: "Günaydın",
     greetingAfternoon: "İyi günler",
     greetingEvening: "İyi akşamlar",
@@ -376,8 +379,11 @@ const en = {
     heatmapStats: "{days} active days",
     heatmapLess: "Less",
     heatmapMore: "More",
-    heatmapCell: "{date}: {count}",
-    heatmapCellGoal: "{date}: {count} · {goal}",
+    heatmapCell: "{count} logged on {date}",
+    heatmapCellEmpty: "No activity on {date}",
+    heatmapCellGoal: "{count} logged on {date} · {goal}",
+    heatmapCellFuture: "Not yet · {date}",
+    heatmapEntry: "{count} {unit} {title}",
     greetingMorning: "Good morning",
     greetingAfternoon: "Good afternoon",
     greetingEvening: "Good evening",
@@ -634,7 +640,10 @@ export type Dictionary = {
     heatmapLess: string;
     heatmapMore: string;
     heatmapCell: string;
+    heatmapCellEmpty: string;
     heatmapCellGoal: string;
+    heatmapCellFuture: string;
+    heatmapEntry: string;
     greetingMorning: string;
     greetingAfternoon: string;
     greetingEvening: string;
