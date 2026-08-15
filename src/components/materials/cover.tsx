@@ -6,6 +6,7 @@ type CoverProps = {
   coverUrl?: string | null;
   className?: string;
   priority?: boolean;
+  sizes?: string;
 };
 
 export function Cover({
@@ -14,6 +15,7 @@ export function Cover({
   coverUrl,
   className = "",
   priority = false,
+  sizes = "160px",
 }: CoverProps) {
   return (
     <div
@@ -24,18 +26,19 @@ export function Cover({
           src={coverUrl}
           alt={title}
           fill
-          sizes="160px"
+          sizes={sizes}
           className="object-cover"
           priority={priority}
           unoptimized
         />
       ) : (
-        <div className="flex h-full w-full flex-col justify-between bg-[radial-gradient(ellipse_at_top,_#27272a_0%,_#09090b_70%)] p-4">
-          <p className="line-clamp-4 text-[0.95rem] leading-snug font-medium tracking-tight text-zinc-100">
+        <div className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950 p-3">
+          <span className="absolute inset-y-0 left-0 w-[3px] bg-black/40" />
+          <p className="line-clamp-4 text-[0.8rem] leading-snug font-medium tracking-tight text-zinc-100">
             {title}
           </p>
           {author ? (
-            <p className="truncate font-mono text-[0.65rem] tracking-wide text-zinc-500 uppercase">
+            <p className="truncate font-mono text-[0.6rem] tracking-wide text-zinc-500 uppercase">
               {author}
             </p>
           ) : null}

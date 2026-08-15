@@ -9,12 +9,18 @@ const tr = {
     eyebrow: "Sıfır sosyal gürültü",
     headlineLine1: "Okumak gösteri değil.",
     headlineLine2: "Mesaidir.",
-    sub: "The Vault; masandaki kitapları, soru bankalarını ve dokümantasyonları takip eden sessiz bir ilerleme terminali. Feed yok, beğeni yok — sadece mesain.",
+    sub: "Masandaki kitap, soru ve dokümanları takip eden sessiz bir ilerleme terminali. Feed yok, beğeni yok — sadece mesain.",
     ctaPrimary: "Giriş yap",
     ctaSecondary: "Nasıl çalışıyor",
-    statDeskLabel: "aktif materyal limiti",
-    statNoiseLabel: "beğeni, yorum, takipçi",
-    statDailyLabel: "günlük kutu, her gün",
+    statDeskLabel: "masa limiti",
+    statNoiseLabel: "sosyal gürültü",
+    statDailyLabel: "günlük kutu",
+    kindBook: "Kitap",
+    kindBookHint: "Roman, deneme, el kitabı.",
+    kindSet: "Soru",
+    kindSetHint: "Set, çalışma, deneme.",
+    kindDocs: "Doküman",
+    kindDocsHint: "Not, referans, PDF.",
     manifestoTitle: "Az yüzey. Gerçek mesai.",
     manifestoBody:
       "Kitap takibi; sahte incelemeler ve gösteriş raflarıyla dolu bir sosyal ağa dönüştü. The Vault tersini yapıyor: her şeyi söküp geriye yalnızca ölçülebilir mesaiyi bırakıyor.",
@@ -50,15 +56,20 @@ const tr = {
     closingCta: "Başla",
     closingNote: "E-posta yeter. Kart yok, reklam yok.",
     footerNote: "Zihinsel mesai için yapıldı.",
-    mockTitle1: "Suç ve Ceza",
-    mockAuthor1: "Dostoyevski",
-    mockTitle2: "DGS · Sayısal",
-    mockAuthor2: "Deneme 12",
-    mockTitle3: "Postgres Docs",
-    mockAuthor3: "v17",
-    mockTitle4: "Meditasyonlar",
-    mockTitle5: "Sefiller",
-    mockTitle6: "Yerdeniz",
+    mockSample: "Örnek",
+    mockLimit: "Limit",
+    mockBookTitle: "Cilt I",
+    mockBookMeta: "Roman",
+    mockSetTitle: "Soru seti",
+    mockSetMeta: "Bölüm 4",
+    mockDocsTitle: "Referans",
+    mockDocsMeta: "Notlar",
+    mockCoverA: "Cilt II",
+    mockCoverB: "Deneme",
+    mockCoverC: "El kitabı",
+    mockCoverD: "Makale",
+    mockCoverE: "Çalışma",
+    mockCoverF: "Arşiv notu",
   },
   nav: {
     desk: "Desk",
@@ -81,16 +92,21 @@ const tr = {
     title: "Active Desk",
     subtitle: "Şu an masanda · {count}/3",
     empty: "Masa boş.",
+    emptySlot: "Boş yer",
+    emptySlotCta: "Ekle",
     addMaterial: "Materyal ekle",
+    fullHint: "Masa dolu. Yeni bir şey için önce birini Vault’a kaldır.",
     pageOnly: "Sayfa {page}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
     consistencyHint: "Günlük disiplin — masaya oturduğun günler.",
     pageInput: "Ulaşılan sayfa",
-    updateProgress: "Güncelle",
-    markCompleted: "Manuel Bitir",
+    updateProgress: "Kaydet",
+    markCompleted: "Bitir",
     shelve: "Vault’a kaldır",
     heatmapStats: "{days} aktif gün",
+    heatmapLess: "Az",
+    heatmapMore: "Çok",
   },
   vault: {
     title: "The Vault",
@@ -169,12 +185,18 @@ const en = {
     eyebrow: "Zero social noise",
     headlineLine1: "Reading isn’t a performance.",
     headlineLine2: "It’s a shift.",
-    sub: "The Vault is a quiet progress terminal for the books, question banks and docs on your desk. No feed, no likes — just the work.",
+    sub: "A quiet progress terminal for the books, sets and docs on your desk. No feed, no likes — just the work.",
     ctaPrimary: "Sign in",
     ctaSecondary: "How it works",
-    statDeskLabel: "active material limit",
-    statNoiseLabel: "likes, comments, followers",
-    statDailyLabel: "cell a day, every day",
+    statDeskLabel: "desk limit",
+    statNoiseLabel: "social noise",
+    statDailyLabel: "daily cell",
+    kindBook: "Book",
+    kindBookHint: "Novel, essay, handbook.",
+    kindSet: "Set",
+    kindSetHint: "Problems, drills, papers.",
+    kindDocs: "Docs",
+    kindDocsHint: "Notes, reference, PDF.",
     manifestoTitle: "Less surface. Real work.",
     manifestoBody:
       "Book tracking turned into a social network of fake reviews and display shelves. The Vault does the opposite: strip everything out and leave only measurable hours.",
@@ -211,15 +233,20 @@ const en = {
     closingCta: "Get started",
     closingNote: "Email is enough. No card, no ads.",
     footerNote: "Built for deep work.",
-    mockTitle1: "Crime and Punishment",
-    mockAuthor1: "Dostoevsky",
-    mockTitle2: "GRE · Quant",
-    mockAuthor2: "Set 12",
-    mockTitle3: "Postgres Docs",
-    mockAuthor3: "v17",
-    mockTitle4: "Meditations",
-    mockTitle5: "Les Misérables",
-    mockTitle6: "Earthsea",
+    mockSample: "Sample",
+    mockLimit: "Limit",
+    mockBookTitle: "Volume I",
+    mockBookMeta: "Novel",
+    mockSetTitle: "Problem set",
+    mockSetMeta: "Chapter 4",
+    mockDocsTitle: "Reference",
+    mockDocsMeta: "Notes",
+    mockCoverA: "Volume II",
+    mockCoverB: "Essay",
+    mockCoverC: "Handbook",
+    mockCoverD: "Paper",
+    mockCoverE: "Workbook",
+    mockCoverF: "Archive note",
   },
   nav: {
     desk: "Desk",
@@ -242,16 +269,21 @@ const en = {
     title: "Active Desk",
     subtitle: "On your desk · {count}/3",
     empty: "Desk is empty.",
+    emptySlot: "Open slot",
+    emptySlotCta: "Add",
     addMaterial: "Add material",
+    fullHint: "Desk is full. Shelve one to the Vault before adding another.",
     pageOnly: "Page {page}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
     consistencyHint: "Daily discipline — days you sat at the desk.",
     pageInput: "Page reached",
-    updateProgress: "Update",
-    markCompleted: "Mark completed",
+    updateProgress: "Log",
+    markCompleted: "Complete",
     shelve: "Move to Vault",
     heatmapStats: "{days} active days",
+    heatmapLess: "Less",
+    heatmapMore: "More",
   },
   vault: {
     title: "The Vault",
@@ -334,6 +366,12 @@ export type Dictionary = {
     statDeskLabel: string;
     statNoiseLabel: string;
     statDailyLabel: string;
+    kindBook: string;
+    kindBookHint: string;
+    kindSet: string;
+    kindSetHint: string;
+    kindDocs: string;
+    kindDocsHint: string;
     manifestoTitle: string;
     manifestoBody: string;
     removedTitle: string;
@@ -355,15 +393,20 @@ export type Dictionary = {
     closingCta: string;
     closingNote: string;
     footerNote: string;
-    mockTitle1: string;
-    mockAuthor1: string;
-    mockTitle2: string;
-    mockAuthor2: string;
-    mockTitle3: string;
-    mockAuthor3: string;
-    mockTitle4: string;
-    mockTitle5: string;
-    mockTitle6: string;
+    mockSample: string;
+    mockLimit: string;
+    mockBookTitle: string;
+    mockBookMeta: string;
+    mockSetTitle: string;
+    mockSetMeta: string;
+    mockDocsTitle: string;
+    mockDocsMeta: string;
+    mockCoverA: string;
+    mockCoverB: string;
+    mockCoverC: string;
+    mockCoverD: string;
+    mockCoverE: string;
+    mockCoverF: string;
   };
   nav: {
     desk: string;
@@ -386,7 +429,10 @@ export type Dictionary = {
     title: string;
     subtitle: string;
     empty: string;
+    emptySlot: string;
+    emptySlotCta: string;
     addMaterial: string;
+    fullHint: string;
     pageOnly: string;
     pageOf: string;
     consistency: string;
@@ -396,6 +442,8 @@ export type Dictionary = {
     markCompleted: string;
     shelve: string;
     heatmapStats: string;
+    heatmapLess: string;
+    heatmapMore: string;
   };
   vault: {
     title: string;

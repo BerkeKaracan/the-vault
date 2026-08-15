@@ -131,6 +131,26 @@ export default async function LandingPage() {
                 </div>
               ))}
             </dl>
+
+            <ul className="landing-rise landing-rise-delay-3 mt-8 grid max-w-lg grid-cols-3 gap-3">
+              {[
+                { title: landing.kindBook, hint: landing.kindBookHint },
+                { title: landing.kindSet, hint: landing.kindSetHint },
+                { title: landing.kindDocs, hint: landing.kindDocsHint },
+              ].map((kind) => (
+                <li
+                  key={kind.title}
+                  className="border-t border-white/8 pt-3"
+                >
+                  <p className="font-mono text-[0.58rem] tracking-[0.22em] text-zinc-400 uppercase">
+                    {kind.title}
+                  </p>
+                  <p className="mt-1.5 text-[0.72rem] leading-snug text-zinc-600">
+                    {kind.hint}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="landing-rise landing-rise-delay-2 relative">

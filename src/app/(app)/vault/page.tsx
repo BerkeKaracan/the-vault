@@ -11,19 +11,19 @@ export default async function VaultPage() {
   ]);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col">
+    <main className="flex flex-1 flex-col">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-lg font-medium tracking-tight text-zinc-100">
+          <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-zinc-50">
             {dictionary.vault.title}
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1.5 text-sm text-zinc-500">
             {t(dictionary.vault.subtitle, { count: materials.length })}
           </p>
         </div>
         <Link
           href="/add"
-          className="text-sm text-zinc-400 underline underline-offset-4 hover:text-zinc-200"
+          className="rounded-full border border-white/12 px-4 py-1.5 text-sm text-zinc-300 transition hover:border-white/25 hover:bg-white/4 hover:text-white"
         >
           {dictionary.vault.add}
         </Link>

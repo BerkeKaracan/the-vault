@@ -68,36 +68,44 @@ export function MaterialCard({
   }
 
   return (
-    <li className="group flex flex-col gap-4 rounded-lg border border-zinc-900 bg-zinc-950/50 p-4 transition hover:border-zinc-700">
-      <div className="mx-auto w-36 sm:mx-0 sm:w-40">
+    <li className="flex flex-col gap-4 rounded-xl border border-white/8 bg-zinc-950/50 p-4 sm:flex-row sm:items-start">
+      <div className="w-20 shrink-0 sm:w-24">
         <Cover
           title={material.title}
           author={material.author}
           coverUrl={material.cover_url}
           priority={priority}
+          sizes="96px"
         />
       </div>
 
-      <div className="flex flex-1 flex-col gap-2">
-        <h3 className="line-clamp-2 text-base font-medium tracking-tight text-zinc-100">
-          {material.title}
-        </h3>
-        {material.author ? (
-          <p className="truncate text-sm text-zinc-500">{material.author}</p>
-        ) : null}
-        <p className="font-mono text-xs text-zinc-600">
-          {progressLabel}
-          {percent !== null ? ` · %${percent}` : ""}
-        </p>
-        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-zinc-900">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="line-clamp-2 text-base font-medium tracking-tight text-zinc-100">
+              {material.title}
+            </h3>
+            {material.author ? (
+              <p className="mt-0.5 truncate text-sm text-zinc-500">
+                {material.author}
+              </p>
+            ) : null}
+          </div>
+          <p className="shrink-0 font-mono text-xs text-zinc-500">
+            {progressLabel}
+            {percent !== null ? ` · ${percent}%` : ""}
+          </p>
+        </div>
+
+        <div className="h-1 overflow-hidden rounded-full bg-white/8">
           <div
-            className="h-full rounded-full bg-accent transition-[width] duration-500"
+            className="h-full rounded-full bg-emerald-400/90 transition-[width] duration-500"
             style={{ width: `${percent ?? 8}%` }}
           />
         </div>
 
         <form
-          className="mt-3 flex gap-2"
+          className="flex gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             const next = Number(pageAfter);
@@ -116,23 +124,23 @@ export function MaterialCard({
             value={pageAfter}
             onChange={(e) => setPageAfter(e.target.value)}
             aria-label={dictionary.desk.pageInput}
-            className="w-full rounded-md border border-zinc-800 bg-zinc-950 px-2.5 py-1.5 font-mono text-sm text-zinc-100 outline-none focus:border-zinc-600"
+            className="w-28 rounded-md border border-white/10 bg-zinc-950 px-2.5 py-1.5 font-mono text-sm text-zinc-100 outline-none focus:border-zinc-500"
           />
           <button
             type="submit"
             disabled={pending}
-            className="shrink-0 rounded-md bg-zinc-100 px-2.5 py-1.5 text-xs font-medium text-zinc-950 disabled:opacity-40"
+            className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-emerald-950 transition hover:bg-emerald-300 disabled:opacity-40"
           >
             {dictionary.desk.updateProgress}
           </button>
         </form>
 
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
             disabled={pending}
             onClick={() => run(() => markCompleted(material.id))}
-            className="rounded-md border border-zinc-800 px-2.5 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 disabled:opacity-40"
+            className="text-xs text-zinc-400 transition hover:text-zinc-200 disabled:opacity-40"
           >
             {dictionary.desk.markCompleted}
           </button>
@@ -140,14 +148,14 @@ export function MaterialCard({
             type="button"
             disabled={pending}
             onClick={() => run(() => shelveMaterial(material.id))}
-            className="rounded-md border border-zinc-800 px-2.5 py-1.5 text-xs text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 disabled:opacity-40"
+            className="text-xs text-zinc-600 transition hover:text-zinc-300 disabled:opacity-40"
           >
             {dictionary.desk.shelve}
           </button>
         </div>
 
         {message ? (
-          <output className="mt-2 text-xs text-zinc-500">{message}</output>
+          <output className="text-xs text-zinc-500">{message}</output>
         ) : null}
       </div>
     </li>
