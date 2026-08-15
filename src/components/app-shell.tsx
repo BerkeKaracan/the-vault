@@ -1,16 +1,26 @@
 import Link from "next/link";
-import { signOut } from "@/app/(app)/actions";
+import { getSessionProfile } from "@/app/(app)/settings-actions";
 import { AppNav } from "@/components/app-nav";
+import { UserMenu } from "@/components/user-menu";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
-  const dictionary = await getDictionary();
+  const [dictionary, session] = await Promise.all([
+    getDictionary(),
+    getSessionProfile(),
+  ]);
   const nav = [
     { href: "/desk", label: dictionary.nav.desk },
     { href: "/vault", label: dictionary.nav.vault },
     { href: "/add", label: dictionary.nav.add },
+    { href: "/settings", label: dictionary.nav.settings },
   ] as const;
+
+  const userLabel =
+    session.profile?.display_name?.trim() ||
+    session.email ||
+    dictionary.nav.settings;
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-[#08080a]">
@@ -25,14 +35,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-5">
             <AppNav items={nav} />
             <LanguageSwitcher />
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="text-sm text-zinc-600 transition hover:text-zinc-300"
-              >
-                {dictionary.nav.signOut}
-              </button>
-            </form>
+            <UserMenu label={userLabel} />
           </div>
         </div>
       </header>

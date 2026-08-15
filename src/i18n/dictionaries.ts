@@ -75,6 +75,7 @@ const tr = {
     desk: "Desk",
     vault: "Vault",
     add: "Ekle",
+    settings: "Ayarlar",
     signOut: "Çıkış",
   },
   login: {
@@ -174,6 +175,28 @@ const tr = {
     tr: "TR",
     en: "EN",
   },
+  cookies: {
+    title: "Çerezler",
+    body: "Oturum ve dil için zorunlu çerezler kullanılır. İsteğe bağlı tercih çerezlerini kabul edebilir veya yalnızca zorunluları bırakabilirsin.",
+    necessary: "Yalnızca zorunlu",
+    acceptAll: "Tümünü kabul et",
+  },
+  settings: {
+    title: "Ayarlar",
+    profileTitle: "Profil",
+    generalTitle: "Genel",
+    displayName: "Görünen ad",
+    email: "E-posta",
+    timezone: "Saat dilimi",
+    weekStart: "Haftanın ilk günü",
+    weekMonday: "Pazartesi",
+    weekSunday: "Pazar",
+    cookiePref: "Çerezler",
+    cookieNecessary: "Yalnızca zorunlu",
+    cookieAll: "Tümü",
+    save: "Kaydet",
+    saved: "Kaydedildi.",
+  },
 } as const;
 
 const en = {
@@ -252,6 +275,7 @@ const en = {
     desk: "Desk",
     vault: "Vault",
     add: "Add",
+    settings: "Settings",
     signOut: "Sign out",
   },
   login: {
@@ -351,6 +375,28 @@ const en = {
     tr: "TR",
     en: "EN",
   },
+  cookies: {
+    title: "Cookies",
+    body: "Necessary cookies keep your session and language. You can accept optional preference cookies or keep necessary only.",
+    necessary: "Necessary only",
+    acceptAll: "Accept all",
+  },
+  settings: {
+    title: "Settings",
+    profileTitle: "Profile",
+    generalTitle: "General",
+    displayName: "Display name",
+    email: "Email",
+    timezone: "Time zone",
+    weekStart: "First day of week",
+    weekMonday: "Monday",
+    weekSunday: "Sunday",
+    cookiePref: "Cookies",
+    cookieNecessary: "Necessary only",
+    cookieAll: "All",
+    save: "Save",
+    saved: "Saved.",
+  },
 } as const;
 
 export type Dictionary = {
@@ -412,6 +458,7 @@ export type Dictionary = {
     desk: string;
     vault: string;
     add: string;
+    settings: string;
     signOut: string;
   };
   login: {
@@ -505,6 +552,28 @@ export type Dictionary = {
     label: string;
     tr: string;
     en: string;
+  };
+  cookies: {
+    title: string;
+    body: string;
+    necessary: string;
+    acceptAll: string;
+  };
+  settings: {
+    title: string;
+    profileTitle: string;
+    generalTitle: string;
+    displayName: string;
+    email: string;
+    timezone: string;
+    weekStart: string;
+    weekMonday: string;
+    weekSunday: string;
+    cookiePref: string;
+    cookieNecessary: string;
+    cookieAll: string;
+    save: string;
+    saved: string;
   };
 };
 

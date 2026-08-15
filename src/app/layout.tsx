@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
+import { CookieBanner } from "@/components/cookie-banner";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { I18nProvider } from "@/i18n/provider";
+import { getCookieConsent } from "@/lib/consent";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
   const dictionary = await getDictionary();
+  const consent = await getCookieConsent();
 
   return (
     <html
@@ -40,6 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-dvh flex-col bg-background text-foreground">
         <I18nProvider locale={locale} dictionary={dictionary}>
           {children}
+          {consent ? null : <CookieBanner />}
         </I18nProvider>
       </body>
     </html>

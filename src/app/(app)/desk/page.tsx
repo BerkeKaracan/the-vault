@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { getActiveMaterials } from "@/app/(app)/materials-actions";
+import { getSessionProfile } from "@/app/(app)/settings-actions";
 import { ActiveDesk } from "@/components/desk/active-desk";
 import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 
 export default async function DeskPage() {
-  const [materials, dictionary] = await Promise.all([
+  const [materials, dictionary, session] = await Promise.all([
     getActiveMaterials(),
     getDictionary(),
+    getSessionProfile(),
   ]);
 
   return (
@@ -48,7 +50,9 @@ export default async function DeskPage() {
           {dictionary.desk.consistencyHint}
         </p>
         <div className="mt-8">
-          <ContributionHeatmap />
+          <ContributionHeatmap
+            weekStartsOn={session.profile?.week_starts_on ?? "monday"}
+          />
         </div>
       </section>
     </main>

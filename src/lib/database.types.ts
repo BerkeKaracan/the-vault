@@ -54,6 +54,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          timezone: string
+          updated_at: string
+          week_starts_on: Database["public"]["Enums"]["week_start"]
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+          timezone?: string
+          updated_at?: string
+          week_starts_on?: Database["public"]["Enums"]["week_start"]
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          timezone?: string
+          updated_at?: string
+          week_starts_on?: Database["public"]["Enums"]["week_start"]
+        }
+        Relationships: []
+      }
       progress_entries: {
         Row: {
           created_at: string
@@ -128,6 +155,7 @@ export type Database = {
     Enums: {
       material_source: "google" | "custom"
       material_status: "active" | "shelved" | "completed"
+      week_start: "monday" | "sunday"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -257,6 +285,7 @@ export const Constants = {
     Enums: {
       material_source: ["google", "custom"],
       material_status: ["active", "shelved", "completed"],
+      week_start: ["monday", "sunday"],
     },
   },
 } as const

@@ -5,6 +5,7 @@ import { getHeatmapTotals } from "@/app/(app)/materials-actions";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import { getLocalDateString } from "@/lib/local-date";
+import type { WeekStart } from "@/lib/types";
 
 const WEEKS = 26;
 const DAYS = WEEKS * 7;
@@ -17,11 +18,13 @@ const LEVELS = [
   "bg-emerald-400",
 ] as const;
 
-function mondayWeeksAgo(weeks: number): Date {
+function weekStartWeeksAgo(weeks: number, weekStartsOn: WeekStart): Date {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
-  const mondayOffset = (date.getDay() + 6) % 7;
-  date.setDate(date.getDate() - mondayOffset - (weeks - 1) * 7);
+  const weekday = date.getDay();
+  const offset =
+    weekStartsOn === "sunday" ? weekday : (weekday + 6) % 7;
+  date.setDate(date.getDate() - offset - (weeks - 1) * 7);
   return date;
 }
 
@@ -43,9 +46,16 @@ function intensity(pages: number): number {
   return 4;
 }
 
-export function ContributionHeatmap() {
+export function ContributionHeatmap({
+  weekStartsOn = "monday",
+}: {
+  weekStartsOn?: WeekStart;
+}) {
   const { dictionary } = useI18n();
-  const fromDate = useMemo(() => mondayWeeksAgo(WEEKS), []);
+  const fromDate = useMemo(
+    () => weekStartWeeksAgo(WEEKS, weekStartsOn),
+    [weekStartsOn],
+  );
   const from = useMemo(() => getLocalDateString(fromDate), [fromDate]);
   const days = useMemo(() => eachLocalDay(fromDate, DAYS), [fromDate]);
   const today = useMemo(() => getLocalDateString(), []);
