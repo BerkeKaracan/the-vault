@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { logProgress } from "@/app/(app)/materials-actions";
+import {
+  logProgress,
+  updateMaterialMetric,
+} from "@/app/(app)/materials-actions";
+import { MetricTypeRadios } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
-import type { Material } from "@/lib/types";
+import type { Material, MetricType } from "@/lib/types";
 
 function translateError(
   dictionary: ReturnType<typeof useI18n>["dictionary"],
@@ -25,7 +29,11 @@ function formatElapsed(seconds: number): string {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-const QUICK = [10, 50] as const;
+const QUICK: Record<MetricType, readonly number[]> = {
+  pages: [10, 50],
+  questions: [10, 50],
+  chapters: [1, 5],
+};
 
 type StoredTimer = {
   startedAt: number | null;
@@ -71,9 +79,7 @@ export function ProgressControls({
   showTimer?: boolean;
 }) {
   const { dictionary } = useI18n();
-  const [pageAfter, setPageAfter] = useState(
-    String(Math.max(material.current_page + 1, 1)),
-  );
+  const [pageAfter, setPageAfter] = useState(String(material.current_page));
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [running, setRunning] = useState(false);
@@ -82,7 +88,7 @@ export function ProgressControls({
   const startedAt = useRef<number | null>(null);
 
   useEffect(() => {
-    setPageAfter(String(Math.max(material.current_page + 1, 1)));
+    setPageAfter(String(material.current_page));
     setMessage(null);
   }, [material.current_page]);
 
@@ -122,17 +128,28 @@ export function ProgressControls({
 
   const unit = metricUnit(dictionary, material.metric_type);
   const maxPage = material.total_pages;
+  const steps = QUICK[material.metric_type];
+
+  function resetTimer() {
+    startedAt.current = null;
+    setRunning(false);
+    setElapsed(0);
+    clearTimer(material.id);
+  }
 
   function commit(nextPage: number) {
-    const capped =
-      maxPage != null ? Math.min(nextPage, maxPage) : Math.floor(nextPage);
-    if (capped <= material.current_page) return;
+    const floored = Math.max(0, Math.floor(nextPage));
+    const capped = maxPage != null ? Math.min(floored, maxPage) : floored;
+    const delta = capped - material.current_page;
+    if (delta === 0) return;
     const duration =
-      running && startedAt.current
-        ? Math.max(1, Math.floor((Date.now() - startedAt.current) / 1000))
-        : elapsed > 0
-          ? elapsed
-          : undefined;
+      delta > 0
+        ? running && startedAt.current
+          ? Math.max(1, Math.floor((Date.now() - startedAt.current) / 1000))
+          : elapsed > 0
+            ? elapsed
+            : undefined
+        : undefined;
     setMessage(null);
     startTransition(async () => {
       const result = await logProgress({
@@ -140,16 +157,26 @@ export function ProgressControls({
         pageAfter: capped,
         loggedOn: getLocalDateString(),
         durationSeconds: duration,
-        unitsDelta: capped - material.current_page,
+        unitsDelta: delta,
       });
       if (!result.ok) {
         setMessage(translateError(dictionary, result.error ?? "generic"));
         return;
       }
-      startedAt.current = null;
-      setRunning(false);
-      setElapsed(0);
-      clearTimer(material.id);
+      if (delta > 0) {
+        resetTimer();
+      }
+    });
+  }
+
+  function changeMetric(metric: MetricType) {
+    if (metric === material.metric_type) return;
+    setMessage(null);
+    startTransition(async () => {
+      const result = await updateMaterialMetric(material.id, metric);
+      if (!result.ok) {
+        setMessage(translateError(dictionary, result.error ?? "generic"));
+      }
     });
   }
 
@@ -174,13 +201,38 @@ export function ProgressControls({
           <span className="font-mono text-xs text-muted">
             {formatElapsed(elapsed)}
           </span>
+          <button
+            type="button"
+            disabled={elapsed === 0 && !running}
+            onClick={resetTimer}
+            className="font-mono text-[0.65rem] tracking-wide text-muted uppercase hover:text-foreground disabled:opacity-40"
+          >
+            {dictionary.desk.timerReset}
+          </button>
         </div>
       ) : null}
 
+      <MetricTypeRadios
+        value={material.metric_type}
+        onChange={changeMetric}
+        name={`metric-${material.id}`}
+      />
+
       <div className="flex flex-wrap items-center gap-2">
-        {QUICK.map((step) => (
+        {[...steps].reverse().map((step) => (
           <button
-            key={step}
+            key={`sub-${step}`}
+            type="button"
+            disabled={pending || material.current_page <= 0}
+            onClick={() => commit(material.current_page - step)}
+            className="rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-foreground/80 hover:border-foreground/25 disabled:opacity-40"
+          >
+            {t(dictionary.desk.quickSub, { n: step })}
+          </button>
+        ))}
+        {steps.map((step) => (
+          <button
+            key={`add-${step}`}
             type="button"
             disabled={pending}
             onClick={() => commit(material.current_page + step)}
@@ -200,11 +252,12 @@ export function ProgressControls({
       >
         <input
           type="number"
-          min={material.current_page + 1}
+          min={0}
+          max={maxPage ?? undefined}
           value={pageAfter}
           onChange={(e) => setPageAfter(e.target.value)}
           aria-label={t(dictionary.desk.pageInput, { unit })}
-          className="w-24 rounded-md border border-border bg-black/50 px-3 py-2 font-mono text-sm text-foreground outline-none focus:border-accent/50"
+          className="w-24 rounded-md border border-border bg-elevated px-3 py-2 font-mono text-sm text-foreground outline-none focus:border-accent/50"
         />
         <button
           type="submit"

@@ -33,7 +33,12 @@ async function countActive(userId: string): Promise<number> {
 function mapDbError(message: string | undefined): ActionErrorCode {
   if (!message) return "generic";
   if (message.includes("ACTIVE_DESK_FULL")) return "deskFull";
-  if (message.includes("page_after must be greater")) return "invalidPage";
+  if (
+    message.includes("page_after must be greater") ||
+    message.includes("page_after must be >=")
+  ) {
+    return "invalidPage";
+  }
   if (message.includes("Material not found")) return "notFound";
   if (message.includes("Not authenticated")) return "authRequired";
   if (
@@ -200,7 +205,7 @@ export async function logProgress(input: {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.loggedOn)) {
     return { ok: false, error: "generic" };
   }
-  if (!Number.isFinite(input.pageAfter) || input.pageAfter <= 0) {
+  if (!Number.isFinite(input.pageAfter) || input.pageAfter < 0) {
     return { ok: false, error: "invalidPage" };
   }
 
@@ -226,21 +231,18 @@ export async function logProgress(input: {
   }
 
   const duration = input.durationSeconds;
-  if (duration && Number.isFinite(duration) && duration > 0) {
+  const unitsDelta = input.unitsDelta ?? 0;
+  if (duration && Number.isFinite(duration) && duration > 0 && unitsDelta > 0) {
     const ended = new Date();
     const seconds = Math.floor(duration);
     const started = new Date(ended.getTime() - seconds * 1000);
-    const units =
-      input.unitsDelta && input.unitsDelta > 0
-        ? Math.floor(input.unitsDelta)
-        : null;
     await supabase.from("reading_sessions").insert({
       user_id: user.id,
       material_id: input.materialId,
       started_at: started.toISOString(),
       ended_at: ended.toISOString(),
       duration_seconds: seconds,
-      units_delta: units,
+      units_delta: Math.floor(unitsDelta),
     });
   }
 
@@ -324,6 +326,45 @@ async function updateMaterialStatus(
   }
 
   revalidateMaterialPaths(data.id, data.google_books_id);
+  return { ok: true, data };
+}
+
+export async function updateMaterialMetric(
+  materialId: string,
+  metricType: MetricType,
+): Promise<ActionResult<Material>> {
+  if (!isMetricType(metricType)) {
+    return { ok: false, error: "generic" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data, error } = await supabase
+    .from("materials")
+    .update({
+      metric_type: metricType,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
+
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
 }
 

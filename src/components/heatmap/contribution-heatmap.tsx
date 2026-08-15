@@ -90,7 +90,7 @@ export function ContributionHeatmap({
         className={`grid w-full grid-flow-col grid-rows-7 gap-0.75 ${loaded ? "" : "opacity-40"}`}
       >
         {days.map((date) => {
-          const pages = totals[date] ?? 0;
+          const pages = Math.max(0, totals[date] ?? 0);
           const isToday = date === today;
           const isFuture = date > today;
           const goalMet =
