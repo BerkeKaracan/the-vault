@@ -88,9 +88,12 @@ export async function addMaterial(
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "generic" };
+  }
 
   revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  return { ok: true, data };
 }
 
 export async function logProgress(input: {
@@ -122,9 +125,12 @@ export async function logProgress(input: {
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "generic" };
+  }
 
   revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  return { ok: true, data };
 }
 
 export async function markCompleted(
@@ -166,9 +172,12 @@ export async function activateMaterial(
   if (error) {
     return { ok: false, error: mapDbError(error.message) };
   }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
 
   revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  return { ok: true, data };
 }
 
 async function updateMaterialStatus(
@@ -199,7 +208,7 @@ async function updateMaterialStatus(
   }
 
   revalidateMaterialPaths();
-  return { ok: true, data: data as Material };
+  return { ok: true, data };
 }
 
 export async function getActiveMaterials(): Promise<Material[]> {
@@ -217,7 +226,7 @@ export async function getActiveMaterials(): Promise<Material[]> {
     .order("updated_at", { ascending: false });
 
   if (error) throw error;
-  return (data ?? []) as Material[];
+  return data ?? [];
 }
 
 export async function getVaultMaterials(): Promise<Material[]> {
@@ -235,7 +244,7 @@ export async function getVaultMaterials(): Promise<Material[]> {
     .order("updated_at", { ascending: false });
 
   if (error) throw error;
-  return (data ?? []) as Material[];
+  return data ?? [];
 }
 
 /** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
@@ -260,8 +269,7 @@ export async function getHeatmapTotals(
 
   const totals: Record<string, number> = {};
   for (const row of data ?? []) {
-    const day = row.logged_on as string;
-    totals[day] = (totals[day] ?? 0) + (row.pages_delta as number);
+    totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
   }
   return totals;
 }
