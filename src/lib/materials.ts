@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { isMetricType } from "@/lib/catalog";
 import {
   type GoogleBookResult,
   getGoogleBook,
@@ -6,42 +7,69 @@ import {
 } from "@/lib/google-books";
 import { isUuid } from "@/lib/ids";
 import { createClient } from "@/lib/supabase/server";
-import type { Material } from "@/lib/types";
+import type { Material, MaterialNote } from "@/lib/types";
+
+function normalizeMaterial(row: Material): Material {
+  return {
+    ...row,
+    metric_type:
+      typeof row.metric_type === "string" && isMetricType(row.metric_type)
+        ? row.metric_type
+        : "pages",
+    tags: Array.isArray(row.tags) ? row.tags : [],
+  };
+}
 
 export async function getActiveMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
 
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("status", "active")
-    .order("updated_at", { ascending: false });
+    const { data, error } = await supabase
+      .from("materials")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false });
 
-  if (error) throw error;
-  return data ?? [];
+    if (error) {
+      console.error("[getActiveMaterials]", error.message);
+      return [];
+    }
+    return (data ?? []).map(normalizeMaterial);
+  } catch (error) {
+    console.error("[getActiveMaterials]", error);
+    return [];
+  }
 }
 
 export async function getVaultMaterials(): Promise<Material[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
 
-  const { data, error } = await supabase
-    .from("materials")
-    .select("*")
-    .eq("user_id", user.id)
-    .in("status", ["shelved", "completed"])
-    .order("updated_at", { ascending: false });
+    const { data, error } = await supabase
+      .from("materials")
+      .select("*")
+      .eq("user_id", user.id)
+      .in("status", ["shelved", "completed"])
+      .order("updated_at", { ascending: false });
 
-  if (error) throw error;
-  return data ?? [];
+    if (error) {
+      console.error("[getVaultMaterials]", error.message);
+      return [];
+    }
+    return (data ?? []).map(normalizeMaterial);
+  } catch (error) {
+    console.error("[getVaultMaterials]", error);
+    return [];
+  }
 }
 
 export async function findMaterialByGoogleId(
@@ -62,8 +90,11 @@ export async function findMaterialByGoogleId(
     .eq("google_books_id", googleId)
     .maybeSingle();
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    console.error("[findMaterialByGoogleId]", error.message);
+    return null;
+  }
+  return data ? normalizeMaterial(data) : null;
 }
 
 async function hydrateMaterial(material: Material): Promise<Material> {
@@ -144,6 +175,37 @@ export const getMaterial = cache(
   async (id: string): Promise<Material | null> => {
     if (!isUuid(id)) return null;
 
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from("materials")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("[getMaterial]", error.message);
+        return null;
+      }
+      if (!data) return null;
+      return hydrateMaterial(normalizeMaterial(data));
+    } catch (error) {
+      console.error("[getMaterial]", error);
+      return null;
+    }
+  },
+);
+
+export async function getMaterialNote(
+  materialId: string,
+): Promise<MaterialNote | null> {
+  try {
     const supabase = await createClient();
     const {
       data: { user },
@@ -151,14 +213,55 @@ export const getMaterial = cache(
     if (!user) return null;
 
     const { data, error } = await supabase
-      .from("materials")
+      .from("material_notes")
       .select("*")
-      .eq("id", id)
       .eq("user_id", user.id)
+      .eq("material_id", materialId)
       .maybeSingle();
 
-    if (error) throw error;
-    if (!data) return null;
-    return hydrateMaterial(data);
-  },
-);
+    if (error) {
+      console.error("[getMaterialNote]", error.message);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error("[getMaterialNote]", error);
+    return null;
+  }
+}
+
+export async function getMaterialPace(
+  materialId: string,
+): Promise<number | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from("reading_sessions")
+      .select("duration_seconds, units_delta")
+      .eq("user_id", user.id)
+      .eq("material_id", materialId)
+      .not("units_delta", "is", null);
+
+    if (error) {
+      console.error("[getMaterialPace]", error.message);
+      return null;
+    }
+    let seconds = 0;
+    let units = 0;
+    for (const row of data ?? []) {
+      if (!row.units_delta) continue;
+      seconds += row.duration_seconds;
+      units += row.units_delta;
+    }
+    if (seconds <= 0 || units <= 0) return null;
+    return Math.round((units / seconds) * 3600);
+  } catch (error) {
+    console.error("[getMaterialPace]", error);
+    return null;
+  }
+}

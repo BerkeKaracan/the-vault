@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  getMaterialNote,
-  getMaterialPace,
-} from "@/app/(app)/materials-actions";
 import { BookRecord } from "@/components/books/book-record";
 import { LibraryActions } from "@/components/books/library-actions";
 import { MaterialNotes } from "@/components/books/material-notes";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { localizeDescription } from "@/lib/localize-description";
-import { getMaterial } from "@/lib/materials";
+import {
+  getMaterial,
+  getMaterialNote,
+  getMaterialPace,
+} from "@/lib/materials";
 import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {

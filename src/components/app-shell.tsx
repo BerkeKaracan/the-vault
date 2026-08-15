@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSessionProfile } from "@/app/(app)/settings-actions";
+import { getSessionProfile } from "@/lib/profile";
 import { AppNav } from "@/components/app-nav";
 import { FocusToggle } from "@/components/focus-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";

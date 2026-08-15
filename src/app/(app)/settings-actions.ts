@@ -37,48 +37,6 @@ function revalidateSettingsPaths() {
   revalidatePath("/materials", "layout");
 }
 
-export async function getSessionProfile(): Promise<{
-  email: string | null;
-  profile: Profile | null;
-}> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { email: null, profile: null };
-  }
-
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (error) throw error;
-
-  if (!data) {
-    const fallbackName = user.email?.split("@")[0]?.trim() || null;
-    const { data: created, error: insertError } = await supabase
-      .from("profiles")
-      .insert({
-        id: user.id,
-        display_name: fallbackName,
-      })
-      .select()
-      .single();
-
-    if (insertError) {
-      return { email: user.email ?? null, profile: null };
-    }
-
-    return { email: user.email ?? null, profile: created };
-  }
-
-  return { email: user.email ?? null, profile: data };
-}
-
 export async function updateProfile(input: {
   displayName: string;
   timezone: string;

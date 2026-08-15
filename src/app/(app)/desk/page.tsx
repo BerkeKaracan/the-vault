@@ -1,4 +1,4 @@
-import { getSessionProfile } from "@/app/(app)/settings-actions";
+import { getSessionProfile } from "@/lib/profile";
 import { DeskSurface } from "@/components/desk/desk-surface";
 import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
 import { getActiveMaterials } from "@/lib/materials";

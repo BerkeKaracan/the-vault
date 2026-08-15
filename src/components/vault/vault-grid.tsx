@@ -33,7 +33,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
     const seen = new Set<string>();
     const list: string[] = [];
     for (const material of materials) {
-      for (const tag of material.tags) {
+      for (const tag of material.tags ?? []) {
         const key = tag.toLocaleLowerCase("tr");
         if (seen.has(key)) continue;
         seen.add(key);
@@ -46,7 +46,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
   const visible = useMemo(() => {
     const filtered = tagFilter
       ? materials.filter((material) =>
-          material.tags.some(
+          (material.tags ?? []).some(
             (tag) =>
               tag.toLocaleLowerCase("tr") === tagFilter.toLocaleLowerCase("tr"),
           ),
