@@ -6,12 +6,6 @@ export function isAccentColor(value: string): value is AccentColor {
   return value === "emerald" || value === "blue" || value === "amber";
 }
 
-export const METRICS: readonly MetricType[] = [
-  "pages",
-  "questions",
-  "chapters",
-];
-
 export function isMetricType(value: string): value is MetricType {
   return value === "pages" || value === "questions" || value === "chapters";
 }

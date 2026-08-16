@@ -225,7 +225,7 @@ export function DeskPanel({
   );
 }
 
-export function HeatGrid({ compact = false }: { compact?: boolean }) {
+function HeatGrid({ compact = false }: { compact?: boolean }) {
   const cells = compact ? HEAT_COMPACT : HEAT_FULL;
 
   return (
