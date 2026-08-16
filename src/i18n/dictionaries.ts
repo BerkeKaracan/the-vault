@@ -88,17 +88,10 @@ const tr = {
     signupSuccess: "Hesap oluşturuldu. Giriş yapabilirsiniz.",
   },
   desk: {
-    title: "Active Desk",
-    subtitle: "Şu an masanda · {count}/3",
-    empty: "Masa boş.",
     emptySlot: "Boş yer",
-    emptySlotCta: "Materyal ekle",
-    addMaterial: "Materyal ekle",
-    fullHint: "Masa dolu. Yeni bir şey için önce birini Vault’a kaldır.",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
-    consistencyHint: "Günlük disiplin — masaya oturduğun günler.",
     pageInput: "Ulaşılan {unit}",
     updateProgress: "Kaydet",
     markCompleted: "Bitir",
@@ -111,19 +104,8 @@ const tr = {
     heatmapCellGoal: "{date}: {count} kayıt · {goal}",
     heatmapCellFuture: "{date}: henüz değil",
     heatmapEntry: "{count} {unit} {title}",
-    greetingMorning: "Günaydın",
-    greetingAfternoon: "İyi günler",
-    greetingEvening: "İyi akşamlar",
-    remainingStat: "kalan",
-    slotsStat: "masa",
-    todayStat: "bugün",
-    streakStat: "gün seri",
     remainingPages: "{count} {unit} kaldı",
-    remainingUnknown: "Toplam yok",
-    todayEmpty: "Bugün henüz kayıt yok",
-    todayLit: "Bugünün kutusu yandı",
     slotLabel: "Yer {n}",
-    pagesShort: "syf",
     quickAdd: "+{n}",
     quickSub: "-{n}",
     timerStart: "Başlat",
@@ -361,17 +343,10 @@ const en = {
     signupSuccess: "Account created. You can sign in now.",
   },
   desk: {
-    title: "Active Desk",
-    subtitle: "On your desk · {count}/3",
-    empty: "Desk is empty.",
     emptySlot: "Open slot",
-    emptySlotCta: "Add a material",
-    addMaterial: "Add material",
-    fullHint: "Desk is full. Shelve one to the Vault before adding another.",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
-    consistencyHint: "Daily discipline — days you sat at the desk.",
     pageInput: "Reached {unit}",
     updateProgress: "Log",
     markCompleted: "Complete",
@@ -384,19 +359,8 @@ const en = {
     heatmapCellGoal: "{count} logged on {date} · {goal}",
     heatmapCellFuture: "Not yet · {date}",
     heatmapEntry: "{count} {unit} {title}",
-    greetingMorning: "Good morning",
-    greetingAfternoon: "Good afternoon",
-    greetingEvening: "Good evening",
-    remainingStat: "left",
-    slotsStat: "on desk",
-    todayStat: "today",
-    streakStat: "day streak",
     remainingPages: "{count} {unit} left",
-    remainingUnknown: "No total",
-    todayEmpty: "Nothing logged today",
-    todayLit: "Today’s cell is lit",
     slotLabel: "Slot {n}",
-    pagesShort: "pp",
     quickAdd: "+{n}",
     quickSub: "-{n}",
     timerStart: "Start",
@@ -621,17 +585,10 @@ export type Dictionary = {
     signupSuccess: string;
   };
   desk: {
-    title: string;
-    subtitle: string;
-    empty: string;
     emptySlot: string;
-    emptySlotCta: string;
-    addMaterial: string;
-    fullHint: string;
     pageOnly: string;
     pageOf: string;
     consistency: string;
-    consistencyHint: string;
     pageInput: string;
     updateProgress: string;
     markCompleted: string;
@@ -644,19 +601,8 @@ export type Dictionary = {
     heatmapCellGoal: string;
     heatmapCellFuture: string;
     heatmapEntry: string;
-    greetingMorning: string;
-    greetingAfternoon: string;
-    greetingEvening: string;
-    remainingStat: string;
-    slotsStat: string;
-    todayStat: string;
-    streakStat: string;
     remainingPages: string;
-    remainingUnknown: string;
-    todayEmpty: string;
-    todayLit: string;
     slotLabel: string;
-    pagesShort: string;
     quickAdd: string;
     quickSub: string;
     timerStart: string;

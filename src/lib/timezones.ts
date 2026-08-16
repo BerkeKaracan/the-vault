@@ -13,7 +13,7 @@ export const TIMEZONES = [
   "Australia/Sydney",
 ] as const;
 
-export type Timezone = (typeof TIMEZONES)[number];
+type Timezone = (typeof TIMEZONES)[number];
 
 export function isTimezone(value: string): value is Timezone {
   return (TIMEZONES as readonly string[]).includes(value);

@@ -75,7 +75,7 @@ function categoriesOrNull(
   return cleaned.length > 0 ? cleaned : null;
 }
 
-export type AddMaterialInput = {
+type AddMaterialInput = {
   title: string;
   author?: string | null;
   totalPages?: number | null;
@@ -376,7 +376,7 @@ export type HeatmapDayEntry = {
   delta: number;
 };
 
-export type HeatmapData = {
+type HeatmapData = {
   totals: Record<string, number>;
   entries: Record<string, HeatmapDayEntry[]>;
 };

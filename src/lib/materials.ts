@@ -5,6 +5,7 @@ import {
   getGoogleBook,
   isGoogleVolumeId,
 } from "@/lib/google-books";
+import { getAuthUser } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { createClient } from "@/lib/supabase/server";
 import type { Material, MaterialNote } from "@/lib/types";
@@ -22,10 +23,10 @@ function normalizeMaterial(row: Material): Material {
 
 export async function getActiveMaterials(): Promise<Material[]> {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const [supabase, user] = await Promise.all([
+      createClient(),
+      getAuthUser(),
+    ]);
     if (!user) return [];
 
     const { data, error } = await supabase
@@ -48,10 +49,10 @@ export async function getActiveMaterials(): Promise<Material[]> {
 
 export async function getVaultMaterials(): Promise<Material[]> {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const [supabase, user] = await Promise.all([
+      createClient(),
+      getAuthUser(),
+    ]);
     if (!user) return [];
 
     const { data, error } = await supabase
