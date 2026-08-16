@@ -8,6 +8,20 @@ type SessionProfile = {
   profile: Profile | null;
 };
 
+function displayNameFromAuth(user: {
+  email?: string | null;
+  user_metadata?: Record<string, unknown>;
+}): string | null {
+  const meta = user.user_metadata ?? {};
+  for (const key of ["full_name", "name", "user_name", "preferred_username"]) {
+    const value = meta[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim().slice(0, 80);
+    }
+  }
+  return user.email?.split("@")[0]?.trim() || null;
+}
+
 /** Read-only. Must not live in a `"use server"` file — those are actions, not render queries. */
 export const getSessionProfile = cache(
   async (): Promise<SessionProfile> => {
@@ -33,7 +47,7 @@ export const getSessionProfile = cache(
       }
 
       if (!data) {
-        const fallbackName = user.email?.split("@")[0]?.trim() || null;
+        const fallbackName = displayNameFromAuth(user);
         const { data: created, error: insertError } = await supabase
           .from("profiles")
           .insert({

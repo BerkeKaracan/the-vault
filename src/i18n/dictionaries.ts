@@ -79,13 +79,9 @@ const tr = {
   login: {
     title: "Odak terminali",
     subtitle: "Sosyal gürültü yok. Sadece masan ve ilerlemen.",
-    tabLogin: "Giriş",
-    tabSignup: "Kayıt",
-    email: "E-posta",
-    password: "Şifre",
-    submitLogin: "Giriş yap",
-    submitSignup: "Hesap oluştur",
-    signupSuccess: "Hesap oluşturuldu. Giriş yapabilirsiniz.",
+    google: "Google ile devam et",
+    github: "GitHub ile devam et",
+    failed: "Giriş tamamlanamadı. Tekrar dene.",
   },
   desk: {
     emptySlot: "Boş yer",
@@ -334,13 +330,9 @@ const en = {
   login: {
     title: "Focus terminal",
     subtitle: "No social noise. Just your desk and your progress.",
-    tabLogin: "Sign in",
-    tabSignup: "Sign up",
-    email: "Email",
-    password: "Password",
-    submitLogin: "Sign in",
-    submitSignup: "Create account",
-    signupSuccess: "Account created. You can sign in now.",
+    google: "Continue with Google",
+    github: "Continue with GitHub",
+    failed: "Sign-in didn’t finish. Try again.",
   },
   desk: {
     emptySlot: "Open slot",
@@ -576,13 +568,9 @@ export type Dictionary = {
   login: {
     title: string;
     subtitle: string;
-    tabLogin: string;
-    tabSignup: string;
-    email: string;
-    password: string;
-    submitLogin: string;
-    submitSignup: string;
-    signupSuccess: string;
+    google: string;
+    github: string;
+    failed: string;
   };
   desk: {
     emptySlot: string;

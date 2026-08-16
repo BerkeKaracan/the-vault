@@ -22,7 +22,12 @@ Supabase proje URL + anon key’i doldur. Google Books anahtarı sonraki sprintt
 
 Supabase SQL Editor’de [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql) dosyasını çalıştır.
 
-Auth → URL Configuration’da Site URL ve Redirect URLs’e `http://localhost:3000` ve `http://localhost:3000/auth/callback` ekle.
+Auth → URL Configuration:
+
+- Site URL: `http://localhost:3000` (production’da `https://the-value.vercel.app`)
+- Redirect URLs: `/auth/callback` (local + production)
+
+Auth → Providers: Google ve GitHub’ı aç. Callback URL olarak Supabase’in verdiği `https://<project>.supabase.co/auth/v1/callback` adresini Google Cloud / GitHub OAuth app’e ekle. Email+şifre kapalı kalabilir.
 
 4. Geliştirme:
 
