@@ -87,6 +87,40 @@ function CoverSlot({
   );
 }
 
+function EmptyDesk() {
+  const { dictionary } = useI18n();
+
+  return (
+    <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-16 sm:px-8">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
+      />
+      <div className="relative mx-auto max-w-md text-center">
+        <p className="font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
+          {dictionary.nav.desk}
+        </p>
+        <h1 className="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl">
+          {dictionary.desk.emptyTitle}
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          {dictionary.desk.emptyBody}
+        </p>
+        <Link
+          href="/add"
+          className="mt-7 inline-flex rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition hover:opacity-90"
+        >
+          {dictionary.desk.emptyCta}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function EmptySlot({ slot }: { slot: number }) {
   const { dictionary } = useI18n();
 
@@ -213,6 +247,10 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
 
   const selected = materials.find((item) => item.id === selectedId) ?? null;
   const empties = Math.max(0, DESK_LIMIT - materials.length);
+
+  if (materials.length === 0) {
+    return <EmptyDesk />;
+  }
 
   return (
     <>
