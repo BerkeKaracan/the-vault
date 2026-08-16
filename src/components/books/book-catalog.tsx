@@ -10,12 +10,11 @@ import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import {
   BOOK_SHELVES,
-  CATALOG_PAGE_SIZE,
   DEFAULT_BOOK_SHELF,
   googleQueryFor,
   type BookShelfId,
 } from "@/lib/book-shelves";
-import type { GoogleBookResult } from "@/lib/google-books";
+import type { GoogleBookResult, GoogleBooksPage } from "@/lib/google-books";
 import type { MetricType } from "@/lib/types";
 
 function translateError(
@@ -33,11 +32,11 @@ function shelfLabel(dictionary: Dictionary, id: BookShelfId) {
 }
 
 export function BookCatalog({
-  initialBooks,
+  initialPage,
   metricType,
   tags,
 }: {
-  initialBooks: GoogleBookResult[];
+  initialPage: GoogleBooksPage;
   metricType: MetricType;
   tags: string;
 }) {
@@ -46,14 +45,15 @@ export function BookCatalog({
   const [shelf, setShelf] = useState<BookShelfId>(DEFAULT_BOOK_SHELF);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [books, setBooks] = useState(initialBooks);
-  const [hasMore, setHasMore] = useState(initialBooks.length >= CATALOG_PAGE_SIZE);
+  const [books, setBooks] = useState(initialPage.books);
+  const [nextIndex, setNextIndex] = useState(initialPage.nextIndex);
+  const [hasMore, setHasMore] = useState(initialPage.hasMore);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const skipInitialFetch = useRef(initialBooks.length > 0);
+  const skipInitialFetch = useRef(initialPage.books.length > 0);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 400);
@@ -105,9 +105,7 @@ export function BookCatalog({
       const res = await fetch(`/api/books/search?${params.toString()}`, {
         signal,
       });
-      const data = (await res.json()) as {
-        books?: GoogleBookResult[];
-        hasMore?: boolean;
+      const data = (await res.json()) as GoogleBooksPage & {
         error?: string;
         errorKey?: ErrorKey;
       };
@@ -130,7 +128,8 @@ export function BookCatalog({
         const seen = new Set(current.map((book) => book.id));
         return [...current, ...next.filter((book) => !seen.has(book.id))];
       });
-      setHasMore(data.hasMore ?? next.length >= CATALOG_PAGE_SIZE);
+      setNextIndex(data.nextIndex);
+      setHasMore(data.hasMore);
       if (replace && next.length === 0) {
         setSearchError(dictionary.add.noResults);
       }
@@ -277,7 +276,7 @@ export function BookCatalog({
           type="button"
           disabled={searching}
           onClick={() =>
-            void loadBooks({ replace: false, startIndex: books.length })
+            void loadBooks({ replace: false, startIndex: nextIndex })
           }
           className="self-center rounded-full border border-border px-4 py-2 text-sm text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/5 disabled:opacity-40"
         >

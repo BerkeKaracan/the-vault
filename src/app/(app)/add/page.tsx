@@ -2,19 +2,31 @@ import { AddMaterialPanel } from "@/components/materials/add-material-panel";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE } from "@/lib/book-shelves";
 import {
-  type GoogleBookResult,
+  type GoogleBooksPage,
   searchGoogleBooks,
 } from "@/lib/google-books";
 
 export default async function AddPage() {
   const dictionary = await getDictionary();
-  let initialBooks: GoogleBookResult[] = [];
+  let initialPage: GoogleBooksPage = {
+    books: [],
+    totalItems: 0,
+    startIndex: 0,
+    nextIndex: 0,
+    hasMore: false,
+  };
   try {
-    initialBooks = await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
+    initialPage = await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
       orderBy: "newest",
     });
   } catch {
-    initialBooks = [];
+    initialPage = {
+      books: [],
+      totalItems: 0,
+      startIndex: 0,
+      nextIndex: 0,
+      hasMore: false,
+    };
   }
 
   return (
@@ -24,7 +36,7 @@ export default async function AddPage() {
       </h1>
       <p className="mt-1.5 text-sm text-muted">{dictionary.add.subtitle}</p>
       <div className="mt-8">
-        <AddMaterialPanel initialBooks={initialBooks} />
+        <AddMaterialPanel initialPage={initialPage} />
       </div>
     </main>
   );

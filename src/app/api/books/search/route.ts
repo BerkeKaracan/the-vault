@@ -87,7 +87,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const books = await searchGoogleBooks(
+    const page = await searchGoogleBooks(
       toGoogleBooksQuery(q, subject),
       CATALOG_PAGE_SIZE,
       {
@@ -95,10 +95,7 @@ export async function GET(request: Request) {
         startIndex: Number.isFinite(startIndex) ? Math.max(startIndex, 0) : 0,
       },
     );
-    return NextResponse.json({
-      books,
-      hasMore: books.length >= CATALOG_PAGE_SIZE,
-    });
+    return NextResponse.json(page);
   } catch (error) {
     const payload = await userFacingMessage(error);
     console.error("[books/search]", error);

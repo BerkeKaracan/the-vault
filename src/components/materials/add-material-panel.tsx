@@ -7,7 +7,7 @@ import { MetricFields } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import type { GoogleBookResult } from "@/lib/google-books";
+import type { GoogleBooksPage } from "@/lib/google-books";
 import type { MetricType } from "@/lib/types";
 
 type Tab = "search" | "manual";
@@ -23,9 +23,9 @@ function translateError(
 }
 
 export function AddMaterialPanel({
-  initialBooks,
+  initialPage,
 }: {
-  initialBooks: GoogleBookResult[];
+  initialPage: GoogleBooksPage;
 }) {
   const { dictionary } = useI18n();
   const [tab, setTab] = useState<Tab>("search");
@@ -114,7 +114,7 @@ export function AddMaterialPanel({
 
       {tab === "search" ? (
         <BookCatalog
-          initialBooks={initialBooks}
+          initialPage={initialPage}
           metricType={metricType}
           tags={tags}
         />
