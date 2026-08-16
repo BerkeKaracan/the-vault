@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { getAuthUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
@@ -11,10 +12,10 @@ type SessionProfile = {
 export const getSessionProfile = cache(
   async (): Promise<SessionProfile> => {
     try {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const [supabase, user] = await Promise.all([
+        createClient(),
+        getAuthUser(),
+      ]);
 
       if (!user) {
         return { email: null, profile: null };

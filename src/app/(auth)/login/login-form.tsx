@@ -46,7 +46,8 @@ export function LoginForm({ next = "/desk" }: { next?: string }) {
         setMessage(error.message);
         return;
       }
-      window.location.href = next;
+      await supabase.auth.getSession();
+      window.location.assign(next);
     });
   }
 
