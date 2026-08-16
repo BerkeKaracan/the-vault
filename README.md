@@ -27,7 +27,9 @@ Auth → URL Configuration:
 - Site URL: `http://localhost:3000` (production’da `https://the-value.vercel.app`)
 - Redirect URLs: `/auth/callback` (local + production)
 
-Auth → Providers: Google ve GitHub’ı aç. Callback URL olarak Supabase’in verdiği `https://<project>.supabase.co/auth/v1/callback` adresini Google Cloud / GitHub OAuth app’e ekle. Email+şifre kapalı kalabilir.
+Auth → Providers: Google ve GitHub’ı aç. Callback URL olarak Supabase’in verdiği `https://<project>.supabase.co/auth/v1/callback` adresini Google Cloud / GitHub OAuth app’e ekle.
+
+Yerel test girişi (`npm run dev` login butonu, `testuser@gmail.com` / `123456`) için Email provider açık olsun; Confirm email kapalı olsun veya Authentication → Users’tan bu kullanıcıyı Auto Confirm ile ekle. Production’da bu buton görünmez.
 
 4. Geliştirme:
 

@@ -81,9 +81,14 @@ const tr = {
     subtitle: "Sosyal gürültü yok. Sadece masan ve ilerlemen.",
     google: "Google ile devam et",
     github: "GitHub ile devam et",
+    dev: "Yerel test · testuser@gmail.com",
     failed: "Giriş tamamlanamadı. Tekrar dene.",
   },
   desk: {
+    emptyTitle: "Masana bir şey koy.",
+    emptyBody:
+      "Aynı anda en fazla üç materyal. Kitap, soru seti veya doküman — ilkini ekle, bugünün kutusunu yak.",
+    emptyCta: "Materyal ekle",
     emptySlot: "Boş yer",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
@@ -332,9 +337,14 @@ const en = {
     subtitle: "No social noise. Just your desk and your progress.",
     google: "Continue with Google",
     github: "Continue with GitHub",
+    dev: "Local test · testuser@gmail.com",
     failed: "Sign-in didn’t finish. Try again.",
   },
   desk: {
+    emptyTitle: "Put something on the desk.",
+    emptyBody:
+      "Three materials at most. A book, a set, or a doc — add the first one and light today’s cell.",
+    emptyCta: "Add material",
     emptySlot: "Open slot",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
@@ -570,9 +580,13 @@ export type Dictionary = {
     subtitle: string;
     google: string;
     github: string;
+    dev: string;
     failed: string;
   };
   desk: {
+    emptyTitle: string;
+    emptyBody: string;
+    emptyCta: string;
     emptySlot: string;
     pageOnly: string;
     pageOf: string;

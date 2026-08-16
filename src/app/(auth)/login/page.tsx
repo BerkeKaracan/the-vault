@@ -35,7 +35,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           {dictionary.login.subtitle}
         </p>
       </div>
-      <LoginForm next={next} error={error ?? null} />
+      <LoginForm
+        next={next}
+        error={error ?? null}
+        showDevLogin={process.env.NODE_ENV === "development"}
+      />
     </main>
   );
 }

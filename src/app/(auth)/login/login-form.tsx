@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import { useI18n } from "@/i18n/provider";
 import { createClient } from "@/lib/supabase/client";
+import { devSignIn } from "./actions";
 
 type OAuthProvider = "google" | "github";
+type LoginTarget = OAuthProvider | "dev";
 
 function GoogleMark() {
   return (
@@ -43,16 +45,30 @@ function GitHubMark() {
 export function LoginForm({
   next = "/desk",
   error = null,
+  showDevLogin = false,
 }: {
   next?: string;
   error?: string | null;
+  showDevLogin?: boolean;
 }) {
   const { dictionary } = useI18n();
   const [pending, startTransition] = useTransition();
-  const [active, setActive] = useState<OAuthProvider | null>(null);
+  const [active, setActive] = useState<LoginTarget | null>(null);
   const [message, setMessage] = useState<string | null>(
     error ? dictionary.login.failed : null,
   );
+
+  function signInDev() {
+    setMessage(null);
+    setActive("dev");
+    startTransition(async () => {
+      const result = await devSignIn(next);
+      if (result && !result.ok) {
+        setMessage(dictionary.login.failed);
+        setActive(null);
+      }
+    });
+  }
 
   function signIn(provider: OAuthProvider) {
     setMessage(null);
@@ -101,6 +117,18 @@ export function LoginForm({
           ? dictionary.busy
           : dictionary.login.github}
       </button>
+      {showDevLogin ? (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={signInDev}
+          className="flex items-center justify-center rounded-full border border-dashed border-border px-4 py-3 font-mono text-xs text-muted transition hover:border-foreground/25 hover:text-foreground disabled:opacity-40"
+        >
+          {pending && active === "dev"
+            ? dictionary.busy
+            : dictionary.login.dev}
+        </button>
+      ) : null}
       {message ? (
         <output className="mt-1 text-center text-sm text-muted">{message}</output>
       ) : null}
