@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { setCollectionMembership } from "@/app/(app)/collection-actions";
 import { deleteMaterial, updateMaterial } from "@/app/(app)/materials-actions";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
+import type { Collection } from "@/lib/collections";
 import type { Material } from "@/lib/types";
 
 const fieldClass =
@@ -19,7 +21,13 @@ function translateError(
   return dictionary.errors.generic;
 }
 
-export function MaterialEditor({ material }: { material: Material }) {
+export function MaterialEditor({
+  material,
+  collections,
+}: {
+  material: Material;
+  collections: Collection[];
+}) {
   const { dictionary } = useI18n();
   const [title, setTitle] = useState(material.title);
   const [totalPages, setTotalPages] = useState(
@@ -104,6 +112,46 @@ export function MaterialEditor({ material }: { material: Material }) {
             className={fieldClass}
           />
         </label>
+        {collections.length > 0 ? (
+          <fieldset>
+            <legend className="text-sm text-muted">
+              {dictionary.vault.shelfAdd}
+            </legend>
+            <div className="mt-2 flex flex-col gap-2">
+              {collections.map((shelf) => {
+                const checked = shelf.materialIds.includes(material.id);
+                return (
+                  <label
+                    key={shelf.id}
+                    className="flex items-center gap-2 text-sm text-foreground/80"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      disabled={pending}
+                      onChange={(e) => {
+                        const on = e.target.checked;
+                        startTransition(async () => {
+                          const result = await setCollectionMembership(
+                            shelf.id,
+                            material.id,
+                            on,
+                          );
+                          if (!result.ok) {
+                            setMessage(
+                              translateError(dictionary, result.error),
+                            );
+                          }
+                        });
+                      }}
+                    />
+                    {shelf.name}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        ) : null}
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"

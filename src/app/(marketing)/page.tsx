@@ -72,7 +72,18 @@ export default async function LandingPage() {
           >
             {dictionary.brand}
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <nav className="hidden items-center gap-4 text-[0.8rem] text-muted sm:flex">
+              <Link href="#how" className="hover:text-foreground">
+                {landing.navHow}
+              </Link>
+              <Link href="#library" className="hover:text-foreground">
+                {landing.navLibrary}
+              </Link>
+              <Link href="#log" className="hover:text-foreground">
+                {landing.navLog}
+              </Link>
+            </nav>
             <ThemeToggle />
             <LanguageSwitcher />
             <Link
@@ -114,7 +125,7 @@ export default async function LandingPage() {
                 {landing.closingCta}
               </Link>
               <Link
-                href="#manifesto"
+                href="#how"
                 className="rounded-full border border-border px-6 py-3 text-[0.9rem] text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/5 hover:text-foreground"
               >
                 {landing.ctaSecondary}
@@ -164,7 +175,7 @@ export default async function LandingPage() {
         </section>
 
         <section
-          id="manifesto"
+          id="how"
           className="reveal grid gap-12 border-t border-border py-16 lg:grid-cols-2 lg:gap-20 lg:py-24"
         >
           <div>
@@ -211,25 +222,64 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        <section
+          id="tour"
+          className="reveal border-t border-border py-16 lg:py-24"
+        >
+          <h2 className="font-display text-[clamp(1.9rem,4vw,3.1rem)] leading-[1.02] font-semibold tracking-[-0.03em] text-foreground">
+            {landing.tourTitle}
+          </h2>
+          <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { title: landing.tourDesk, hint: landing.tourDeskHint },
+              { title: landing.tourLibrary, hint: landing.tourLibraryHint },
+              { title: landing.tourDiscover, hint: landing.tourDiscoverHint },
+              { title: landing.tourLog, hint: landing.tourLogHint },
+            ].map((item) => (
+              <li key={item.title} className="border-t border-border pt-4">
+                <p className="font-mono text-[0.62rem] tracking-[0.22em] text-accent/70 uppercase">
+                  {item.title}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {item.hint}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <Act
           index="01"
           title={landing.deskTitle}
           body={landing.deskBody}
           visual={<DeskPanel dictionary={dictionary} variant="limit" />}
         />
-        <Act
-          index="02"
-          title={landing.heatTitle}
-          body={landing.heatBody}
-          visual={<HeatPanel dictionary={dictionary} />}
-          flip
-        />
-        <Act
-          index="03"
-          title={landing.vaultTitle}
-          body={landing.vaultBody}
-          visual={<VaultPanel dictionary={dictionary} />}
-        />
+        <div id="log">
+          <Act
+            index="02"
+            title={landing.heatTitle}
+            body={landing.heatBody}
+            visual={<HeatPanel dictionary={dictionary} />}
+            flip
+          />
+        </div>
+        <div id="library">
+          <Act
+            index="03"
+            title={landing.vaultTitle}
+            body={landing.vaultBody}
+            visual={<VaultPanel dictionary={dictionary} />}
+          />
+        </div>
+
+        <section className="reveal border-t border-border py-16 lg:py-24">
+          <h2 className="font-display max-w-md text-[clamp(1.9rem,4vw,3.1rem)] leading-[1.02] font-semibold tracking-[-0.03em] text-foreground">
+            {landing.shelvesPitchTitle}
+          </h2>
+          <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-muted">
+            {landing.shelvesPitchBody}
+          </p>
+        </section>
 
         <section className="reveal border-t border-border py-24 text-center lg:py-32">
           <h2 className="font-display mx-auto max-w-3xl text-[clamp(2.4rem,7vw,5rem)] leading-[0.98] font-semibold tracking-[-0.045em] text-foreground">
@@ -253,12 +303,37 @@ export default async function LandingPage() {
       </main>
 
       <footer className="relative z-10 border-t border-border">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <p className="font-mono text-[0.65rem] tracking-[0.3em] text-muted uppercase">
-            {dictionary.brand}
-          </p>
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-8 sm:px-10">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-mono text-[0.65rem] tracking-[0.3em] text-muted uppercase">
+              {dictionary.brand}
+            </p>
+            <nav className="flex flex-wrap gap-4 text-[0.78rem] text-muted">
+              <Link href="/login?next=/desk" className="hover:text-foreground">
+                {dictionary.nav.desk}
+              </Link>
+              <Link
+                href="/login?next=/library"
+                className="hover:text-foreground"
+              >
+                {dictionary.nav.library}
+              </Link>
+              <Link
+                href="/login?next=/discover"
+                className="hover:text-foreground"
+              >
+                {dictionary.nav.discover}
+              </Link>
+              <Link href="/login" className="hover:text-foreground">
+                {landing.ctaPrimary}
+              </Link>
+            </nav>
+            <LanguageSwitcher />
+          </div>
           <p className="text-[0.78rem] text-muted">{landing.footerNote}</p>
-          <LanguageSwitcher />
+          <p className="font-mono text-[0.62rem] tracking-[0.18em] text-muted uppercase">
+            {landing.footerNoSocial}
+          </p>
         </div>
       </footer>
     </div>

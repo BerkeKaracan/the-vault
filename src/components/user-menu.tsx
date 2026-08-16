@@ -38,6 +38,14 @@ export function UserMenu({ label }: { label: string }) {
           className="absolute right-0 z-50 mt-2 min-w-40 rounded-lg border border-border bg-elevated py-1 shadow-xl"
         >
           <Link
+            href="/stats"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+          >
+            {dictionary.nav.stats}
+          </Link>
+          <Link
             href="/settings"
             role="menuitem"
             onClick={() => setOpen(false)}
