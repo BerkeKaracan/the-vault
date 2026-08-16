@@ -10,6 +10,7 @@ import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
+import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import type { Material } from "@/lib/types";
 
@@ -79,7 +80,9 @@ export function LibraryActions({
             <button
               type="button"
               disabled={pending}
-              onClick={() => run(() => markCompleted(material.id))}
+              onClick={() =>
+                run(() => markCompleted(material.id, getLocalDateString()))
+              }
               className="px-2 text-xs text-muted hover:text-foreground/80 disabled:opacity-40"
             >
               {dictionary.desk.markCompleted}
@@ -95,14 +98,17 @@ export function LibraryActions({
           </div>
         </>
       ) : (
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => run(() => activateMaterial(material.id))}
-          className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
-        >
-          {dictionary.vault.activate}
-        </button>
+        <>
+          <ProgressControls material={material} showTimer={false} />
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => run(() => activateMaterial(material.id))}
+            className="w-fit rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
+          >
+            {dictionary.vault.activate}
+          </button>
+        </>
       )}
 
       {message ? (

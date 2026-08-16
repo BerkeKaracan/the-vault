@@ -3,14 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookRecord } from "@/components/books/book-record";
 import { DiscoverActions } from "@/components/books/discover-actions";
-import { getDictionary, getLocale } from "@/i18n/get-dictionary";
+import { getDictionary } from "@/i18n/get-dictionary";
 import {
   type GoogleBookResult,
   GoogleBooksError,
   getGoogleBook,
   isGoogleVolumeId,
 } from "@/lib/google-books";
-import { localizeDescription } from "@/lib/localize-description";
 import { findMaterialByGoogleId } from "@/lib/materials";
 
 type DiscoverPageProps = {
@@ -35,10 +34,7 @@ export async function generateMetadata({
 
 export default async function DiscoverPage({ params }: DiscoverPageProps) {
   const { googleId } = await params;
-  const [dictionary, locale] = await Promise.all([
-    getDictionary(),
-    getLocale(),
-  ]);
+  const dictionary = await getDictionary();
 
   if (!isGoogleVolumeId(googleId)) {
     notFound();
@@ -52,7 +48,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
       error instanceof GoogleBooksError &&
       (error.status === 429 || error.status === 503 || error.status >= 500);
     return (
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
         <p className="text-sm text-muted">
           {unavailable
             ? dictionary.errors.booksUnavailable
@@ -69,7 +65,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
   const owned = await findMaterialByGoogleId(book.id);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
       <Link
         href="/add"
         className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"
@@ -82,7 +78,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
           title: book.title,
           author: book.authors.join(", ") || null,
           coverUrl: book.coverUrl,
-          description: await localizeDescription(book.description, locale),
+          description: book.description,
           publishedDate: book.publishedDate,
           publisher: book.publisher,
           categories: book.categories,

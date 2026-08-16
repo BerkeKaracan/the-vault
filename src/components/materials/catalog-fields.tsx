@@ -5,9 +5,9 @@ import { ACCENTS } from "@/lib/catalog";
 import type { MetricType } from "@/lib/types";
 
 const SWATCH: Record<(typeof ACCENTS)[number], string> = {
-  emerald: "bg-[#4ade80]",
-  blue: "bg-[#60a5fa]",
-  amber: "bg-[#fbbf24]",
+  emerald: "bg-[var(--accent-emerald)]",
+  blue: "bg-[var(--accent-blue)]",
+  amber: "bg-[var(--accent-amber)]",
 };
 
 export function AccentSwatches({

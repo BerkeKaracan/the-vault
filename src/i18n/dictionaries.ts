@@ -51,7 +51,7 @@ const tr = {
     closingTitle: "Masana dön.",
     closingBody: "Hesabını aç, ilk materyalini ekle, bugünün kutusunu yak.",
     closingCta: "Başla",
-    closingNote: "E-posta yeter. Kart yok, reklam yok.",
+    closingNote: "Google veya GitHub yeter. Kart yok, reklam yok.",
     footerNote: "Zihinsel mesai için yapıldı.",
     mockSample: "Örnek",
     mockLimit: "Limit",
@@ -72,6 +72,7 @@ const tr = {
     desk: "Desk",
     vault: "Vault",
     add: "Ekle",
+    menu: "Menü",
     settings: "Ayarlar",
     signOut: "Çıkış",
     focus: "Odak",
@@ -98,6 +99,7 @@ const tr = {
     markCompleted: "Bitir",
     shelve: "Vault’a kaldır",
     heatmapStats: "{days} aktif gün",
+    heatmapEmptyCaption: "Bugünü yakmak için bir sayfa kaydet.",
     heatmapLess: "Az",
     heatmapMore: "Çok",
     heatmapCell: "{date}: {count} kayıt",
@@ -114,11 +116,16 @@ const tr = {
     timerReset: "Sıfırla",
     pace: "{rate}/{unit} · saat",
     goalMet: "Hedef",
+    todayGoal: "{today} / {goal}",
+    todayGoalCaption: "bugün / hedef",
   },
   vault: {
     title: "The Vault",
     subtitle: "Arşiv ve bekleyenler · {count}",
-    empty: "Kütüphane henüz boş.",
+    emptyTitle: "Vault henüz boş.",
+    emptyBody:
+      "Bitirdiklerin ve bekleyenler burada durur. İlk kapağı ekle, masaya almak istediğinde hazır olsun.",
+    emptyCta: "Materyal ekle",
     add: "Ekle",
     activate: "Masaya al",
     statusShelved: "Bekliyor",
@@ -129,7 +136,7 @@ const tr = {
   },
   add: {
     title: "Materyal ekle",
-    subtitle: "Google Books’tan bul veya kendi kaynağını elle gir.",
+    subtitle: "Vitrinden bir kapak seç, ara veya kendi kaynağını elle gir.",
     tabSearch: "Google Books",
     tabManual: "Manuel",
     searchPlaceholder: "Kitap, yazar, konu…",
@@ -137,6 +144,7 @@ const tr = {
     searching: "…",
     searchFailed: "Arama başarısız.",
     noResults: "Sonuç bulunamadı.",
+    loadMore: "Daha fazla",
     noAuthor: "Yazar yok",
     pages: "{count} sayfa",
     pagesUnknown: "Sayfa ?",
@@ -159,11 +167,23 @@ const tr = {
     metricChapters: "Bölüm",
     tagsLabel: "Etiketler",
     tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
+    shelves: {
+      all: "Kurgu vitrini",
+      fiction: "Kurgu",
+      history: "Tarih",
+      science: "Bilim",
+      philosophy: "Felsefe",
+      psychology: "Psikoloji",
+      business: "İş",
+      computers: "Yazılım",
+      poetry: "Şiir",
+      biography: "Biyografi",
+    },
   },
   book: {
     about: "Hakkında",
     noDescription: "Bu kitap için açıklama yok.",
-    openInLibrary: "Kütüphanede aç",
+    openInVault: "Vault’ta aç",
     backToAdd: "Aramaya dön",
     backToDesk: "Masaya dön",
     backToVault: "Vault’a dön",
@@ -175,6 +195,12 @@ const tr = {
     notesPlaceholder: "Formül, soru no, alıntı…",
     notesPreview: "Önizle",
     notesEdit: "Düzenle",
+    edit: "Düzenle",
+    save: "Kaydet",
+    saved: "Kaydedildi.",
+    delete: "Sil",
+    deleteConfirm:
+      "Bu materyali silmek istediğine emin misin? Bu işlem geri alınamaz.",
   },
   metric: {
     page: "sayfa",
@@ -191,7 +217,7 @@ const tr = {
     authRequired: "Oturum gerekli.",
     invalidPage: "Değer 0 veya üzeri olmalı.",
     notFound: "Materyal bulunamadı.",
-    alreadyOwned: "Bu kitap zaten kütüphanende.",
+    alreadyOwned: "Bu kitap zaten masanda veya Vault’ta.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -230,7 +256,6 @@ const tr = {
     generalTitle: "Genel",
     displayName: "Görünen ad",
     email: "E-posta",
-    timezone: "Saat dilimi",
     weekStart: "Haftanın ilk günü",
     weekMonday: "Pazartesi",
     weekSunday: "Pazar",
@@ -245,11 +270,11 @@ const tr = {
     themeLight: "Açık",
     accent: "Vurgu rengi",
     accentEmerald: "Neon yeşil",
-    accentBlue: "Vercel mavi",
+    accentBlue: "Mavi",
     accentAmber: "Vault amber",
     dailyGoal: "Günlük hedef",
     dailyGoalHint:
-      "Boş = hedef yok. Heatmap’te hedefi geçen günler işaretlenir.",
+      "Boş = hedef yok. Sayfa cinsinden. Heatmap’te hedefi geçen günler işaretlenir.",
     focusMode: "Gizlilik / odak",
     focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
   },
@@ -307,7 +332,7 @@ const en = {
     closingBody:
       "Create an account, add your first material, light today’s cell.",
     closingCta: "Get started",
-    closingNote: "Email is enough. No card, no ads.",
+    closingNote: "Google or GitHub is enough. No card, no ads.",
     footerNote: "Built for deep work.",
     mockSample: "Sample",
     mockLimit: "Limit",
@@ -328,6 +353,7 @@ const en = {
     desk: "Desk",
     vault: "Vault",
     add: "Add",
+    menu: "Menu",
     settings: "Settings",
     signOut: "Sign out",
     focus: "Focus",
@@ -354,6 +380,7 @@ const en = {
     markCompleted: "Complete",
     shelve: "Move to Vault",
     heatmapStats: "{days} active days",
+    heatmapEmptyCaption: "Log a page to light today.",
     heatmapLess: "Less",
     heatmapMore: "More",
     heatmapCell: "{count} logged on {date}",
@@ -370,11 +397,16 @@ const en = {
     timerReset: "Reset",
     pace: "{rate}/{unit} · hour",
     goalMet: "Goal",
+    todayGoal: "{today} / {goal}",
+    todayGoalCaption: "today / goal",
   },
   vault: {
     title: "The Vault",
     subtitle: "Archive and waiting · {count}",
-    empty: "Library is still empty.",
+    emptyTitle: "The Vault is still empty.",
+    emptyBody:
+      "Finished and waiting materials live here. Add a cover so it’s ready when you want it on the desk.",
+    emptyCta: "Add material",
     add: "Add",
     activate: "Activate",
     statusShelved: "Shelved",
@@ -385,7 +417,7 @@ const en = {
   },
   add: {
     title: "Add material",
-    subtitle: "Find it on Google Books or enter your own source.",
+    subtitle: "Pick a cover from the shelf, search, or enter your own source.",
     tabSearch: "Google Books",
     tabManual: "Manual",
     searchPlaceholder: "Book, author, topic…",
@@ -393,6 +425,7 @@ const en = {
     searching: "…",
     searchFailed: "Search failed.",
     noResults: "No results found.",
+    loadMore: "Load more",
     noAuthor: "No author",
     pages: "{count} pages",
     pagesUnknown: "Pages ?",
@@ -415,11 +448,23 @@ const en = {
     metricChapters: "Chapters",
     tagsLabel: "Tags",
     tagsPlaceholder: "Software, Exam, Literature",
+    shelves: {
+      all: "Fiction shelf",
+      fiction: "Fiction",
+      history: "History",
+      science: "Science",
+      philosophy: "Philosophy",
+      psychology: "Psychology",
+      business: "Business",
+      computers: "Computers",
+      poetry: "Poetry",
+      biography: "Biography",
+    },
   },
   book: {
     about: "About",
     noDescription: "No description for this book.",
-    openInLibrary: "Open in library",
+    openInVault: "Open in Vault",
     backToAdd: "Back to search",
     backToDesk: "Back to desk",
     backToVault: "Back to Vault",
@@ -431,6 +476,11 @@ const en = {
     notesPlaceholder: "Formula, question no, quote…",
     notesPreview: "Preview",
     notesEdit: "Edit",
+    edit: "Edit",
+    save: "Save",
+    saved: "Saved.",
+    delete: "Delete",
+    deleteConfirm: "Delete this material? This cannot be undone.",
   },
   metric: {
     page: "page",
@@ -447,7 +497,7 @@ const en = {
     authRequired: "Sign in required.",
     invalidPage: "Value must be 0 or greater.",
     notFound: "Material not found.",
-    alreadyOwned: "This book is already in your library.",
+    alreadyOwned: "This book is already on your desk or in the Vault.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -486,7 +536,6 @@ const en = {
     generalTitle: "General",
     displayName: "Display name",
     email: "Email",
-    timezone: "Time zone",
     weekStart: "First day of week",
     weekMonday: "Monday",
     weekSunday: "Sunday",
@@ -501,11 +550,11 @@ const en = {
     themeLight: "Light",
     accent: "Accent color",
     accentEmerald: "Neon green",
-    accentBlue: "Vercel blue",
+    accentBlue: "Blue",
     accentAmber: "Vault amber",
     dailyGoal: "Daily goal",
     dailyGoalHint:
-      "Leave empty for no goal. Days that beat it get a mark on the heatmap.",
+      "Leave empty for no goal. Counted in pages. Days that beat it get a mark on the heatmap.",
     focusMode: "Privacy / focus",
     focusModeHint: "Blurs titles and numbers.",
   },
@@ -571,6 +620,7 @@ export type Dictionary = {
     desk: string;
     vault: string;
     add: string;
+    menu: string;
     settings: string;
     signOut: string;
     focus: string;
@@ -596,6 +646,7 @@ export type Dictionary = {
     markCompleted: string;
     shelve: string;
     heatmapStats: string;
+    heatmapEmptyCaption: string;
     heatmapLess: string;
     heatmapMore: string;
     heatmapCell: string;
@@ -612,11 +663,15 @@ export type Dictionary = {
     timerReset: string;
     pace: string;
     goalMet: string;
+    todayGoal: string;
+    todayGoalCaption: string;
   };
   vault: {
     title: string;
     subtitle: string;
-    empty: string;
+    emptyTitle: string;
+    emptyBody: string;
+    emptyCta: string;
     add: string;
     activate: string;
     statusShelved: string;
@@ -635,6 +690,7 @@ export type Dictionary = {
     searching: string;
     searchFailed: string;
     noResults: string;
+    loadMore: string;
     noAuthor: string;
     pages: string;
     pagesUnknown: string;
@@ -657,11 +713,23 @@ export type Dictionary = {
     metricChapters: string;
     tagsLabel: string;
     tagsPlaceholder: string;
+    shelves: {
+      all: string;
+      fiction: string;
+      history: string;
+      science: string;
+      philosophy: string;
+      psychology: string;
+      business: string;
+      computers: string;
+      poetry: string;
+      biography: string;
+    };
   };
   book: {
     about: string;
     noDescription: string;
-    openInLibrary: string;
+    openInVault: string;
     backToAdd: string;
     backToDesk: string;
     backToVault: string;
@@ -673,6 +741,11 @@ export type Dictionary = {
     notesPlaceholder: string;
     notesPreview: string;
     notesEdit: string;
+    edit: string;
+    save: string;
+    saved: string;
+    delete: string;
+    deleteConfirm: string;
   };
   metric: {
     page: string;
@@ -722,7 +795,6 @@ export type Dictionary = {
     generalTitle: string;
     displayName: string;
     email: string;
-    timezone: string;
     weekStart: string;
     weekMonday: string;
     weekSunday: string;

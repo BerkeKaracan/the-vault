@@ -1,6 +1,7 @@
 "use server";
 
-import { refresh, revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
+import { redirect } from "next/navigation";
 import { isMetricType, parseTags } from "@/lib/catalog";
 import {
   type GoogleBookResult,
@@ -48,23 +49,6 @@ function mapDbError(message: string | undefined): ActionErrorCode {
     return "alreadyOwned";
   }
   return "generic";
-}
-
-function revalidateMaterialPaths(
-  materialId?: string,
-  googleId?: string | null,
-) {
-  revalidatePath("/desk");
-  revalidatePath("/vault");
-  revalidatePath("/add");
-  revalidatePath("/materials", "layout");
-  revalidatePath("/discover", "layout");
-  if (materialId) {
-    revalidatePath(`/materials/${materialId}`);
-  }
-  if (googleId) {
-    revalidatePath(`/discover/${googleId}`);
-  }
 }
 
 function categoriesOrNull(
@@ -149,7 +133,7 @@ export async function addMaterial(
     return { ok: false, error: "generic" };
   }
 
-  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
 }
 
@@ -178,6 +162,7 @@ export async function addGoogleBook(
     return { ok: false, error: "notFound" };
   }
 
+  // Persist the Google catalog payload at insert time — never hydrate on GET.
   return addMaterial({
     title: book.title,
     author: book.authors.join(", ") || null,
@@ -246,14 +231,63 @@ export async function logProgress(input: {
     });
   }
 
-  revalidateMaterialPaths(data.id, data.google_books_id);
   refresh();
   return { ok: true, data };
 }
 
 export async function markCompleted(
   materialId: string,
+  loggedOn: string,
 ): Promise<ActionResult<Material>> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(loggedOn)) {
+    return { ok: false, error: "generic" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: material, error: loadError } = await supabase
+    .from("materials")
+    .select("*")
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!material) {
+    return { ok: false, error: "notFound" };
+  }
+
+  if (
+    material.total_pages != null &&
+    material.current_page !== material.total_pages
+  ) {
+    const { data, error } = await supabase.rpc("log_progress", {
+      p_material_id: materialId,
+      p_page_after: material.total_pages,
+      p_logged_on: loggedOn,
+    });
+
+    if (error) {
+      return { ok: false, error: mapDbError(error.message) };
+    }
+    if (!data) {
+      return { ok: false, error: "generic" };
+    }
+
+    if (data.status === "completed") {
+      refresh();
+      return { ok: true, data };
+    }
+  }
+
   return updateMaterialStatus(materialId, "completed");
 }
 
@@ -294,7 +328,7 @@ export async function activateMaterial(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
 }
 
@@ -325,8 +359,127 @@ async function updateMaterialStatus(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
+}
+
+export async function updateMaterial(input: {
+  materialId: string;
+  title: string;
+  totalPages?: number | null;
+  tags?: string[] | string;
+}): Promise<ActionResult<Material>> {
+  const title = input.title.trim();
+  if (!title) {
+    return { ok: false, error: "titleRequired" };
+  }
+
+  let totalPages: number | null = null;
+  if (input.totalPages != null) {
+    if (!Number.isFinite(input.totalPages) || input.totalPages <= 0) {
+      return { ok: false, error: "invalidPage" };
+    }
+    totalPages = Math.floor(input.totalPages);
+  }
+
+  const tags =
+    typeof input.tags === "string" ? parseTags(input.tags) : (input.tags ?? []);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing, error: loadError } = await supabase
+    .from("materials")
+    .select("current_page")
+    .eq("id", input.materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!existing) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const patch: {
+    title: string;
+    total_pages: number | null;
+    tags: string[];
+    updated_at: string;
+    current_page?: number;
+  } = {
+    title,
+    total_pages: totalPages,
+    tags,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (totalPages != null && existing.current_page > totalPages) {
+    patch.current_page = totalPages;
+  }
+
+  const { data, error } = await supabase
+    .from("materials")
+    .update(patch)
+    .eq("id", input.materialId)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
+
+  refresh();
+  return { ok: true, data };
+}
+
+export async function deleteMaterial(
+  materialId: string,
+): Promise<ActionResult<void>> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing, error: loadError } = await supabase
+    .from("materials")
+    .select("id, status, google_books_id")
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!existing) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const { error } = await supabase
+    .from("materials")
+    .delete()
+    .eq("id", materialId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+
+  refresh();
+  redirect(existing.status === "active" ? "/desk" : "/vault");
 }
 
 export async function updateMaterialMetric(
@@ -363,100 +516,8 @@ export async function updateMaterialMetric(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateMaterialPaths(data.id, data.google_books_id);
   refresh();
   return { ok: true, data };
-}
-
-/** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
-export type HeatmapDayEntry = {
-  materialId: string;
-  title: string;
-  metricType: MetricType;
-  delta: number;
-};
-
-type HeatmapData = {
-  totals: Record<string, number>;
-  entries: Record<string, HeatmapDayEntry[]>;
-};
-
-export async function getHeatmapData(fromDate: string): Promise<HeatmapData> {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fromDate)) {
-    return { totals: {}, entries: {} };
-  }
-
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return { totals: {}, entries: {} };
-
-    const { data, error } = await supabase
-      .from("progress_entries")
-      .select(
-        "logged_on, pages_delta, material_id, materials(title, metric_type)",
-      )
-      .eq("user_id", user.id)
-      .gte("logged_on", fromDate)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("[getHeatmapData]", error.message);
-      return { totals: {}, entries: {} };
-    }
-
-    const totals: Record<string, number> = {};
-    const grouped = new Map<string, Map<string, HeatmapDayEntry>>();
-
-    for (const row of data ?? []) {
-      totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
-      const material = nestedMaterial(row.materials);
-      const byMaterial = grouped.get(row.logged_on) ?? new Map();
-      const existing = byMaterial.get(row.material_id);
-      if (existing) {
-        existing.delta += row.pages_delta;
-      } else {
-        byMaterial.set(row.material_id, {
-          materialId: row.material_id,
-          title: material?.title?.trim() || "—",
-          metricType:
-            material?.metric_type && isMetricType(material.metric_type)
-              ? material.metric_type
-              : "pages",
-          delta: row.pages_delta,
-        });
-      }
-      grouped.set(row.logged_on, byMaterial);
-    }
-
-    const entries: Record<string, HeatmapDayEntry[]> = {};
-    for (const [date, byMaterial] of grouped) {
-      entries[date] = [...byMaterial.values()]
-        .filter((item) => item.delta !== 0)
-        .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-    }
-
-    return { totals, entries };
-  } catch (error) {
-    console.error("[getHeatmapData]", error);
-    return { totals: {}, entries: {} };
-  }
-}
-
-function nestedMaterial(
-  value: unknown,
-): { title: string | null; metric_type: string | null } | null {
-  if (!value || typeof value !== "object") return null;
-  const row = Array.isArray(value) ? value[0] : value;
-  if (!row || typeof row !== "object") return null;
-  const title = "title" in row ? row.title : null;
-  const metricType = "metric_type" in row ? row.metric_type : null;
-  return {
-    title: typeof title === "string" ? title : null,
-    metric_type: typeof metricType === "string" ? metricType : null,
-  };
 }
 
 export async function upsertMaterialNote(input: {
@@ -502,6 +563,6 @@ export async function upsertMaterialNote(input: {
     return { ok: false, error: "generic" };
   }
 
-  revalidateMaterialPaths(input.materialId);
+  refresh();
   return { ok: true, data };
 }

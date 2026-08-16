@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { CATALOG_INDEX_CAP, CATALOG_PAGE_SIZE } from "@/lib/book-shelves";
 import { cleanBookDescription } from "@/lib/text";
 
 export type GoogleBookResult = {
@@ -50,10 +51,19 @@ type GoogleVolume = {
 
 type GoogleVolumesResponse = {
   items?: GoogleVolume[];
+  totalItems?: number;
   error?: {
     code?: number;
     message?: string;
   };
+};
+
+export type GoogleBooksPage = {
+  books: GoogleBookResult[];
+  totalItems: number;
+  startIndex: number;
+  nextIndex: number;
+  hasMore: boolean;
 };
 
 const GOOGLE_VOLUME_ID = /^[A-Za-z0-9_-]{1,64}$/;
@@ -128,22 +138,48 @@ function throwIfGoogleError(
   }
 }
 
-/** Same catalog for every UI language; copy is localized after fetch. */
+/** Same catalog for every UI language. */
 const GOOGLE_MARKET = {
   country: "TR",
   acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.8",
 } as const;
 
+export type GoogleBooksSearchOptions = {
+  orderBy?: "relevance" | "newest";
+  startIndex?: number;
+};
+
+function toBooksPage(
+  data: GoogleVolumesResponse,
+  startIndex: number,
+): GoogleBooksPage {
+  const rawCount = data.items?.length ?? 0;
+  const totalItems = Math.max(0, data.totalItems ?? 0);
+  const nextIndex = startIndex + rawCount;
+  const reachable = Math.min(totalItems, CATALOG_INDEX_CAP);
+  return {
+    books: mapVolumes(data),
+    totalItems,
+    startIndex,
+    nextIndex,
+    hasMore: rawCount > 0 && nextIndex < reachable,
+  };
+}
+
 async function fetchVolumes(
   query: string,
   limit: number,
   apiKey?: string,
-): Promise<GoogleBookResult[]> {
+  options?: GoogleBooksSearchOptions,
+): Promise<GoogleBooksPage> {
+  const startIndex = Math.max(options?.startIndex ?? 0, 0);
   const params = new URLSearchParams({
     q: query,
     maxResults: String(Math.min(Math.max(limit, 1), 40)),
     printType: "books",
     country: GOOGLE_MARKET.country,
+    orderBy: options?.orderBy === "newest" ? "newest" : "relevance",
+    startIndex: String(startIndex),
   });
 
   if (apiKey) {
@@ -163,7 +199,7 @@ async function fetchVolumes(
 
   const data = await readGoogleJson<GoogleVolumesResponse>(res);
   throwIfGoogleError(res, data);
-  return mapVolumes(data);
+  return toBooksPage(data, startIndex);
 }
 
 async function fetchVolume(
@@ -239,11 +275,23 @@ async function withOptionalKey<T>(
 
 export async function searchGoogleBooks(
   query: string,
-  limit = 12,
-): Promise<GoogleBookResult[]> {
+  limit = CATALOG_PAGE_SIZE,
+  options?: GoogleBooksSearchOptions,
+): Promise<GoogleBooksPage> {
   const trimmed = query.trim();
-  if (!trimmed) return [];
-  return withOptionalKey((apiKey) => fetchVolumes(trimmed, limit, apiKey));
+  const startIndex = Math.max(options?.startIndex ?? 0, 0);
+  if (!trimmed || startIndex >= CATALOG_INDEX_CAP) {
+    return {
+      books: [],
+      totalItems: 0,
+      startIndex,
+      nextIndex: startIndex,
+      hasMore: false,
+    };
+  }
+  return withOptionalKey((apiKey) =>
+    fetchVolumes(trimmed, limit, apiKey, options),
+  );
 }
 
 export const getGoogleBook = cache(

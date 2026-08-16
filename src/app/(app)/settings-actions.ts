@@ -1,6 +1,6 @@
 "use server";
 
-import { refresh, revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { cookies } from "next/headers";
 import { isAccentColor } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
@@ -9,7 +9,6 @@ import {
   colorSchemeCookieName,
   isColorScheme,
 } from "@/lib/theme";
-import { isTimezone } from "@/lib/timezones";
 import type {
   AccentColor,
   ActionResult,
@@ -28,18 +27,8 @@ async function persistColorSchemeCookie(scheme: ColorScheme) {
   });
 }
 
-function revalidateSettingsPaths() {
-  revalidatePath("/");
-  revalidatePath("/login");
-  revalidatePath("/settings");
-  revalidatePath("/desk");
-  revalidatePath("/vault");
-  revalidatePath("/materials", "layout");
-}
-
 export async function updateProfile(input: {
   displayName: string;
-  timezone: string;
   weekStartsOn: WeekStart;
   accentColor: AccentColor;
   dailyGoal: number | null;
@@ -47,7 +36,6 @@ export async function updateProfile(input: {
 }): Promise<ActionResult<Profile>> {
   const displayName = input.displayName.trim().slice(0, 80);
   if (
-    !isTimezone(input.timezone) ||
     !WEEK_STARTS.has(input.weekStartsOn) ||
     !isAccentColor(input.accentColor) ||
     !isColorScheme(input.colorScheme)
@@ -75,7 +63,6 @@ export async function updateProfile(input: {
     .from("profiles")
     .update({
       display_name: displayName || null,
-      timezone: input.timezone,
       week_starts_on: input.weekStartsOn,
       accent_color: input.accentColor,
       daily_goal: dailyGoal,
@@ -94,7 +81,6 @@ export async function updateProfile(input: {
   }
 
   await persistColorSchemeCookie(input.colorScheme);
-  revalidateSettingsPaths();
   refresh();
   return { ok: true, data };
 }
@@ -127,7 +113,7 @@ export async function setFocusMode(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateSettingsPaths();
+  refresh();
   return { ok: true, data };
 }
 
@@ -159,7 +145,6 @@ export async function setColorScheme(
     }
   }
 
-  revalidateSettingsPaths();
   refresh();
   return { ok: true, data: scheme };
 }

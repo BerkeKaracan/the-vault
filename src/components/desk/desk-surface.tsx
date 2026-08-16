@@ -8,6 +8,7 @@ import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
+import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import type { Material } from "@/lib/types";
 
@@ -65,7 +66,7 @@ function CoverSlot({
           author={material.author}
           coverUrl={material.cover_url}
           priority={priority}
-          sizes="(max-width: 768px) 30vw, 224px"
+          sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 224px"
         />
       </button>
       <div className="mt-4 w-full max-w-56">
@@ -91,7 +92,7 @@ function EmptyDesk() {
   const { dictionary } = useI18n();
 
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-16 sm:px-8">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-8">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
@@ -177,7 +178,7 @@ function DeskDock({ material }: { material: Material }) {
 
   return (
     <div className="border-t border-border bg-surface/90 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-start lg:justify-between">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-4 sm:px-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 lg:max-w-sm">
           <p
             data-private
@@ -210,7 +211,9 @@ function DeskDock({ material }: { material: Material }) {
             <button
               type="button"
               disabled={pending}
-              onClick={() => run(() => markCompleted(material.id))}
+              onClick={() =>
+                run(() => markCompleted(material.id, getLocalDateString()))
+              }
               className="px-2 text-xs text-muted hover:text-foreground disabled:opacity-40"
             >
               {dictionary.desk.markCompleted}
@@ -227,7 +230,7 @@ function DeskDock({ material }: { material: Material }) {
         </div>
       </div>
       {message ? (
-        <output className="mx-auto block w-full max-w-5xl px-5 pb-3 font-mono text-xs text-muted sm:px-8">
+        <output className="mx-auto block w-full max-w-6xl px-6 pb-3 font-mono text-xs text-muted sm:px-8">
           {message}
         </output>
       ) : null}
@@ -254,7 +257,7 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
 
   return (
     <>
-      <div className="relative flex flex-1 items-end px-5 pb-2 sm:px-8">
+      <div className="relative flex flex-1 items-end pb-2">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
@@ -263,7 +266,7 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
         />
-        <div className="relative mx-auto grid w-full max-w-5xl grid-cols-3 items-end gap-3 sm:gap-8">
+        <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-end gap-8 px-6 sm:grid-cols-2 sm:px-8 lg:grid-cols-3">
           {materials.map((material, index) => (
             <CoverSlot
               key={material.id}

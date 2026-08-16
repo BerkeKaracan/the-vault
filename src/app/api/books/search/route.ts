@@ -3,6 +3,11 @@ import type { ErrorKey } from "@/i18n/dictionaries";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { getAuthUser } from "@/lib/auth";
+import {
+  CATALOG_PAGE_SIZE,
+  isBookSubject,
+  toGoogleBooksQuery,
+} from "@/lib/book-shelves";
 import { GoogleBooksError, searchGoogleBooks } from "@/lib/google-books";
 
 async function userFacingMessage(
@@ -61,9 +66,17 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim() ?? "";
+  const subjectRaw = searchParams.get("subject")?.trim() ?? "";
+  const subject = isBookSubject(subjectRaw) ? subjectRaw : null;
+  const orderBy =
+    searchParams.get("orderBy") === "newest" ? "newest" : "relevance";
+  const startIndex = Number.parseInt(
+    searchParams.get("startIndex") ?? "0",
+    10,
+  );
   const dictionary = await getDictionary();
 
-  if (q.length < 2) {
+  if (q.length === 1) {
     return NextResponse.json(
       {
         error: dictionary.errors.queryTooShort,
@@ -74,8 +87,15 @@ export async function GET(request: Request) {
   }
 
   try {
-    const books = await searchGoogleBooks(q, 12);
-    return NextResponse.json({ books });
+    const page = await searchGoogleBooks(
+      toGoogleBooksQuery(q, subject),
+      CATALOG_PAGE_SIZE,
+      {
+        orderBy: q ? "relevance" : orderBy,
+        startIndex: Number.isFinite(startIndex) ? Math.max(startIndex, 0) : 0,
+      },
+    );
+    return NextResponse.json(page);
   } catch (error) {
     const payload = await userFacingMessage(error);
     console.error("[books/search]", error);

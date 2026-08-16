@@ -4,14 +4,10 @@ import { notFound } from "next/navigation";
 import { BookRecord } from "@/components/books/book-record";
 import { LibraryActions } from "@/components/books/library-actions";
 import { MaterialNotes } from "@/components/books/material-notes";
+import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
-import { getDictionary, getLocale } from "@/i18n/get-dictionary";
-import { localizeDescription } from "@/lib/localize-description";
-import {
-  getMaterial,
-  getMaterialNote,
-  getMaterialPace,
-} from "@/lib/materials";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/materials";
 import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {
@@ -29,10 +25,9 @@ export async function generateMetadata({
 
 export default async function MaterialPage({ params }: MaterialPageProps) {
   const { id } = await params;
-  const [material, dictionary, locale] = await Promise.all([
+  const [material, dictionary] = await Promise.all([
     getMaterial(id),
     getDictionary(),
-    getLocale(),
   ]);
 
   if (!material) {
@@ -67,7 +62,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
     : null;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
       <Link
         href={backHref}
         className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"
@@ -83,7 +78,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
           title: material.title,
           author: material.author,
           coverUrl: material.cover_url,
-          description: await localizeDescription(material.description, locale),
+          description: material.description,
           publishedDate: material.published_date,
           publisher: material.publisher,
           categories: material.categories,
@@ -98,6 +93,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         }
       />
       <MaterialNotes materialId={material.id} initialBody={note?.body ?? ""} />
+      <MaterialEditor material={material} />
     </main>
   );
 }
