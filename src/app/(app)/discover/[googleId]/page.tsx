@@ -52,7 +52,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
       error instanceof GoogleBooksError &&
       (error.status === 429 || error.status === 503 || error.status >= 500);
     return (
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
         <p className="text-sm text-muted">
           {unavailable
             ? dictionary.errors.booksUnavailable
@@ -69,7 +69,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
   const owned = await findMaterialByGoogleId(book.id);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
       <Link
         href="/add"
         className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"

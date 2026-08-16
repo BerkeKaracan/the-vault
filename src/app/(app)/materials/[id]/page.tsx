@@ -64,7 +64,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
     : null;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
       <Link
         href={backHref}
         className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"

@@ -165,7 +165,7 @@ export function AddMaterialPanel({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-40"
+            className="rounded-full bg-accent px-3 py-2 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
           >
             {pending ? dictionary.busy : dictionary.add.submit}
           </button>

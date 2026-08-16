@@ -27,7 +27,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       className={`flex min-h-dvh flex-1 flex-col bg-surface ${consent ? "" : "pb-44 sm:pb-32"}`}
     >
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur-xl">
-        <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3.5 sm:px-8">
           <Link
             href="/desk"
             className="font-mono text-[0.7rem] tracking-[0.28em] text-muted uppercase transition hover:text-foreground"

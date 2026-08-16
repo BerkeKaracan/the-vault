@@ -180,7 +180,7 @@ export function BookCatalog({
         <button
           type="submit"
           disabled={searching}
-          className="rounded-md bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:bg-foreground disabled:opacity-40"
+          className="rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
         >
           {searching ? dictionary.add.searching : dictionary.add.search}
         </button>
@@ -253,7 +253,7 @@ export function BookCatalog({
                     type="button"
                     disabled={pending}
                     onClick={() => saveBook(book, "active")}
-                    className="rounded-md bg-foreground px-2 py-1 text-[0.7rem] font-medium text-background disabled:opacity-40"
+                    className="rounded-full bg-accent px-2.5 py-1 text-[0.7rem] font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
                   >
                     {pending && pendingId === book.id
                       ? dictionary.busy
@@ -263,7 +263,7 @@ export function BookCatalog({
                     type="button"
                     disabled={pending}
                     onClick={() => saveBook(book, "shelved")}
-                    className="rounded-md border border-border px-2 py-1 text-[0.7rem] text-foreground/80 hover:border-foreground/25 disabled:opacity-40"
+                    className="rounded-full border border-border px-2.5 py-1 text-[0.7rem] text-foreground/80 transition hover:border-foreground/25 disabled:opacity-40"
                   >
                     {dictionary.add.addToVault}
                   </button>

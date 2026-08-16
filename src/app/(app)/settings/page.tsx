@@ -11,7 +11,7 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10 sm:px-8">
       <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
         {dictionary.settings.title}
       </h1>

@@ -163,7 +163,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
                   }
                 });
               }}
-              className="mt-2 self-start rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background disabled:opacity-40"
+              className="mt-2 self-start rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
             >
               {pending && pendingId === material.id
                 ? dictionary.busy

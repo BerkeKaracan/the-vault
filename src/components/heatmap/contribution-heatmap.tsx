@@ -223,7 +223,7 @@ export function ContributionHeatmap({
   }
 
   return (
-    <div ref={hostRef} className="relative mx-auto w-full max-w-5xl">
+    <div ref={hostRef} className="relative w-full">
       <div className="mb-2 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <p className="font-mono text-[0.58rem] tracking-[0.22em] text-muted uppercase">

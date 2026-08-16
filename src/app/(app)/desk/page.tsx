@@ -18,7 +18,7 @@ export default async function DeskPage() {
 
       <DeskSurface materials={materials} />
 
-      <div className="relative px-5 pb-5 sm:px-8">
+      <div className="relative mx-auto w-full max-w-6xl px-6 pb-5 sm:px-8">
         <ContributionHeatmap
           key={materials
             .map((item) => `${item.id}:${item.current_page}:${item.updated_at}`)

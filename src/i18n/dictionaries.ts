@@ -51,7 +51,7 @@ const tr = {
     closingTitle: "Masana dön.",
     closingBody: "Hesabını aç, ilk materyalini ekle, bugünün kutusunu yak.",
     closingCta: "Başla",
-    closingNote: "E-posta yeter. Kart yok, reklam yok.",
+    closingNote: "Google veya GitHub yeter. Kart yok, reklam yok.",
     footerNote: "Zihinsel mesai için yapıldı.",
     mockSample: "Örnek",
     mockLimit: "Limit",
@@ -183,7 +183,7 @@ const tr = {
   book: {
     about: "Hakkında",
     noDescription: "Bu kitap için açıklama yok.",
-    openInLibrary: "Kütüphanede aç",
+    openInVault: "Vault’ta aç",
     backToAdd: "Aramaya dön",
     backToDesk: "Masaya dön",
     backToVault: "Vault’a dön",
@@ -217,7 +217,7 @@ const tr = {
     authRequired: "Oturum gerekli.",
     invalidPage: "Değer 0 veya üzeri olmalı.",
     notFound: "Materyal bulunamadı.",
-    alreadyOwned: "Bu kitap zaten kütüphanende.",
+    alreadyOwned: "Bu kitap zaten masanda veya Vault’ta.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -270,7 +270,7 @@ const tr = {
     themeLight: "Açık",
     accent: "Vurgu rengi",
     accentEmerald: "Neon yeşil",
-    accentBlue: "Vercel mavi",
+    accentBlue: "Mavi",
     accentAmber: "Vault amber",
     dailyGoal: "Günlük hedef",
     dailyGoalHint:
@@ -332,7 +332,7 @@ const en = {
     closingBody:
       "Create an account, add your first material, light today’s cell.",
     closingCta: "Get started",
-    closingNote: "Email is enough. No card, no ads.",
+    closingNote: "Google or GitHub is enough. No card, no ads.",
     footerNote: "Built for deep work.",
     mockSample: "Sample",
     mockLimit: "Limit",
@@ -464,7 +464,7 @@ const en = {
   book: {
     about: "About",
     noDescription: "No description for this book.",
-    openInLibrary: "Open in library",
+    openInVault: "Open in Vault",
     backToAdd: "Back to search",
     backToDesk: "Back to desk",
     backToVault: "Back to Vault",
@@ -497,7 +497,7 @@ const en = {
     authRequired: "Sign in required.",
     invalidPage: "Value must be 0 or greater.",
     notFound: "Material not found.",
-    alreadyOwned: "This book is already in your library.",
+    alreadyOwned: "This book is already on your desk or in the Vault.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -550,7 +550,7 @@ const en = {
     themeLight: "Light",
     accent: "Accent color",
     accentEmerald: "Neon green",
-    accentBlue: "Vercel blue",
+    accentBlue: "Blue",
     accentAmber: "Vault amber",
     dailyGoal: "Daily goal",
     dailyGoalHint:
@@ -729,7 +729,7 @@ export type Dictionary = {
   book: {
     about: string;
     noDescription: string;
-    openInLibrary: string;
+    openInVault: string;
     backToAdd: string;
     backToDesk: string;
     backToVault: string;

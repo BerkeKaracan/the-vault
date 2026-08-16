@@ -5,7 +5,7 @@ export default async function AppNotFound() {
   const dictionary = await getDictionary();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-16">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-16 sm:px-8">
       <p className="text-sm text-muted">{dictionary.errors.notFound}</p>
       <Link
         href="/add"
