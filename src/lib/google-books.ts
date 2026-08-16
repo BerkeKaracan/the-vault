@@ -134,16 +134,24 @@ const GOOGLE_MARKET = {
   acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.8",
 } as const;
 
+export type GoogleBooksSearchOptions = {
+  orderBy?: "relevance" | "newest";
+  startIndex?: number;
+};
+
 async function fetchVolumes(
   query: string,
   limit: number,
   apiKey?: string,
+  options?: GoogleBooksSearchOptions,
 ): Promise<GoogleBookResult[]> {
   const params = new URLSearchParams({
     q: query,
     maxResults: String(Math.min(Math.max(limit, 1), 40)),
     printType: "books",
     country: GOOGLE_MARKET.country,
+    orderBy: options?.orderBy === "newest" ? "newest" : "relevance",
+    startIndex: String(Math.max(options?.startIndex ?? 0, 0)),
   });
 
   if (apiKey) {
@@ -239,11 +247,14 @@ async function withOptionalKey<T>(
 
 export async function searchGoogleBooks(
   query: string,
-  limit = 12,
+  limit = 24,
+  options?: GoogleBooksSearchOptions,
 ): Promise<GoogleBookResult[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];
-  return withOptionalKey((apiKey) => fetchVolumes(trimmed, limit, apiKey));
+  return withOptionalKey((apiKey) =>
+    fetchVolumes(trimmed, limit, apiKey, options),
+  );
 }
 
 export const getGoogleBook = cache(

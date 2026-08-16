@@ -129,7 +129,7 @@ const tr = {
   },
   add: {
     title: "Materyal ekle",
-    subtitle: "Google Books’tan bul veya kendi kaynağını elle gir.",
+    subtitle: "Vitrinden bir kapak seç, ara veya kendi kaynağını elle gir.",
     tabSearch: "Google Books",
     tabManual: "Manuel",
     searchPlaceholder: "Kitap, yazar, konu…",
@@ -137,6 +137,7 @@ const tr = {
     searching: "…",
     searchFailed: "Arama başarısız.",
     noResults: "Sonuç bulunamadı.",
+    loadMore: "Daha fazla",
     noAuthor: "Yazar yok",
     pages: "{count} sayfa",
     pagesUnknown: "Sayfa ?",
@@ -159,6 +160,18 @@ const tr = {
     metricChapters: "Bölüm",
     tagsLabel: "Etiketler",
     tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
+    shelves: {
+      all: "Vitrin",
+      fiction: "Kurgu",
+      history: "Tarih",
+      science: "Bilim",
+      philosophy: "Felsefe",
+      psychology: "Psikoloji",
+      business: "İş",
+      computers: "Yazılım",
+      poetry: "Şiir",
+      biography: "Biyografi",
+    },
   },
   book: {
     about: "Hakkında",
@@ -385,7 +398,7 @@ const en = {
   },
   add: {
     title: "Add material",
-    subtitle: "Find it on Google Books or enter your own source.",
+    subtitle: "Pick a cover from the shelf, search, or enter your own source.",
     tabSearch: "Google Books",
     tabManual: "Manual",
     searchPlaceholder: "Book, author, topic…",
@@ -393,6 +406,7 @@ const en = {
     searching: "…",
     searchFailed: "Search failed.",
     noResults: "No results found.",
+    loadMore: "Load more",
     noAuthor: "No author",
     pages: "{count} pages",
     pagesUnknown: "Pages ?",
@@ -415,6 +429,18 @@ const en = {
     metricChapters: "Chapters",
     tagsLabel: "Tags",
     tagsPlaceholder: "Software, Exam, Literature",
+    shelves: {
+      all: "Shelf",
+      fiction: "Fiction",
+      history: "History",
+      science: "Science",
+      philosophy: "Philosophy",
+      psychology: "Psychology",
+      business: "Business",
+      computers: "Computers",
+      poetry: "Poetry",
+      biography: "Biography",
+    },
   },
   book: {
     about: "About",
@@ -635,6 +661,7 @@ export type Dictionary = {
     searching: string;
     searchFailed: string;
     noResults: string;
+    loadMore: string;
     noAuthor: string;
     pages: string;
     pagesUnknown: string;
@@ -657,6 +684,18 @@ export type Dictionary = {
     metricChapters: string;
     tagsLabel: string;
     tagsPlaceholder: string;
+    shelves: {
+      all: string;
+      fiction: string;
+      history: string;
+      science: string;
+      philosophy: string;
+      psychology: string;
+      business: string;
+      computers: string;
+      poetry: string;
+      biography: string;
+    };
   };
   book: {
     about: string;
