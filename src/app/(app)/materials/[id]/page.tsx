@@ -4,14 +4,11 @@ import { notFound } from "next/navigation";
 import { BookRecord } from "@/components/books/book-record";
 import { LibraryActions } from "@/components/books/library-actions";
 import { MaterialNotes } from "@/components/books/material-notes";
+import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { localizeDescription } from "@/lib/localize-description";
-import {
-  getMaterial,
-  getMaterialNote,
-  getMaterialPace,
-} from "@/lib/materials";
+import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/materials";
 import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {
@@ -98,6 +95,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         }
       />
       <MaterialNotes materialId={material.id} initialBody={note?.body ?? ""} />
+      <MaterialEditor material={material} />
     </main>
   );
 }

@@ -10,7 +10,6 @@ import { LanguageSwitcher } from "@/i18n/language-switcher";
 import { useI18n } from "@/i18n/provider";
 import { isAccentColor } from "@/lib/catalog";
 import { setCookieConsent } from "@/lib/consent-actions";
-import { TIMEZONES } from "@/lib/timezones";
 import type { AccentColor, Profile, WeekStart } from "@/lib/types";
 
 const fieldClass =
@@ -26,11 +25,8 @@ export function SettingsForm({
   consent: CookieConsent | null;
 }) {
   const { dictionary } = useI18n();
-  const { colorScheme, setTheme } = usePreferences();
+  const { colorScheme, setTheme, focusMode, toggleFocus } = usePreferences();
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
-  const [timezone, setTimezone] = useState(
-    profile?.timezone ?? "Europe/Istanbul",
-  );
   const [weekStartsOn, setWeekStartsOn] = useState<WeekStart>(
     profile?.week_starts_on ?? "monday",
   );
@@ -58,7 +54,6 @@ export function SettingsForm({
       const [profileResult] = await Promise.all([
         updateProfile({
           displayName,
-          timezone,
           weekStartsOn,
           accentColor,
           dailyGoal: parsedGoal,
@@ -151,9 +146,14 @@ export function SettingsForm({
             {dictionary.settings.dailyGoalHint}
           </span>
         </label>
-        <p className="mt-6 text-sm text-muted">
+        <label className="mt-6 flex items-center gap-2 text-sm text-foreground/80">
+          <input
+            type="checkbox"
+            checked={focusMode}
+            onChange={() => toggleFocus()}
+          />
           {dictionary.settings.focusMode}
-        </p>
+        </label>
         <p className="mt-1 text-xs text-muted">
           {dictionary.settings.focusModeHint}
         </p>
@@ -170,21 +170,6 @@ export function SettingsForm({
             <LanguageSwitcher />
           </div>
         </div>
-
-        <label className="mt-4 block text-sm text-muted">
-          {dictionary.settings.timezone}
-          <select
-            value={timezone}
-            onChange={(e) => setTimezone(e.target.value)}
-            className={fieldClass}
-          >
-            {TIMEZONES.map((zone) => (
-              <option key={zone} value={zone}>
-                {zone.replaceAll("_", " ")}
-              </option>
-            ))}
-          </select>
-        </label>
 
         <fieldset className="mt-4">
           <legend className="text-sm text-muted">

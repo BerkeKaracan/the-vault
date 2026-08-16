@@ -5,6 +5,7 @@ import {
   getHeatmapData,
   type HeatmapDayEntry,
 } from "@/app/(app)/materials-actions";
+import { usePreferences } from "@/components/preferences";
 import type { Locale } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
@@ -59,6 +60,13 @@ const HEAT = ["heat-0", "heat-1", "heat-2", "heat-3", "heat-4"] as const;
 
 function heatClass(pages: number): string {
   return HEAT[intensity(pages)] ?? "heat-0";
+}
+
+function pageUnitsLogged(dayEntries: HeatmapDayEntry[]): number {
+  return dayEntries.reduce(
+    (sum, entry) => (entry.metricType === "pages" ? sum + entry.delta : sum),
+    0,
+  );
 }
 
 function HeatTip({
@@ -121,6 +129,7 @@ export function ContributionHeatmap({
   dailyGoal?: number | null;
 }) {
   const { dictionary, locale } = useI18n();
+  const { focusMode } = usePreferences();
   const hostRef = useRef<HTMLDivElement>(null);
   const fromDate = useMemo(
     () => weekStartWeeksAgo(WEEKS, weekStartsOn),
@@ -163,6 +172,7 @@ export function ContributionHeatmap({
   }, [tip?.pinned]);
 
   const activeDays = Object.values(totals).filter((n) => n > 0).length;
+  const todayPages = Math.max(0, pageUnitsLogged(entries[today] ?? []));
 
   function entryLine(entry: HeatmapDayEntry): string {
     return t(dictionary.desk.heatmapEntry, {
@@ -214,10 +224,24 @@ export function ContributionHeatmap({
 
   return (
     <div ref={hostRef} className="relative mx-auto w-full max-w-5xl">
-      <div className="mb-2 flex items-center justify-between">
-        <p className="font-mono text-[0.58rem] tracking-[0.22em] text-muted uppercase">
-          {dictionary.desk.consistency}
-        </p>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <p className="font-mono text-[0.58rem] tracking-[0.22em] text-muted uppercase">
+            {dictionary.desk.consistency}
+          </p>
+          {loaded && dailyGoal != null && dailyGoal > 0 ? (
+            <p data-private className="font-mono text-[0.58rem] text-muted">
+              <span className="tracking-[0.18em] uppercase">
+                {dictionary.desk.todayGoalCaption}
+              </span>
+              {" · "}
+              {t(dictionary.desk.todayGoal, {
+                today: todayPages,
+                goal: dailyGoal,
+              })}
+            </p>
+          ) : null}
+        </div>
         <p className="font-mono text-[0.58rem] text-muted">
           {t(dictionary.desk.heatmapStats, { days: activeDays })}
         </p>
@@ -235,11 +259,12 @@ export function ContributionHeatmap({
           const dayEntries = entries[date] ?? [];
           const isToday = date === today;
           const isFuture = date > today;
+          const pagesTowardGoal = Math.max(0, pageUnitsLogged(dayEntries));
           const goalMet =
-            dailyGoal != null && dailyGoal > 0 && pages >= dailyGoal;
+            dailyGoal != null && dailyGoal > 0 && pagesTowardGoal >= dailyGoal;
           const label = [
             heading(date, pages, goalMet, isFuture),
-            ...dayEntries.map(entryLine),
+            ...(focusMode ? [] : dayEntries.map(entryLine)),
           ].join(". ");
 
           return (
@@ -299,7 +324,8 @@ export function ContributionHeatmap({
             Math.max(0, totals[tip.date] ?? 0),
             dailyGoal != null &&
               dailyGoal > 0 &&
-              Math.max(0, totals[tip.date] ?? 0) >= dailyGoal,
+              Math.max(0, pageUnitsLogged(entries[tip.date] ?? [])) >=
+                dailyGoal,
             tip.date > today,
           )}
           lines={(entries[tip.date] ?? []).map((entry) => ({

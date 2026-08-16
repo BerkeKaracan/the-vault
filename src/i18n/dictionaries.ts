@@ -116,6 +116,8 @@ const tr = {
     timerReset: "Sıfırla",
     pace: "{rate}/{unit} · saat",
     goalMet: "Hedef",
+    todayGoal: "{today} / {goal}",
+    todayGoalCaption: "bugün / hedef",
   },
   vault: {
     title: "The Vault",
@@ -193,6 +195,12 @@ const tr = {
     notesPlaceholder: "Formül, soru no, alıntı…",
     notesPreview: "Önizle",
     notesEdit: "Düzenle",
+    edit: "Düzenle",
+    save: "Kaydet",
+    saved: "Kaydedildi.",
+    delete: "Sil",
+    deleteConfirm:
+      "Bu materyali silmek istediğine emin misin? Bu işlem geri alınamaz.",
   },
   metric: {
     page: "sayfa",
@@ -248,7 +256,6 @@ const tr = {
     generalTitle: "Genel",
     displayName: "Görünen ad",
     email: "E-posta",
-    timezone: "Saat dilimi",
     weekStart: "Haftanın ilk günü",
     weekMonday: "Pazartesi",
     weekSunday: "Pazar",
@@ -267,7 +274,7 @@ const tr = {
     accentAmber: "Vault amber",
     dailyGoal: "Günlük hedef",
     dailyGoalHint:
-      "Boş = hedef yok. Heatmap’te hedefi geçen günler işaretlenir.",
+      "Boş = hedef yok. Sayfa cinsinden. Heatmap’te hedefi geçen günler işaretlenir.",
     focusMode: "Gizlilik / odak",
     focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
   },
@@ -390,6 +397,8 @@ const en = {
     timerReset: "Reset",
     pace: "{rate}/{unit} · hour",
     goalMet: "Goal",
+    todayGoal: "{today} / {goal}",
+    todayGoalCaption: "today / goal",
   },
   vault: {
     title: "The Vault",
@@ -467,6 +476,11 @@ const en = {
     notesPlaceholder: "Formula, question no, quote…",
     notesPreview: "Preview",
     notesEdit: "Edit",
+    edit: "Edit",
+    save: "Save",
+    saved: "Saved.",
+    delete: "Delete",
+    deleteConfirm: "Delete this material? This cannot be undone.",
   },
   metric: {
     page: "page",
@@ -522,7 +536,6 @@ const en = {
     generalTitle: "General",
     displayName: "Display name",
     email: "Email",
-    timezone: "Time zone",
     weekStart: "First day of week",
     weekMonday: "Monday",
     weekSunday: "Sunday",
@@ -541,7 +554,7 @@ const en = {
     accentAmber: "Vault amber",
     dailyGoal: "Daily goal",
     dailyGoalHint:
-      "Leave empty for no goal. Days that beat it get a mark on the heatmap.",
+      "Leave empty for no goal. Counted in pages. Days that beat it get a mark on the heatmap.",
     focusMode: "Privacy / focus",
     focusModeHint: "Blurs titles and numbers.",
   },
@@ -650,6 +663,8 @@ export type Dictionary = {
     timerReset: string;
     pace: string;
     goalMet: string;
+    todayGoal: string;
+    todayGoalCaption: string;
   };
   vault: {
     title: string;
@@ -726,6 +741,11 @@ export type Dictionary = {
     notesPlaceholder: string;
     notesPreview: string;
     notesEdit: string;
+    edit: string;
+    save: string;
+    saved: string;
+    delete: string;
+    deleteConfirm: string;
   };
   metric: {
     page: string;
@@ -775,7 +795,6 @@ export type Dictionary = {
     generalTitle: string;
     displayName: string;
     email: string;
-    timezone: string;
     weekStart: string;
     weekMonday: string;
     weekSunday: string;

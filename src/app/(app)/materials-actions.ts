@@ -1,6 +1,7 @@
 "use server";
 
 import { refresh, revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { isMetricType, parseTags } from "@/lib/catalog";
 import {
   type GoogleBookResult,
@@ -253,7 +254,58 @@ export async function logProgress(input: {
 
 export async function markCompleted(
   materialId: string,
+  loggedOn: string,
 ): Promise<ActionResult<Material>> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(loggedOn)) {
+    return { ok: false, error: "generic" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: material, error: loadError } = await supabase
+    .from("materials")
+    .select("*")
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!material) {
+    return { ok: false, error: "notFound" };
+  }
+
+  if (
+    material.total_pages != null &&
+    material.current_page !== material.total_pages
+  ) {
+    const { data, error } = await supabase.rpc("log_progress", {
+      p_material_id: materialId,
+      p_page_after: material.total_pages,
+      p_logged_on: loggedOn,
+    });
+
+    if (error) {
+      return { ok: false, error: mapDbError(error.message) };
+    }
+    if (!data) {
+      return { ok: false, error: "generic" };
+    }
+
+    if (data.status === "completed") {
+      revalidateMaterialPaths(data.id, data.google_books_id);
+      refresh();
+      return { ok: true, data };
+    }
+  }
+
   return updateMaterialStatus(materialId, "completed");
 }
 
@@ -295,6 +347,7 @@ export async function activateMaterial(
   }
 
   revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
 }
 
@@ -326,7 +379,129 @@ async function updateMaterialStatus(
   }
 
   revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
   return { ok: true, data };
+}
+
+export async function updateMaterial(input: {
+  materialId: string;
+  title: string;
+  totalPages?: number | null;
+  tags?: string[] | string;
+}): Promise<ActionResult<Material>> {
+  const title = input.title.trim();
+  if (!title) {
+    return { ok: false, error: "titleRequired" };
+  }
+
+  let totalPages: number | null = null;
+  if (input.totalPages != null) {
+    if (!Number.isFinite(input.totalPages) || input.totalPages <= 0) {
+      return { ok: false, error: "invalidPage" };
+    }
+    totalPages = Math.floor(input.totalPages);
+  }
+
+  const tags =
+    typeof input.tags === "string" ? parseTags(input.tags) : (input.tags ?? []);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing, error: loadError } = await supabase
+    .from("materials")
+    .select("current_page")
+    .eq("id", input.materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!existing) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const patch: {
+    title: string;
+    total_pages: number | null;
+    tags: string[];
+    updated_at: string;
+    current_page?: number;
+  } = {
+    title,
+    total_pages: totalPages,
+    tags,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (totalPages != null && existing.current_page > totalPages) {
+    patch.current_page = totalPages;
+  }
+
+  const { data, error } = await supabase
+    .from("materials")
+    .update(patch)
+    .eq("id", input.materialId)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
+
+  revalidateMaterialPaths(data.id, data.google_books_id);
+  refresh();
+  return { ok: true, data };
+}
+
+export async function deleteMaterial(
+  materialId: string,
+): Promise<ActionResult<void>> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data: existing, error: loadError } = await supabase
+    .from("materials")
+    .select("id, status, google_books_id")
+    .eq("id", materialId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: mapDbError(loadError.message) };
+  }
+  if (!existing) {
+    return { ok: false, error: "notFound" };
+  }
+
+  const { error } = await supabase
+    .from("materials")
+    .delete()
+    .eq("id", materialId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    return { ok: false, error: mapDbError(error.message) };
+  }
+
+  revalidateMaterialPaths(existing.id, existing.google_books_id);
+  refresh();
+  redirect(existing.status === "active" ? "/desk" : "/vault");
 }
 
 export async function updateMaterialMetric(

@@ -8,6 +8,7 @@ import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
+import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import type { Material } from "@/lib/types";
 
@@ -210,7 +211,9 @@ function DeskDock({ material }: { material: Material }) {
             <button
               type="button"
               disabled={pending}
-              onClick={() => run(() => markCompleted(material.id))}
+              onClick={() =>
+                run(() => markCompleted(material.id, getLocalDateString()))
+              }
               className="px-2 text-xs text-muted hover:text-foreground disabled:opacity-40"
             >
               {dictionary.desk.markCompleted}
