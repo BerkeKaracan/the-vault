@@ -128,7 +128,7 @@ function throwIfGoogleError(
   }
 }
 
-/** Same catalog for every UI language; copy is localized after fetch. */
+/** Same catalog for every UI language. */
 const GOOGLE_MARKET = {
   country: "TR",
   acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.8",

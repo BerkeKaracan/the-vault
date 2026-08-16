@@ -1,12 +1,14 @@
-import { getSessionProfile } from "@/lib/profile";
 import { DeskSurface } from "@/components/desk/desk-surface";
 import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
+import { getHeatmapData } from "@/lib/heatmap";
 import { getActiveMaterials } from "@/lib/materials";
+import { getSessionProfile } from "@/lib/profile";
 
 export default async function DeskPage() {
-  const [materials, session] = await Promise.all([
+  const [materials, session, heatmap] = await Promise.all([
     getActiveMaterials(),
     getSessionProfile(),
+    getHeatmapData(),
   ]);
 
   return (
@@ -20,11 +22,9 @@ export default async function DeskPage() {
 
       <div className="relative mx-auto w-full max-w-6xl px-6 pb-5 sm:px-8">
         <ContributionHeatmap
-          key={materials
-            .map((item) => `${item.id}:${item.current_page}:${item.updated_at}`)
-            .join("|")}
           weekStartsOn={session.profile?.week_starts_on ?? "monday"}
           dailyGoal={session.profile?.daily_goal ?? null}
+          data={heatmap}
         />
       </div>
     </main>

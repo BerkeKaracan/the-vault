@@ -1,6 +1,6 @@
 "use server";
 
-import { refresh, revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { cookies } from "next/headers";
 import { isAccentColor } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
@@ -25,15 +25,6 @@ async function persistColorSchemeCookie(scheme: ColorScheme) {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   });
-}
-
-function revalidateSettingsPaths() {
-  revalidatePath("/");
-  revalidatePath("/login");
-  revalidatePath("/settings");
-  revalidatePath("/desk");
-  revalidatePath("/vault");
-  revalidatePath("/materials", "layout");
 }
 
 export async function updateProfile(input: {
@@ -90,7 +81,6 @@ export async function updateProfile(input: {
   }
 
   await persistColorSchemeCookie(input.colorScheme);
-  revalidateSettingsPaths();
   refresh();
   return { ok: true, data };
 }
@@ -123,7 +113,7 @@ export async function setFocusMode(
     return { ok: false, error: "notFound" };
   }
 
-  revalidateSettingsPaths();
+  refresh();
   return { ok: true, data };
 }
 
@@ -155,7 +145,6 @@ export async function setColorScheme(
     }
   }
 
-  revalidateSettingsPaths();
   refresh();
   return { ok: true, data: scheme };
 }
