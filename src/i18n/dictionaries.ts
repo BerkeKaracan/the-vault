@@ -37,17 +37,33 @@ const tr = {
     kept: ["Masandaki üç materyal", "Girdiğin her sayfa", "Bugünün kutusu"],
     deskTitle: "Active Desk",
     deskBody:
-      "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Vault’a kaldırırsın — sınırın kendisi odaktır.",
+      "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Library’ye kaldırırsın — sınırın kendisi odaktır.",
     deskMockLabel: "Active Desk",
     heatTitle: "İstikrar haritası",
     heatBody:
       "“Yılda 50 kitap” gibi yapay hedefler yok. Tek soru: bugün masaya oturdun mu. Girdiğin her sayfa o günün kutusunu yakar.",
     heatMockLabel: "Son 6 ay",
     heatMockLabelYear: "Son 12 ay",
-    vaultTitle: "The Vault",
+    vaultTitle: "Library",
     vaultBody:
       "Biten ve sırada bekleyen her şey, alt alta listeler yerine kapaklardan oluşan bir ızgarada durur. Kapağı olmayan materyal tipografik kapak alır.",
     vaultMockLabel: "Arşiv",
+    tourTitle: "Dört yüzey. Sosyal yok.",
+    tourDesk: "Masa",
+    tourDeskHint: "Aynı anda üç materyal.",
+    tourLibrary: "Library",
+    tourLibraryHint: "Raflar, bekleyenler, bitenler.",
+    tourDiscover: "Discover",
+    tourDiscoverHint: "Vitrinden kapak seç.",
+    tourLog: "Log",
+    tourLogHint: "Gün gün ne okudun.",
+    shelvesPitchTitle: "Raflar.",
+    shelvesPitchBody:
+      "Bekleyenler ayrı, bitenler ayrı. İsimli raflarla kendi düzenini kur — feed yok.",
+    navHow: "Nasıl",
+    navLibrary: "Library",
+    navLog: "Log",
+    footerNoSocial: "Sosyal yok. Sadece mesai.",
     closingTitle: "Masana dön.",
     closingBody: "Hesabını aç, ilk materyalini ekle, bugünün kutusunu yak.",
     closingCta: "Başla",
@@ -70,9 +86,14 @@ const tr = {
   },
   nav: {
     desk: "Desk",
+    library: "Library",
+    discover: "Discover",
+    log: "Log",
+    stats: "Stats",
     vault: "Vault",
     add: "Ekle",
     menu: "Menü",
+    close: "Kapat",
     settings: "Ayarlar",
     signOut: "Çıkış",
     focus: "Odak",
@@ -89,15 +110,16 @@ const tr = {
     emptyTitle: "Masana bir şey koy.",
     emptyBody:
       "Aynı anda en fazla üç materyal. Kitap, soru seti veya doküman — ilkini ekle, bugünün kutusunu yak.",
-    emptyCta: "Materyal ekle",
+    emptyCta: "Vitrine git",
     emptySlot: "Boş yer",
+    openLog: "Log’a git",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
     pageInput: "Ulaşılan {unit}",
     updateProgress: "Kaydet",
     markCompleted: "Bitir",
-    shelve: "Vault’a kaldır",
+    shelve: "Library’ye kaldır",
     heatmapStats: "{days} aktif gün",
     heatmapEmptyCaption: "Bugünü yakmak için bir sayfa kaydet.",
     heatmapLess: "Az",
@@ -120,22 +142,31 @@ const tr = {
     todayGoalCaption: "bugün / hedef",
   },
   vault: {
-    title: "The Vault",
-    subtitle: "Arşiv ve bekleyenler · {count}",
-    emptyTitle: "Vault henüz boş.",
+    title: "Library",
+    subtitle: "Kütüphane · {count}",
+    emptyTitle: "Kütüphane henüz boş.",
     emptyBody:
-      "Bitirdiklerin ve bekleyenler burada durur. İlk kapağı ekle, masaya almak istediğinde hazır olsun.",
-    emptyCta: "Materyal ekle",
+      "Bitirdiklerin, bekleyenler ve masadakiler burada durur. İlk kapağı ekle.",
+    emptyCta: "Vitrine git",
     add: "Ekle",
     activate: "Masaya al",
+    statusActive: "Masada",
     statusShelved: "Bekliyor",
     statusCompleted: "Tamamlandı",
     filterAll: "Tümü",
     sortUpdated: "Son güncelleme",
     sortTitle: "Başlık",
+    sortProgress: "İlerleme",
+    searchPlaceholder: "Başlık veya yazar…",
+    shelvesTitle: "Raflar",
+    shelfCreate: "Raf oluştur",
+    shelfName: "Raf adı",
+    shelfEmpty: "Bu raf boş.",
+    shelfDelete: "Rafı sil",
+    shelfAdd: "Rafa ekle",
   },
   add: {
-    title: "Materyal ekle",
+    title: "Discover",
     subtitle: "Vitrinden bir kapak seç, ara veya kendi kaynağını elle gir.",
     tabSearch: "Google Books",
     tabManual: "Manuel",
@@ -149,16 +180,16 @@ const tr = {
     pages: "{count} sayfa",
     pagesUnknown: "Sayfa ?",
     addToDesk: "Masaya ekle",
-    addToVault: "Vault’a koy",
+    addToVault: "Library’ye koy",
     addedToDesk: '"{title}" masaya eklendi.',
-    addedToVault: '"{title}" Vault’a koyuldu.',
+    addedToVault: '"{title}" Library’ye koyuldu.',
     added: '"{title}" eklendi.',
     titleLabel: "Başlık",
     authorLabel: "Yazar",
     totalPagesLabel: "Toplam (opsiyonel)",
     descriptionLabel: "Açıklama (opsiyonel)",
     statusActive: "Active Desk",
-    statusVault: "Vault",
+    statusVault: "Library",
     submit: "Ekle",
     openDetails: "İncele",
     metricLabel: "Ölçüm",
@@ -183,10 +214,10 @@ const tr = {
   book: {
     about: "Hakkında",
     noDescription: "Bu kitap için açıklama yok.",
-    openInVault: "Vault’ta aç",
-    backToAdd: "Aramaya dön",
+    openInVault: "Library’de aç",
+    backToAdd: "Vitrine dön",
     backToDesk: "Masaya dön",
-    backToVault: "Vault’a dön",
+    backToVault: "Library’ye dön",
     onDesk: "Masada",
     notes: "Notlar",
     notesHint: "Markdown: **kalın**, *italik*, listeler.",
@@ -202,6 +233,25 @@ const tr = {
     deleteConfirm:
       "Bu materyali silmek istediğine emin misin? Bu işlem geri alınamaz.",
   },
+  log: {
+    title: "Log",
+    subtitle: "Girdiğin her gün. Kutuya tıkla.",
+    empty: "Bu ay henüz kayıt yok.",
+    emptyDay: "Bu günde kayıt yok.",
+    prev: "Önceki ay",
+    next: "Sonraki ay",
+  },
+  stats: {
+    title: "Stats",
+    subtitle: "Ölçülebilir mesai. Grafik yok, sayı var.",
+    thisMonth: "Bu ay",
+    thisYear: "Bu yıl",
+    activeDays: "Aktif gün",
+    pages: "Sayfa",
+    completed: "Biten",
+    streak: "En uzun seri",
+    daysUnit: "{count} gün",
+  },
   metric: {
     page: "sayfa",
     pages: "sayfa",
@@ -212,12 +262,12 @@ const tr = {
   },
   errors: {
     deskFull:
-      "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Vault'a kaldırın.",
+      "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Library’ye kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
     invalidPage: "Değer 0 veya üzeri olmalı.",
     notFound: "Materyal bulunamadı.",
-    alreadyOwned: "Bu kitap zaten masanda veya Vault’ta.",
+    alreadyOwned: "Bu kitap zaten masanda veya Library’de.",
     generic: "Bir hata oluştu.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
@@ -317,17 +367,33 @@ const en = {
     kept: ["Three materials on the desk", "Every page you log", "Today’s cell"],
     deskTitle: "Active Desk",
     deskBody:
-      "Three materials at most. To add a fourth you move one to the Vault first — the limit is the focus.",
+      "Three materials at most. To add a fourth you move one to the Library first — the limit is the focus.",
     deskMockLabel: "Active Desk",
     heatTitle: "Consistency map",
     heatBody:
       "No artificial “50 books a year” targets. One question: did you sit down today. Every page you log lights that day’s cell.",
     heatMockLabel: "Last 6 months",
     heatMockLabelYear: "Last 12 months",
-    vaultTitle: "The Vault",
+    vaultTitle: "Library",
     vaultBody:
       "Everything finished or waiting lives in a cover-first grid instead of a flat list. Materials without art get a typographic cover.",
     vaultMockLabel: "Archive",
+    tourTitle: "Four surfaces. No social.",
+    tourDesk: "Desk",
+    tourDeskHint: "Three materials at once.",
+    tourLibrary: "Library",
+    tourLibraryHint: "Shelves, waiting, done.",
+    tourDiscover: "Discover",
+    tourDiscoverHint: "Pick a cover from the shelf.",
+    tourLog: "Log",
+    tourLogHint: "What you read, day by day.",
+    shelvesPitchTitle: "Shelves.",
+    shelvesPitchBody:
+      "Waiting apart from finished. Named shelves for your own order — no feed.",
+    navHow: "How",
+    navLibrary: "Library",
+    navLog: "Log",
+    footerNoSocial: "No social. Just the work.",
     closingTitle: "Back to the desk.",
     closingBody:
       "Create an account, add your first material, light today’s cell.",
@@ -351,9 +417,14 @@ const en = {
   },
   nav: {
     desk: "Desk",
+    library: "Library",
+    discover: "Discover",
+    log: "Log",
+    stats: "Stats",
     vault: "Vault",
     add: "Add",
     menu: "Menu",
+    close: "Close",
     settings: "Settings",
     signOut: "Sign out",
     focus: "Focus",
@@ -370,15 +441,16 @@ const en = {
     emptyTitle: "Put something on the desk.",
     emptyBody:
       "Three materials at most. A book, a set, or a doc — add the first one and light today’s cell.",
-    emptyCta: "Add material",
+    emptyCta: "Open Discover",
     emptySlot: "Open slot",
+    openLog: "Open Log",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "Consistency",
     pageInput: "Reached {unit}",
     updateProgress: "Log",
     markCompleted: "Complete",
-    shelve: "Move to Vault",
+    shelve: "Move to Library",
     heatmapStats: "{days} active days",
     heatmapEmptyCaption: "Log a page to light today.",
     heatmapLess: "Less",
@@ -401,22 +473,31 @@ const en = {
     todayGoalCaption: "today / goal",
   },
   vault: {
-    title: "The Vault",
-    subtitle: "Archive and waiting · {count}",
-    emptyTitle: "The Vault is still empty.",
+    title: "Library",
+    subtitle: "Library · {count}",
+    emptyTitle: "The library is still empty.",
     emptyBody:
-      "Finished and waiting materials live here. Add a cover so it’s ready when you want it on the desk.",
-    emptyCta: "Add material",
+      "Finished, waiting, and desk materials live here. Add a cover to start.",
+    emptyCta: "Open Discover",
     add: "Add",
     activate: "Activate",
+    statusActive: "On desk",
     statusShelved: "Shelved",
     statusCompleted: "Completed",
     filterAll: "All",
     sortUpdated: "Last updated",
     sortTitle: "Title",
+    sortProgress: "Progress",
+    searchPlaceholder: "Title or author…",
+    shelvesTitle: "Shelves",
+    shelfCreate: "New shelf",
+    shelfName: "Shelf name",
+    shelfEmpty: "This shelf is empty.",
+    shelfDelete: "Delete shelf",
+    shelfAdd: "Add to shelf",
   },
   add: {
-    title: "Add material",
+    title: "Discover",
     subtitle: "Pick a cover from the shelf, search, or enter your own source.",
     tabSearch: "Google Books",
     tabManual: "Manual",
@@ -430,16 +511,16 @@ const en = {
     pages: "{count} pages",
     pagesUnknown: "Pages ?",
     addToDesk: "Add to desk",
-    addToVault: "Send to Vault",
+    addToVault: "Send to Library",
     addedToDesk: '"{title}" added to desk.',
-    addedToVault: '"{title}" sent to Vault.',
+    addedToVault: '"{title}" sent to Library.',
     added: '"{title}" added.',
     titleLabel: "Title",
     authorLabel: "Author",
     totalPagesLabel: "Total (optional)",
     descriptionLabel: "Description (optional)",
     statusActive: "Active Desk",
-    statusVault: "Vault",
+    statusVault: "Library",
     submit: "Add",
     openDetails: "View",
     metricLabel: "Metric",
@@ -464,10 +545,10 @@ const en = {
   book: {
     about: "About",
     noDescription: "No description for this book.",
-    openInVault: "Open in Vault",
-    backToAdd: "Back to search",
+    openInVault: "Open in Library",
+    backToAdd: "Back to Discover",
     backToDesk: "Back to desk",
-    backToVault: "Back to Vault",
+    backToVault: "Back to Library",
     onDesk: "On desk",
     notes: "Notes",
     notesHint: "Markdown: **bold**, *italic*, lists.",
@@ -482,6 +563,25 @@ const en = {
     delete: "Delete",
     deleteConfirm: "Delete this material? This cannot be undone.",
   },
+  log: {
+    title: "Log",
+    subtitle: "Every day you sat down. Tap a cell.",
+    empty: "Nothing logged this month.",
+    emptyDay: "Nothing logged this day.",
+    prev: "Previous month",
+    next: "Next month",
+  },
+  stats: {
+    title: "Stats",
+    subtitle: "Measurable hours. No charts, just counts.",
+    thisMonth: "This month",
+    thisYear: "This year",
+    activeDays: "Active days",
+    pages: "Pages",
+    completed: "Finished",
+    streak: "Longest streak",
+    daysUnit: "{count} days",
+  },
   metric: {
     page: "page",
     pages: "pages",
@@ -492,12 +592,12 @@ const en = {
   },
   errors: {
     deskFull:
-      "Your desk is full. Move a book to the Vault before activating another.",
+      "Your desk is full. Move a book to the Library before activating another.",
     titleRequired: "Title is required.",
     authRequired: "Sign in required.",
     invalidPage: "Value must be 0 or greater.",
     notFound: "Material not found.",
-    alreadyOwned: "This book is already on your desk or in the Vault.",
+    alreadyOwned: "This book is already on your desk or in the Library.",
     generic: "Something went wrong.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
@@ -596,6 +696,21 @@ export type Dictionary = {
     vaultTitle: string;
     vaultBody: string;
     vaultMockLabel: string;
+    tourTitle: string;
+    tourDesk: string;
+    tourDeskHint: string;
+    tourLibrary: string;
+    tourLibraryHint: string;
+    tourDiscover: string;
+    tourDiscoverHint: string;
+    tourLog: string;
+    tourLogHint: string;
+    shelvesPitchTitle: string;
+    shelvesPitchBody: string;
+    navHow: string;
+    navLibrary: string;
+    navLog: string;
+    footerNoSocial: string;
     closingTitle: string;
     closingBody: string;
     closingCta: string;
@@ -618,9 +733,14 @@ export type Dictionary = {
   };
   nav: {
     desk: string;
+    library: string;
+    discover: string;
+    log: string;
+    stats: string;
     vault: string;
     add: string;
     menu: string;
+    close: string;
     settings: string;
     signOut: string;
     focus: string;
@@ -638,6 +758,7 @@ export type Dictionary = {
     emptyBody: string;
     emptyCta: string;
     emptySlot: string;
+    openLog: string;
     pageOnly: string;
     pageOf: string;
     consistency: string;
@@ -674,11 +795,20 @@ export type Dictionary = {
     emptyCta: string;
     add: string;
     activate: string;
+    statusActive: string;
     statusShelved: string;
     statusCompleted: string;
     filterAll: string;
     sortUpdated: string;
     sortTitle: string;
+    sortProgress: string;
+    searchPlaceholder: string;
+    shelvesTitle: string;
+    shelfCreate: string;
+    shelfName: string;
+    shelfEmpty: string;
+    shelfDelete: string;
+    shelfAdd: string;
   };
   add: {
     title: string;
@@ -746,6 +876,25 @@ export type Dictionary = {
     saved: string;
     delete: string;
     deleteConfirm: string;
+  };
+  log: {
+    title: string;
+    subtitle: string;
+    empty: string;
+    emptyDay: string;
+    prev: string;
+    next: string;
+  };
+  stats: {
+    title: string;
+    subtitle: string;
+    thisMonth: string;
+    thisYear: string;
+    activeDays: string;
+    pages: string;
+    completed: string;
+    streak: string;
+    daysUnit: string;
   };
   metric: {
     page: string;

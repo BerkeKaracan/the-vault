@@ -1,43 +1,5 @@
-import { AddMaterialPanel } from "@/components/materials/add-material-panel";
-import { getDictionary } from "@/i18n/get-dictionary";
-import { BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE } from "@/lib/book-shelves";
-import {
-  type GoogleBooksPage,
-  searchGoogleBooks,
-} from "@/lib/google-books";
+import { redirect } from "next/navigation";
 
-export default async function AddPage() {
-  const dictionary = await getDictionary();
-  let initialPage: GoogleBooksPage = {
-    books: [],
-    totalItems: 0,
-    startIndex: 0,
-    nextIndex: 0,
-    hasMore: false,
-  };
-  try {
-    initialPage = await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
-      orderBy: "newest",
-    });
-  } catch {
-    initialPage = {
-      books: [],
-      totalItems: 0,
-      startIndex: 0,
-      nextIndex: 0,
-      hasMore: false,
-    };
-  }
-
-  return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10 sm:px-8">
-      <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
-        {dictionary.add.title}
-      </h1>
-      <p className="mt-1.5 text-sm text-muted">{dictionary.add.subtitle}</p>
-      <div className="mt-8">
-        <AddMaterialPanel initialPage={initialPage} />
-      </div>
-    </main>
-  );
+export default function AddRedirect() {
+  redirect("/discover");
 }

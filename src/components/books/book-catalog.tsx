@@ -169,7 +169,10 @@ export function BookCatalog({
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={onSubmit} className="flex gap-2">
+      <form
+        onSubmit={onSubmit}
+        className="sticky top-[3.6rem] z-20 flex gap-2 bg-surface/90 py-2 backdrop-blur-xl"
+      >
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}

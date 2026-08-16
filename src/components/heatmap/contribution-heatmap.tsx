@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePreferences } from "@/components/preferences";
 import type { Locale } from "@/i18n/config";
@@ -313,14 +314,22 @@ export function ContributionHeatmap({
           hostWidth={hostRef.current?.offsetWidth ?? 0}
         />
       ) : null}
-      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[0.58rem] text-muted">
-        <span>{dictionary.desk.heatmapLess}</span>
-        <span className="heat-0 size-2.5 rounded-xs" />
-        <span className="heat-1 size-2.5 rounded-xs" />
-        <span className="heat-2 size-2.5 rounded-xs" />
-        <span className="heat-3 size-2.5 rounded-xs" />
-        <span className="heat-4 size-2.5 rounded-xs" />
-        <span>{dictionary.desk.heatmapMore}</span>
+      <div className="mt-2 flex items-center justify-between gap-3 font-mono text-[0.58rem] text-muted">
+        <Link
+          href="/log"
+          className="tracking-[0.18em] uppercase hover:text-foreground"
+        >
+          {dictionary.desk.openLog}
+        </Link>
+        <div className="flex items-center gap-1.5">
+          <span>{dictionary.desk.heatmapLess}</span>
+          <span className="heat-0 size-2.5 rounded-xs" />
+          <span className="heat-1 size-2.5 rounded-xs" />
+          <span className="heat-2 size-2.5 rounded-xs" />
+          <span className="heat-3 size-2.5 rounded-xs" />
+          <span className="heat-4 size-2.5 rounded-xs" />
+          <span>{dictionary.desk.heatmapMore}</span>
+        </div>
       </div>
     </div>
   );

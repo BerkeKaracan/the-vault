@@ -479,7 +479,7 @@ export async function deleteMaterial(
   }
 
   refresh();
-  redirect(existing.status === "active" ? "/desk" : "/vault");
+  redirect(existing.status === "active" ? "/desk" : "/library");
 }
 
 export async function updateMaterialMetric(

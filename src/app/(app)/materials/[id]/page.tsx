@@ -7,6 +7,7 @@ import { MaterialNotes } from "@/components/books/material-notes";
 import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { getCollections } from "@/lib/collections";
 import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/materials";
 import { metricUnit } from "@/lib/metric";
 
@@ -34,9 +35,10 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
     notFound();
   }
 
-  const [note, pace] = await Promise.all([
+  const [note, pace, collections] = await Promise.all([
     getMaterialNote(material.id),
     getMaterialPace(material.id),
+    getCollections(),
   ]);
 
   const statusLabel =
@@ -46,7 +48,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         ? dictionary.vault.statusCompleted
         : dictionary.vault.statusShelved;
 
-  const backHref = material.status === "active" ? "/desk" : "/vault";
+  const backHref = material.status === "active" ? "/desk" : "/library";
   const backLabel =
     material.status === "active"
       ? dictionary.book.backToDesk
@@ -93,7 +95,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         }
       />
       <MaterialNotes materialId={material.id} initialBody={note?.body ?? ""} />
-      <MaterialEditor material={material} />
+      <MaterialEditor material={material} collections={collections} />
     </main>
   );
 }

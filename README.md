@@ -33,8 +33,9 @@ Supabase SQL Editor’de migration dosyalarını **sırayla** çalıştır:
 | [`005_color_scheme.sql`](supabase/migrations/005_color_scheme.sql) | Renk şeması (dark / light) |
 | [`006_progress_corrections.sql`](supabase/migrations/006_progress_corrections.sql) | İlerleme düzeltmeleri (negatif delta) |
 | [`007_profile_oauth_display_name.sql`](supabase/migrations/007_profile_oauth_display_name.sql) | OAuth görünen ad (`full_name` / `name` / `user_name` / `preferred_username`) |
+| [`008_collections.sql`](supabase/migrations/008_collections.sql) | Library rafları (`collections`, `collection_items`) |
 
-Mevcut bir projeye geçiyorsan **007’yi SQL Editor’de çalıştırman gerekir.** Tetikleyici fonksiyonu `CREATE OR REPLACE` ile günceller; kullanıcı verisi silinmez. 007 olmadan yeni kullanıcıların görünen adı yalnızca e-posta öneki olur.
+Mevcut bir projeye geçiyorsan **007 ve 008’i SQL Editor’de çalıştırman gerekir.** 007 tetikleyici fonksiyonu `CREATE OR REPLACE` ile günceller; 008 rafları ekler. Kullanıcı verisi silinmez.
 
 Auth → URL Configuration:
 

@@ -112,7 +112,7 @@ function EmptyDesk() {
           {dictionary.desk.emptyBody}
         </p>
         <Link
-          href="/add"
+          href="/discover"
           className="mt-7 inline-flex rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition hover:opacity-90"
         >
           {dictionary.desk.emptyCta}
@@ -127,7 +127,7 @@ function EmptySlot({ slot }: { slot: number }) {
 
   return (
     <Link
-      href="/add"
+      href="/discover"
       className="flex flex-col items-center opacity-40 transition hover:opacity-80"
     >
       <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">

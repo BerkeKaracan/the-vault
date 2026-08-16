@@ -40,7 +40,7 @@ export async function getActiveMaterials(): Promise<Material[]> {
   }
 }
 
-export async function getVaultMaterials(): Promise<Material[]> {
+export async function getLibraryMaterials(): Promise<Material[]> {
   try {
     const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
     if (!user) return [];
@@ -49,16 +49,15 @@ export async function getVaultMaterials(): Promise<Material[]> {
       .from("materials")
       .select("*")
       .eq("user_id", user.id)
-      .in("status", ["shelved", "completed"])
       .order("updated_at", { ascending: false });
 
     if (error) {
-      console.error("[getVaultMaterials]", error.message);
+      console.error("[getLibraryMaterials]", error.message);
       return [];
     }
     return (data ?? []).map(normalizeMaterial);
   } catch (error) {
-    console.error("[getVaultMaterials]", error);
+    console.error("[getLibraryMaterials]", error);
     return [];
   }
 }

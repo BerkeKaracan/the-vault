@@ -67,7 +67,7 @@ export default async function DiscoverPage({ params }: DiscoverPageProps) {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-8">
       <Link
-        href="/add"
+        href="/discover"
         className="mb-8 w-fit font-mono text-[0.65rem] tracking-[0.2em] text-muted uppercase transition hover:text-foreground"
       >
         {dictionary.book.backToAdd}
