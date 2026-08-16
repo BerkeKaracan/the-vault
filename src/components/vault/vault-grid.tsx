@@ -62,8 +62,19 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
 
   if (materials.length === 0) {
     return (
-      <div className="mt-8 rounded-lg border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
-        {dictionary.vault.empty}
+      <div className="mt-8 rounded-lg border border-dashed border-border px-6 py-16 text-center">
+        <h2 className="font-display text-xl font-semibold tracking-[-0.03em] text-foreground">
+          {dictionary.vault.emptyTitle}
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          {dictionary.vault.emptyBody}
+        </p>
+        <Link
+          href="/add"
+          className="mt-7 inline-flex rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition hover:opacity-90"
+        >
+          {dictionary.vault.emptyCta}
+        </Link>
       </div>
     );
   }
@@ -115,7 +126,7 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
       ) : null}
       <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {visible.map((material) => (
-          <li key={material.id} className="group relative">
+          <li key={material.id} className="flex flex-col">
             <Link href={`/materials/${material.id}`} className="block">
               <Cover
                 title={material.title}
@@ -123,43 +134,41 @@ export function VaultGrid({ materials }: { materials: Material[] }) {
                 coverUrl={material.cover_url}
               />
             </Link>
-            <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100">
-              <Link
-                href={`/materials/${material.id}`}
-                data-private
-                className="line-clamp-2 text-sm font-medium text-white hover:text-white"
-              >
-                {material.title}
-              </Link>
-              <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-white/70 uppercase">
-                {material.status === "completed"
-                  ? dictionary.vault.statusCompleted
-                  : dictionary.vault.statusShelved}
-              </p>
-              <div className="mt-2">
-                <TagList tags={material.tags} />
-              </div>
-              <button
-                type="button"
-                disabled={pending}
-                onClick={() => {
-                  setMessage(null);
-                  setPendingId(material.id);
-                  startTransition(async () => {
-                    const result = await activateMaterial(material.id);
-                    setPendingId(null);
-                    if (!result.ok) {
-                      setMessage(translateError(dictionary, result.error));
-                    }
-                  });
-                }}
-                className="mt-2 rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background disabled:opacity-40"
-              >
-                {pending && pendingId === material.id
-                  ? dictionary.busy
-                  : dictionary.vault.activate}
-              </button>
+            <Link
+              href={`/materials/${material.id}`}
+              data-private
+              className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+            >
+              {material.title}
+            </Link>
+            <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-muted uppercase">
+              {material.status === "completed"
+                ? dictionary.vault.statusCompleted
+                : dictionary.vault.statusShelved}
+            </p>
+            <div className="mt-2">
+              <TagList tags={material.tags} />
             </div>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => {
+                setMessage(null);
+                setPendingId(material.id);
+                startTransition(async () => {
+                  const result = await activateMaterial(material.id);
+                  setPendingId(null);
+                  if (!result.ok) {
+                    setMessage(translateError(dictionary, result.error));
+                  }
+                });
+              }}
+              className="mt-2 self-start rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background disabled:opacity-40"
+            >
+              {pending && pendingId === material.id
+                ? dictionary.busy
+                : dictionary.vault.activate}
+            </button>
           </li>
         ))}
       </ul>

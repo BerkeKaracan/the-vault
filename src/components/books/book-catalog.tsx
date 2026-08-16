@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { addGoogleBook } from "@/app/(app)/materials-actions";
 import { Cover } from "@/components/materials/cover";
@@ -41,6 +42,7 @@ export function BookCatalog({
   tags: string;
 }) {
   const { dictionary } = useI18n();
+  const router = useRouter();
   const [shelf, setShelf] = useState<BookShelfId>(DEFAULT_BOOK_SHELF);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -157,11 +159,7 @@ export function BookCatalog({
         setActionMessage(translateError(dictionary, result.error));
         return;
       }
-      setActionMessage(
-        status === "active"
-          ? t(dictionary.add.addedToDesk, { title: book.title })
-          : t(dictionary.add.addedToVault, { title: book.title }),
-      );
+      router.push(`/materials/${result.data.id}`);
     });
   }
 

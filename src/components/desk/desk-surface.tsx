@@ -65,7 +65,7 @@ function CoverSlot({
           author={material.author}
           coverUrl={material.cover_url}
           priority={priority}
-          sizes="(max-width: 768px) 30vw, 224px"
+          sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 224px"
         />
       </button>
       <div className="mt-4 w-full max-w-56">
@@ -263,7 +263,7 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
         />
-        <div className="relative mx-auto grid w-full max-w-5xl grid-cols-3 items-end gap-3 sm:gap-8">
+        <div className="relative mx-auto grid w-full max-w-5xl grid-cols-1 items-end gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {materials.map((material, index) => (
             <CoverSlot
               key={material.id}

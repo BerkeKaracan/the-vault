@@ -14,6 +14,7 @@ export const BOOK_SHELVES = [
 export type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
 
 export const DEFAULT_BOOK_SHELF: BookShelfId = "all";
+/** Default vitrine is fiction — Google Books has no true newest-all feed. */
 export const BROWSE_ALL_QUERY = "subject:fiction";
 export const CATALOG_PAGE_SIZE = 24;
 

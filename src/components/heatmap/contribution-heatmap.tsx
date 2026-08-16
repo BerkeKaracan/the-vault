@@ -222,6 +222,11 @@ export function ContributionHeatmap({
           {t(dictionary.desk.heatmapStats, { days: activeDays })}
         </p>
       </div>
+      {loaded && activeDays === 0 ? (
+        <p className="mb-2 font-mono text-[0.62rem] text-muted">
+          {dictionary.desk.heatmapEmptyCaption}
+        </p>
+      ) : null}
       <div
         className={`grid w-full grid-flow-col grid-rows-7 gap-0.75 ${loaded ? "" : "opacity-40"}`}
       >

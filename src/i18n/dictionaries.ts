@@ -72,6 +72,7 @@ const tr = {
     desk: "Desk",
     vault: "Vault",
     add: "Ekle",
+    menu: "Menü",
     settings: "Ayarlar",
     signOut: "Çıkış",
     focus: "Odak",
@@ -98,6 +99,7 @@ const tr = {
     markCompleted: "Bitir",
     shelve: "Vault’a kaldır",
     heatmapStats: "{days} aktif gün",
+    heatmapEmptyCaption: "Bugünü yakmak için bir sayfa kaydet.",
     heatmapLess: "Az",
     heatmapMore: "Çok",
     heatmapCell: "{date}: {count} kayıt",
@@ -118,7 +120,10 @@ const tr = {
   vault: {
     title: "The Vault",
     subtitle: "Arşiv ve bekleyenler · {count}",
-    empty: "Kütüphane henüz boş.",
+    emptyTitle: "Vault henüz boş.",
+    emptyBody:
+      "Bitirdiklerin ve bekleyenler burada durur. İlk kapağı ekle, masaya almak istediğinde hazır olsun.",
+    emptyCta: "Materyal ekle",
     add: "Ekle",
     activate: "Masaya al",
     statusShelved: "Bekliyor",
@@ -161,7 +166,7 @@ const tr = {
     tagsLabel: "Etiketler",
     tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
     shelves: {
-      all: "Vitrin",
+      all: "Kurgu vitrini",
       fiction: "Kurgu",
       history: "Tarih",
       science: "Bilim",
@@ -341,6 +346,7 @@ const en = {
     desk: "Desk",
     vault: "Vault",
     add: "Add",
+    menu: "Menu",
     settings: "Settings",
     signOut: "Sign out",
     focus: "Focus",
@@ -367,6 +373,7 @@ const en = {
     markCompleted: "Complete",
     shelve: "Move to Vault",
     heatmapStats: "{days} active days",
+    heatmapEmptyCaption: "Log a page to light today.",
     heatmapLess: "Less",
     heatmapMore: "More",
     heatmapCell: "{count} logged on {date}",
@@ -387,7 +394,10 @@ const en = {
   vault: {
     title: "The Vault",
     subtitle: "Archive and waiting · {count}",
-    empty: "Library is still empty.",
+    emptyTitle: "The Vault is still empty.",
+    emptyBody:
+      "Finished and waiting materials live here. Add a cover so it’s ready when you want it on the desk.",
+    emptyCta: "Add material",
     add: "Add",
     activate: "Activate",
     statusShelved: "Shelved",
@@ -430,7 +440,7 @@ const en = {
     tagsLabel: "Tags",
     tagsPlaceholder: "Software, Exam, Literature",
     shelves: {
-      all: "Shelf",
+      all: "Fiction shelf",
       fiction: "Fiction",
       history: "History",
       science: "Science",
@@ -597,6 +607,7 @@ export type Dictionary = {
     desk: string;
     vault: string;
     add: string;
+    menu: string;
     settings: string;
     signOut: string;
     focus: string;
@@ -622,6 +633,7 @@ export type Dictionary = {
     markCompleted: string;
     shelve: string;
     heatmapStats: string;
+    heatmapEmptyCaption: string;
     heatmapLess: string;
     heatmapMore: string;
     heatmapCell: string;
@@ -642,7 +654,9 @@ export type Dictionary = {
   vault: {
     title: string;
     subtitle: string;
-    empty: string;
+    emptyTitle: string;
+    emptyBody: string;
+    emptyCta: string;
     add: string;
     activate: string;
     statusShelved: string;
