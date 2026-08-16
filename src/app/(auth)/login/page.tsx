@@ -12,6 +12,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const next = safeNextPath(
     Array.isArray(nextValue) ? nextValue[0] : nextValue,
   );
+  const errorValue = params.error;
+  const error = Array.isArray(errorValue) ? errorValue[0] : errorValue;
 
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-16">
@@ -33,7 +35,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           {dictionary.login.subtitle}
         </p>
       </div>
-      <LoginForm next={next} />
+      <LoginForm next={next} error={error ?? null} />
     </main>
   );
 }
