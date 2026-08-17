@@ -9,6 +9,7 @@ import { t } from "@/i18n/t";
 import type { HeatmapData, HeatmapDayEntry } from "@/lib/heatmap";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
+import { signedDeltaLabel, signedEntryId } from "@/lib/progress-day";
 import type { WeekStart } from "@/lib/types";
 
 const WEEKS = 26;
@@ -155,7 +156,7 @@ export function ContributionHeatmap({
 
   function entryLine(entry: HeatmapDayEntry): string {
     return t(dictionary.desk.heatmapEntry, {
-      count: entry.delta,
+      count: signedDeltaLabel(entry.delta),
       unit: metricUnit(dictionary, entry.metricType, Math.abs(entry.delta)),
       title: entry.title,
     });
@@ -306,7 +307,7 @@ export function ContributionHeatmap({
             tip.date > today,
           )}
           lines={(entries[tip.date] ?? []).map((entry) => ({
-            id: entry.materialId,
+            id: signedEntryId(entry),
             text: entryLine(entry),
           }))}
           x={tip.x}

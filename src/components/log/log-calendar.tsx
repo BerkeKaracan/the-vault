@@ -6,6 +6,7 @@ import { useI18n } from "@/i18n/provider";
 import { getLocalDateString } from "@/lib/local-date";
 import type { MonthLog } from "@/lib/log";
 import { metricUnit } from "@/lib/metric";
+import { signedDeltaLabel, signedEntryId } from "@/lib/progress-day";
 
 function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
@@ -132,7 +133,7 @@ export function LogCalendar({
         ) : (
           <ul className="mt-3 flex flex-col gap-3">
             {dayEntries.map((entry) => (
-              <li key={entry.materialId}>
+              <li key={signedEntryId(entry)}>
                 <Link
                   href={`/materials/${entry.materialId}`}
                   data-private
@@ -141,8 +142,12 @@ export function LogCalendar({
                   {entry.title}
                 </Link>
                 <p className="font-mono text-[0.65rem] text-muted">
-                  {entry.delta}{" "}
-                  {metricUnit(dictionary, entry.metricType, entry.delta)}
+                  {signedDeltaLabel(entry.delta)}{" "}
+                  {metricUnit(
+                    dictionary,
+                    entry.metricType,
+                    Math.abs(entry.delta),
+                  )}
                 </p>
               </li>
             ))}

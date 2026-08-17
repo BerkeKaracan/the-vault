@@ -13,8 +13,8 @@ export default async function DeskPage() {
 
   return (
     <main className="relative flex min-h-[calc(100dvh-3.75rem)] flex-1 flex-col">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,var(--accent-glow),transparent_60%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="desk-orb absolute top-[-20%] left-[20%] size-[55vh] rounded-full bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,var(--accent-glow),transparent_60%)] blur-2xl" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_100%,var(--desk-fade),transparent_70%)]" />
       </div>
 

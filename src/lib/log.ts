@@ -1,15 +1,15 @@
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
 import { isMetricType } from "@/lib/catalog";
+import {
+  addSignedDayEntry,
+  type SignedDayEntry,
+  signedDayEntries,
+} from "@/lib/progress-day";
 import { createClient } from "@/lib/supabase/server";
 import type { MetricType } from "@/lib/types";
 
-export type LogDayEntry = {
-  materialId: string;
-  title: string;
-  metricType: MetricType;
-  delta: number;
-};
+export type LogDayEntry = SignedDayEntry;
 
 export type MonthLog = {
   totals: Record<string, number>;
@@ -69,29 +69,15 @@ export const getMonthLog = cache(
       for (const row of data ?? []) {
         totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
         const material = nestedTitle(row.materials);
-        const byMaterial = grouped.get(row.logged_on) ?? new Map();
-        const existing = byMaterial.get(row.material_id);
-        if (existing) {
-          existing.delta += row.pages_delta;
-        } else {
-          byMaterial.set(row.material_id, {
-            materialId: row.material_id,
-            title: material.title,
-            metricType: material.metricType,
-            delta: row.pages_delta,
-          });
-        }
-        grouped.set(row.logged_on, byMaterial);
+        addSignedDayEntry(grouped, row.logged_on, {
+          materialId: row.material_id,
+          title: material.title,
+          metricType: material.metricType,
+          delta: row.pages_delta,
+        });
       }
 
-      const entries: Record<string, LogDayEntry[]> = {};
-      for (const [date, byMaterial] of grouped) {
-        entries[date] = [...byMaterial.values()]
-          .filter((item) => item.delta !== 0)
-          .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-      }
-
-      return { totals, entries };
+      return { totals, entries: signedDayEntries(grouped) };
     } catch (error) {
       console.error("[getMonthLog]", error);
       return EMPTY_LOG;
