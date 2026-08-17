@@ -44,6 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: dictionary.meta.description,
     applicationName: dictionary.brand,
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "32x32" },
+        { url: "/icon", type: "image/png", sizes: "512x512" },
+      ],
+      apple: [{ url: "/apple-icon", sizes: "180x180" }],
+    },
     appleWebApp: {
       capable: true,
       title: dictionary.brand,

@@ -1,4 +1,4 @@
-const ICON = "/icon/192";
+const ICON = "/icon";
 const DEFAULT_BODY = "Back to the desk. Light today’s cell.";
 
 self.addEventListener("push", (event) => {
