@@ -1,4 +1,4 @@
-export const NOTIFICATION_ICON = "/icon/192";
+export const NOTIFICATION_ICON = "/icon";
 export const NOTIFICATION_URL = "/desk";
 
 export type GoalNotificationInput = {

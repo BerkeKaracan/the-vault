@@ -18,19 +18,19 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     lang: locale,
     icons: [
       {
-        src: "/icon/192",
+        src: "/icon",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icon/512",
+        src: "/icon",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icon/512",
+        src: "/icon",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

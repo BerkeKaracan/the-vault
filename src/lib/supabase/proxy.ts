@@ -12,6 +12,7 @@ function isPublicPath(path: string) {
     path.startsWith("/setup") ||
     path.startsWith("/api/cron") ||
     path === "/sw.js" ||
+    path === "/favicon.ico" ||
     path === "/icon" ||
     path.startsWith("/icon/") ||
     path === "/apple-icon" ||
