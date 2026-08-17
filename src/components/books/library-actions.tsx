@@ -5,7 +5,7 @@ import {
   activateMaterial,
   markCompleted,
   shelveMaterial,
-} from "@/app/(app)/materials-actions";
+} from "@/app/(app)/materials/[id]/actions";
 import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
@@ -34,19 +34,22 @@ export function LibraryActions({
   const { dictionary } = useI18n();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [serverMaterial, setServerMaterial] = useState(material);
+  const [current, setCurrent] = useState(material);
 
-  const progressLabel = material.total_pages
+  if (material !== serverMaterial) {
+    setServerMaterial(material);
+    setCurrent(material);
+  }
+
+  const progressLabel = current.total_pages
     ? t(dictionary.desk.pageOf, {
-        current: material.current_page,
-        total: material.total_pages,
+        current: current.current_page,
+        total: current.total_pages,
       })
     : t(dictionary.desk.pageOnly, {
-        page: material.current_page,
-        unit: metricUnit(
-          dictionary,
-          material.metric_type,
-          material.current_page,
-        ),
+        page: current.current_page,
+        unit: metricUnit(dictionary, current.metric_type, current.current_page),
       });
 
   function run(action: () => Promise<{ ok: boolean; error?: string }>) {
@@ -68,20 +71,23 @@ export function LibraryActions({
         <p className="font-mono text-xs text-muted">
           {t(dictionary.desk.pace, {
             rate: pace,
-            unit: metricUnit(dictionary, material.metric_type),
+            unit: metricUnit(dictionary, current.metric_type),
           })}
         </p>
       ) : null}
 
-      {material.status === "active" ? (
+      {current.status === "active" ? (
         <>
-          <ProgressControls material={material} />
+          <ProgressControls
+            material={current}
+            onLogged={(next) => setCurrent(next)}
+          />
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               disabled={pending}
               onClick={() =>
-                run(() => markCompleted(material.id, getLocalDateString()))
+                run(() => markCompleted(current.id, getLocalDateString()))
               }
               className="px-2 text-xs text-muted hover:text-foreground/80 disabled:opacity-40"
             >
@@ -90,7 +96,7 @@ export function LibraryActions({
             <button
               type="button"
               disabled={pending}
-              onClick={() => run(() => shelveMaterial(material.id))}
+              onClick={() => run(() => shelveMaterial(current.id))}
               className="px-2 text-xs text-muted hover:text-foreground/80 disabled:opacity-40"
             >
               {dictionary.desk.shelve}
@@ -99,11 +105,15 @@ export function LibraryActions({
         </>
       ) : (
         <>
-          <ProgressControls material={material} showTimer={false} />
+          <ProgressControls
+            material={current}
+            showTimer={false}
+            onLogged={(next) => setCurrent(next)}
+          />
           <button
             type="button"
             disabled={pending}
-            onClick={() => run(() => activateMaterial(material.id))}
+            onClick={() => run(() => activateMaterial(current.id))}
             className="w-fit rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
           >
             {dictionary.vault.activate}

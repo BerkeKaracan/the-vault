@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { cookies } from "next/headers";
-import { isAccentColor } from "@/lib/catalog";
+import { isAccentColor } from "@/lib/catalog/fields";
 import { createClient } from "@/lib/supabase/server";
 import {
   type ColorScheme,

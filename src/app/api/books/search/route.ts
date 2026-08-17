@@ -7,8 +7,8 @@ import {
   CATALOG_PAGE_SIZE,
   isBookSubject,
   toGoogleBooksQuery,
-} from "@/lib/book-shelves";
-import { GoogleBooksError, searchGoogleBooks } from "@/lib/google-books";
+} from "@/lib/catalog/book-shelves";
+import { GoogleBooksError, searchGoogleBooks } from "@/lib/catalog/google-books";
 
 async function userFacingMessage(
   error: unknown,

@@ -9,7 +9,7 @@ import {
   useState,
   useTransition,
 } from "react";
-import { setColorScheme, setFocusMode } from "@/app/(app)/settings-actions";
+import { setColorScheme, setFocusMode } from "@/app/(app)/settings/actions";
 import {
   type ColorScheme,
   defaultColorScheme,

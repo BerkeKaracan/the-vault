@@ -1,7 +1,7 @@
 "use client";
 
 import { useI18n } from "@/i18n/provider";
-import { ACCENTS } from "@/lib/catalog";
+import { ACCENTS } from "@/lib/catalog/fields";
 import type { MetricType } from "@/lib/types";
 
 const SWATCH: Record<(typeof ACCENTS)[number], string> = {

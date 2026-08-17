@@ -1,21 +1,20 @@
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
-import { isMetricType } from "@/lib/catalog";
+import { isMetricType } from "@/lib/catalog/fields";
 import { getLocalDateString } from "@/lib/local-date";
+import {
+  addSignedDayEntry,
+  type SignedDayEntry,
+  signedDayEntries,
+} from "@/lib/progress/day";
 import { createClient } from "@/lib/supabase/server";
-import type { MetricType } from "@/lib/types";
 
 const HEATMAP_WEEKS = 26;
 /** Extra days so a UTC server still covers the client's 26-week local grid. */
 const HEATMAP_LOOKBACK_DAYS = HEATMAP_WEEKS * 7 + 14;
 
 /** pages keyed by logged_on (YYYY-MM-DD local calendar day from client). */
-export type HeatmapDayEntry = {
-  materialId: string;
-  title: string;
-  metricType: MetricType;
-  delta: number;
-};
+export type HeatmapDayEntry = SignedDayEntry;
 
 export type HeatmapData = {
   totals: Record<string, number>;
@@ -69,32 +68,18 @@ export const getHeatmapData = cache(async (): Promise<HeatmapData> => {
     for (const row of data ?? []) {
       totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
       const material = nestedMaterial(row.materials);
-      const byMaterial = grouped.get(row.logged_on) ?? new Map();
-      const existing = byMaterial.get(row.material_id);
-      if (existing) {
-        existing.delta += row.pages_delta;
-      } else {
-        byMaterial.set(row.material_id, {
-          materialId: row.material_id,
-          title: material?.title?.trim() || "—",
-          metricType:
-            material?.metric_type && isMetricType(material.metric_type)
-              ? material.metric_type
-              : "pages",
-          delta: row.pages_delta,
-        });
-      }
-      grouped.set(row.logged_on, byMaterial);
+      addSignedDayEntry(grouped, row.logged_on, {
+        materialId: row.material_id,
+        title: material?.title?.trim() || "—",
+        metricType:
+          material?.metric_type && isMetricType(material.metric_type)
+            ? material.metric_type
+            : "pages",
+        delta: row.pages_delta,
+      });
     }
 
-    const entries: Record<string, HeatmapDayEntry[]> = {};
-    for (const [date, byMaterial] of grouped) {
-      entries[date] = [...byMaterial.values()]
-        .filter((item) => item.delta !== 0)
-        .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-    }
-
-    return { totals, entries };
+    return { totals, entries: signedDayEntries(grouped) };
   } catch (error) {
     console.error("[getHeatmapData]", error);
     return EMPTY_HEATMAP;

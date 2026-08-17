@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import { markCompleted, shelveMaterial } from "@/app/(app)/materials-actions";
+import {
+  markCompleted,
+  shelveMaterial,
+} from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
 import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
@@ -32,6 +35,22 @@ function translateError(
   return dictionary.errors.generic;
 }
 
+function DeskAtmosphere() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <div className="desk-orb absolute top-[-28%] right-[-18%] size-[70vh] rounded-full bg-[radial-gradient(circle,var(--accent-glow),transparent_68%)] blur-3xl" />
+      <div className="desk-orb-alt landing-orb-warm absolute bottom-[-30%] left-[-20%] size-[62vh] rounded-full blur-3xl" />
+      <div className="desk-ruling absolute inset-0" />
+      <div className="desk-grain absolute inset-[-45%]" />
+      <div className="absolute bottom-[10%] left-1/2 h-28 w-[min(42rem,80%)] -translate-x-1/2 rounded-[100%] bg-[radial-gradient(ellipse_at_center,var(--accent-glow),transparent_72%)] blur-2xl" />
+      <div className="absolute inset-x-0 bottom-0 h-[32%] bg-linear-to-t from-[var(--desk-fade)] to-transparent" />
+    </div>
+  );
+}
+
 function CoverSlot({
   material,
   slot,
@@ -50,38 +69,57 @@ function CoverSlot({
 
   return (
     <div
-      className={`group flex flex-col items-center text-left transition duration-500 ${selected ? "-translate-y-3" : "opacity-55 hover:opacity-85"}`}
+      className="desk-enter"
+      style={{ animationDelay: `${(slot - 1) * 110}ms` }}
     >
-      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
-        {t(dictionary.desk.slotLabel, { n: slot })}
-      </p>
-      <button
-        type="button"
-        onClick={onSelect}
-        aria-pressed={selected}
-        className={`w-full max-w-56 ${selected ? "ring-1 ring-accent/40" : ""}`}
+      <div
+        className={`group flex flex-col items-center text-left transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          selected
+            ? "-translate-y-5"
+            : "opacity-50 hover:-translate-y-2 hover:opacity-90"
+        }`}
       >
-        <Cover
-          title={material.title}
-          author={material.author}
-          coverUrl={material.cover_url}
-          priority={priority}
-          sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 224px"
-        />
-      </button>
-      <div className="mt-4 w-full max-w-56">
-        <Link
-          href={`/materials/${material.id}`}
-          data-private
-          className="line-clamp-2 font-display text-[0.95rem] leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+        <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
+          {t(dictionary.desk.slotLabel, { n: slot })}
+        </p>
+        <button
+          type="button"
+          onClick={onSelect}
+          aria-pressed={selected}
+          className="relative w-full max-w-56"
         >
-          {material.title}
-        </Link>
-        <div className="mt-3 h-px overflow-hidden bg-border">
-          <div
-            className="h-full bg-accent"
-            style={{ width: `${percent ?? 8}%` }}
+          <span
+            className={`absolute -bottom-4 left-1/2 h-8 w-4/5 -translate-x-1/2 rounded-full bg-accent/25 blur-xl transition-opacity duration-500 ${
+              selected ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+            }`}
           />
+          <Cover
+            title={material.title}
+            author={material.author}
+            coverUrl={material.cover_url}
+            priority={priority}
+            sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 224px"
+            className={`transition-[box-shadow,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              selected
+                ? "ring-1 ring-accent/45 shadow-[0_28px_60px_-24px_color-mix(in_srgb,var(--accent)_55%,transparent)]"
+                : ""
+            }`}
+          />
+        </button>
+        <div className="mt-4 w-full max-w-56">
+          <Link
+            href={`/materials/${material.id}`}
+            data-private
+            className="line-clamp-2 font-display text-[0.95rem] leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+          >
+            {material.title}
+          </Link>
+          <div className="mt-3 h-px overflow-hidden bg-border">
+            <div
+              className="h-full bg-accent transition-[width] duration-500"
+              style={{ width: `${percent ?? 8}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -93,15 +131,8 @@ function EmptyDesk() {
 
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-8">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
-      />
-      <div className="relative mx-auto max-w-md text-center">
+      <DeskAtmosphere />
+      <div className="desk-enter relative mx-auto max-w-md text-center">
         <p className="font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
           {dictionary.nav.desk}
         </p>
@@ -126,22 +157,33 @@ function EmptySlot({ slot }: { slot: number }) {
   const { dictionary } = useI18n();
 
   return (
-    <Link
-      href="/discover"
-      className="flex flex-col items-center opacity-40 transition hover:opacity-80"
+    <div
+      className="desk-enter"
+      style={{ animationDelay: `${(slot - 1) * 110}ms` }}
     >
-      <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
-        {t(dictionary.desk.slotLabel, { n: slot })}
-      </p>
-      <div className="flex aspect-2/3 w-full max-w-56 items-center justify-center rounded-sm border border-dashed border-border">
-        <span className="font-display text-3xl text-muted">+</span>
-      </div>
-      <p className="mt-4 text-sm text-muted">{dictionary.desk.emptySlot}</p>
-    </Link>
+      <Link
+        href="/discover"
+        className="flex flex-col items-center opacity-40 transition hover:-translate-y-1 hover:opacity-80"
+      >
+        <p className="mb-3 font-mono text-[0.58rem] tracking-[0.28em] text-muted uppercase">
+          {t(dictionary.desk.slotLabel, { n: slot })}
+        </p>
+        <div className="flex aspect-2/3 w-full max-w-56 items-center justify-center rounded-sm border border-dashed border-border">
+          <span className="font-display text-3xl text-muted">+</span>
+        </div>
+        <p className="mt-4 text-sm text-muted">{dictionary.desk.emptySlot}</p>
+      </Link>
+    </div>
   );
 }
 
-function DeskDock({ material }: { material: Material }) {
+function DeskDock({
+  material,
+  onLogged,
+}: {
+  material: Material;
+  onLogged?: (material: Material, delta: number) => void;
+}) {
   const { dictionary } = useI18n();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -206,7 +248,7 @@ function DeskDock({ material }: { material: Material }) {
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
-          <ProgressControls material={material} />
+          <ProgressControls material={material} onLogged={onLogged} />
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
@@ -238,7 +280,13 @@ function DeskDock({ material }: { material: Material }) {
   );
 }
 
-export function DeskSurface({ materials }: { materials: Material[] }) {
+export function DeskSurface({
+  materials,
+  onLogged,
+}: {
+  materials: Material[];
+  onLogged?: (material: Material, delta: number) => void;
+}) {
   const [selectedId, setSelectedId] = useState<string | null>(
     materials[0]?.id ?? null,
   );
@@ -257,15 +305,8 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
 
   return (
     <>
-      <div className="relative flex flex-1 items-end pb-2">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-[18%] h-px bg-linear-to-r from-transparent via-border to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-linear-to-t from-[var(--desk-fade)] to-transparent"
-        />
+      <div className="relative flex flex-1 items-end pt-8 pb-2 sm:pt-10">
+        <DeskAtmosphere />
         <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-end gap-8 px-6 sm:grid-cols-2 sm:px-8 lg:grid-cols-3">
           {materials.map((material, index) => (
             <CoverSlot
@@ -282,7 +323,9 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
           ))}
         </div>
       </div>
-      {selected ? <DeskDock key={selected.id} material={selected} /> : null}
+      {selected ? (
+        <DeskDock key={selected.id} material={selected} onLogged={onLogged} />
+      ) : null}
     </>
   );
 }

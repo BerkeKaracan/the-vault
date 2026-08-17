@@ -226,6 +226,44 @@ html::-webkit-scrollbar-corner {
   }
 }
 
+@keyframes desk-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(7%, -5%, 0) scale(1.14);
+  }
+}
+
+@keyframes desk-drift-alt {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-6%, 8%, 0) scale(1.1);
+  }
+}
+
+@keyframes desk-ruling-shift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 18px, 48px 0;
+  }
+}
+
+@keyframes desk-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .landing-rise {
   animation: landing-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -299,6 +337,48 @@ html[data-theme="light"] .landing-grain {
     #000 10%,
     transparent 75%
   );
+}
+
+.desk-ruling {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 17px,
+      color-mix(in srgb, var(--foreground) 11%, transparent) 17px 18px
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent 0 47px,
+      color-mix(in srgb, var(--foreground) 6%, transparent) 47px 48px
+    );
+  mask-image: radial-gradient(
+    ellipse 78% 58% at 50% 64%,
+    #000 18%,
+    transparent 78%
+  );
+  animation: desk-ruling-shift 32s linear infinite;
+}
+
+.desk-orb {
+  animation: desk-drift 24s ease-in-out infinite alternate;
+}
+
+.desk-orb-alt {
+  animation: desk-drift-alt 30s ease-in-out infinite alternate;
+}
+
+.desk-enter {
+  animation: desk-enter 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.desk-grain {
+  opacity: 0.11;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: landing-grain 8s steps(3) infinite;
+}
+
+html[data-theme="light"] .desk-grain {
+  opacity: 0.06;
 }
 
 .landing-orb-warm {
@@ -386,7 +466,12 @@ html[data-theme="light"] .landing-orb-warm {
   .landing-pulse,
   .landing-atmosphere,
   .landing-grain,
-  .landing-tilt {
+  .landing-tilt,
+  .desk-orb,
+  .desk-orb-alt,
+  .desk-ruling,
+  .desk-grain,
+  .desk-enter {
     animation: none;
     transform: none;
   }

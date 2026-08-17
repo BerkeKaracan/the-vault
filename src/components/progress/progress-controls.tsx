@@ -4,12 +4,12 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import {
   logProgress,
   updateMaterialMetric,
-} from "@/app/(app)/materials-actions";
+} from "@/app/(app)/materials/[id]/actions";
 import { MetricTypeRadios } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import { isMetricType } from "@/lib/catalog";
+import { isMetricType } from "@/lib/catalog/fields";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import type { Material, MetricType } from "@/lib/types";
@@ -75,9 +75,11 @@ function clearTimer(materialId: string) {
 export function ProgressControls({
   material,
   showTimer = true,
+  onLogged,
 }: {
   material: Material;
   showTimer?: boolean;
+  onLogged?: (material: Material, delta: number) => void;
 }) {
   const { dictionary } = useI18n();
   const [pageAfter, setPageAfter] = useState(String(material.current_page));
@@ -167,6 +169,7 @@ export function ProgressControls({
         setMessage(translateError(dictionary, result.error ?? "generic"));
         return;
       }
+      onLogged?.(result.data, delta);
       if (delta > 0) {
         resetTimer();
       }

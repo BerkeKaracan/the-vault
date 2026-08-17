@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
-import { getStatsSummary } from "@/lib/stats";
+import { getStatsSummary } from "@/lib/progress/stats";
 
 export default async function StatsPage() {
   const [dictionary, stats] = await Promise.all([

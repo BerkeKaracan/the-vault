@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
-import { isMetricType } from "@/lib/catalog";
-import { isGoogleVolumeId } from "@/lib/google-books";
+import { isMetricType } from "@/lib/catalog/fields";
+import { isGoogleVolumeId } from "@/lib/catalog/google-books";
 import { isUuid } from "@/lib/ids";
 import { createClient } from "@/lib/supabase/server";
 import type { Material, MaterialNote } from "@/lib/types";

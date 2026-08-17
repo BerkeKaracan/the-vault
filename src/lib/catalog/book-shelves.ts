@@ -21,7 +21,10 @@ export const CATALOG_PAGE_SIZE = 40;
 /** Volumes search degrades after a few hundred hits. */
 export const CATALOG_INDEX_CAP = 400;
 
-export type BookSubject = Exclude<(typeof BOOK_SHELVES)[number]["subject"], null>;
+export type BookSubject = Exclude<
+  (typeof BOOK_SHELVES)[number]["subject"],
+  null
+>;
 
 const SUBJECTS = new Set<string>(
   BOOK_SHELVES.flatMap((shelf) => (shelf.subject ? [shelf.subject] : [])),

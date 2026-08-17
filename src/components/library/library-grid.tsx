@@ -5,13 +5,13 @@ import { useMemo, useState, useTransition } from "react";
 import {
   createCollection,
   deleteCollection,
-} from "@/app/(app)/collection-actions";
-import { activateMaterial } from "@/app/(app)/materials-actions";
+} from "@/app/(app)/library/actions";
+import { activateMaterial } from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
 import { TagList } from "@/components/materials/tag-list";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
-import type { Collection } from "@/lib/collections";
+import type { Collection } from "@/lib/library/collections";
 import type { Material, MaterialStatus } from "@/lib/types";
 
 function translateError(

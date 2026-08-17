@@ -2,7 +2,7 @@ import { LogCalendar } from "@/components/log/log-calendar";
 import { PageHeader } from "@/components/page-header";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getLocalDateString } from "@/lib/local-date";
-import { getMonthLog } from "@/lib/log";
+import { getMonthLog } from "@/lib/progress/log";
 import { getSessionProfile } from "@/lib/profile";
 
 type LogPageProps = {

@@ -9,8 +9,8 @@ import {
   GoogleBooksError,
   getGoogleBook,
   isGoogleVolumeId,
-} from "@/lib/google-books";
-import { findMaterialByGoogleId } from "@/lib/materials";
+} from "@/lib/catalog/google-books";
+import { findMaterialByGoogleId } from "@/lib/library/materials";
 
 type DiscoverPageProps = {
   params: Promise<{ googleId: string }>;

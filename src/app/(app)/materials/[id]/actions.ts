@@ -2,13 +2,13 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
-import { isMetricType, parseTags } from "@/lib/catalog";
+import { isMetricType, parseTags } from "@/lib/catalog/fields";
 import {
   type GoogleBookResult,
   getGoogleBook,
   isGoogleVolumeId,
-} from "@/lib/google-books";
-import { findMaterialByGoogleId } from "@/lib/materials";
+} from "@/lib/catalog/google-books";
+import { findMaterialByGoogleId } from "@/lib/library/materials";
 import { createClient } from "@/lib/supabase/server";
 import type {
   ActionErrorCode,
@@ -231,7 +231,6 @@ export async function logProgress(input: {
     });
   }
 
-  refresh();
   return { ok: true, data };
 }
 
