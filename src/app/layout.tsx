@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
-import { PreferencesProvider } from "@/components/preferences";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { I18nProvider } from "@/i18n/provider";
 import { isAccentColor } from "@/lib/catalog/fields";
@@ -10,6 +9,7 @@ import { getSessionProfile } from "@/lib/profile";
 import { getSiteUrl } from "@/lib/site";
 import { isColorScheme } from "@/lib/theme";
 import { getColorScheme } from "@/lib/theme-server";
+import { PreferencesProvider } from "@/store";
 import "./globals.css";
 
 const geistSans = Geist({

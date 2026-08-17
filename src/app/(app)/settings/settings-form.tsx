@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import { setGoalReminders, updateProfile } from "@/app/(app)/settings/actions";
 import { AccentSwatches } from "@/components/materials/catalog-fields";
-import { usePreferences } from "@/components/preferences";
 import type { CookieConsent } from "@/i18n/config";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
@@ -18,6 +17,7 @@ import {
   unsubscribeGoalPush,
 } from "@/lib/push-client";
 import type { AccentColor, Profile, WeekStart } from "@/lib/types";
+import { usePreferences } from "@/store";
 
 const fieldClass =
   "mt-1.5 w-full rounded-md border border-border bg-elevated px-3 py-2 text-sm text-foreground outline-none focus:border-accent/50";
