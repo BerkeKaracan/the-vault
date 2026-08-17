@@ -1,5 +1,6 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
-import { getAuthUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { isMetricType } from "@/lib/catalog/fields";
 import { getLocalDateString } from "@/lib/local-date";
 import {
@@ -45,8 +46,7 @@ function nestedMaterial(
 /** Read-only. Must not live in a `"use server"` file — those are actions. */
 export const getHeatmapData = cache(async (): Promise<HeatmapData> => {
   try {
-    const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
-    if (!user) return EMPTY_HEATMAP;
+    const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
     const { data, error } = await supabase
       .from("progress_entries")
@@ -81,6 +81,7 @@ export const getHeatmapData = cache(async (): Promise<HeatmapData> => {
 
     return { totals, entries: signedDayEntries(grouped) };
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getHeatmapData]", error);
     return EMPTY_HEATMAP;
   }

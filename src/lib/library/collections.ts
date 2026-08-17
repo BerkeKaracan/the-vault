@@ -1,5 +1,6 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
-import { getAuthUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export type Collection = {
@@ -11,8 +12,7 @@ export type Collection = {
 
 export const getCollections = cache(async (): Promise<Collection[]> => {
   try {
-    const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
-    if (!user) return [];
+    const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
     const [
       { data: shelves, error: shelfError },
@@ -51,6 +51,7 @@ export const getCollections = cache(async (): Promise<Collection[]> => {
       materialIds: byShelf.get(shelf.id) ?? [],
     }));
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getCollections]", error);
     return [];
   }

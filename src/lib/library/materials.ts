@@ -1,5 +1,6 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
-import { getAuthUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { isMetricType } from "@/lib/catalog/fields";
 import { isGoogleVolumeId } from "@/lib/catalog/google-books";
 import { isUuid } from "@/lib/ids";
@@ -18,48 +19,36 @@ function normalizeMaterial(row: Material): Material {
 }
 
 export async function getActiveMaterials(): Promise<Material[]> {
-  try {
-    const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
-    if (!user) return [];
+  const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
-    const { data, error } = await supabase
-      .from("materials")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .order("updated_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("materials")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .order("updated_at", { ascending: false });
 
-    if (error) {
-      console.error("[getActiveMaterials]", error.message);
-      return [];
-    }
-    return (data ?? []).map(normalizeMaterial);
-  } catch (error) {
-    console.error("[getActiveMaterials]", error);
+  if (error) {
+    console.error("[getActiveMaterials]", error.message);
     return [];
   }
+  return (data ?? []).map(normalizeMaterial);
 }
 
 export async function getLibraryMaterials(): Promise<Material[]> {
-  try {
-    const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
-    if (!user) return [];
+  const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
-    const { data, error } = await supabase
-      .from("materials")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("materials")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false });
 
-    if (error) {
-      console.error("[getLibraryMaterials]", error.message);
-      return [];
-    }
-    return (data ?? []).map(normalizeMaterial);
-  } catch (error) {
-    console.error("[getLibraryMaterials]", error);
+  if (error) {
+    console.error("[getLibraryMaterials]", error.message);
     return [];
   }
+  return (data ?? []).map(normalizeMaterial);
 }
 
 export async function findMaterialByGoogleId(
@@ -92,11 +81,10 @@ export const getMaterial = cache(
     if (!isUuid(id)) return null;
 
     try {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return null;
+      const [supabase, user] = await Promise.all([
+        createClient(),
+        requireUser(),
+      ]);
 
       const { data, error } = await supabase
         .from("materials")
@@ -112,6 +100,7 @@ export const getMaterial = cache(
       if (!data) return null;
       return normalizeMaterial(data);
     } catch (error) {
+      unstable_rethrow(error);
       console.error("[getMaterial]", error);
       return null;
     }
@@ -122,11 +111,7 @@ export async function getMaterialNote(
   materialId: string,
 ): Promise<MaterialNote | null> {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return null;
+    const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
     const { data, error } = await supabase
       .from("material_notes")
@@ -141,6 +126,7 @@ export async function getMaterialNote(
     }
     return data;
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getMaterialNote]", error);
     return null;
   }
@@ -150,11 +136,7 @@ export async function getMaterialPace(
   materialId: string,
 ): Promise<number | null> {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return null;
+    const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
     const { data, error } = await supabase
       .from("reading_sessions")
@@ -177,6 +159,7 @@ export async function getMaterialPace(
     if (seconds <= 0 || units <= 0) return null;
     return Math.round((units / seconds) * 3600);
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getMaterialPace]", error);
     return null;
   }

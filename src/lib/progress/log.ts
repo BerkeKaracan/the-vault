@@ -1,5 +1,6 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
-import { getAuthUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { isMetricType } from "@/lib/catalog/fields";
 import {
   addSignedDayEntry,
@@ -39,9 +40,8 @@ export const getMonthLog = cache(
     try {
       const [supabase, user] = await Promise.all([
         createClient(),
-        getAuthUser(),
+        requireUser(),
       ]);
-      if (!user) return EMPTY_LOG;
 
       const from = `${year}-${String(month).padStart(2, "0")}-01`;
       const nextMonth = month === 12 ? 1 : month + 1;
@@ -79,6 +79,7 @@ export const getMonthLog = cache(
 
       return { totals, entries: signedDayEntries(grouped) };
     } catch (error) {
+      unstable_rethrow(error);
       console.error("[getMonthLog]", error);
       return EMPTY_LOG;
     }

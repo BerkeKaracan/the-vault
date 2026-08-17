@@ -1,5 +1,6 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
-import { getAuthUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getLocalDateString } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/server";
 
@@ -42,8 +43,7 @@ function longestStreak(dates: string[]): number {
 
 export const getStatsSummary = cache(async (): Promise<StatsSummary> => {
   try {
-    const [supabase, user] = await Promise.all([createClient(), getAuthUser()]);
-    if (!user) return EMPTY;
+    const [supabase, user] = await Promise.all([createClient(), requireUser()]);
 
     const today = new Date();
     const year = today.getFullYear();
@@ -112,6 +112,7 @@ export const getStatsSummary = cache(async (): Promise<StatsSummary> => {
       streak: longestStreak((streakRows ?? []).map((row) => row.logged_on)),
     };
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getStatsSummary]", error);
     return EMPTY;
   }
