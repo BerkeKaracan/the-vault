@@ -8,7 +8,10 @@ import {
   isBookSubject,
   toGoogleBooksQuery,
 } from "@/lib/catalog/book-shelves";
-import { GoogleBooksError, searchGoogleBooks } from "@/lib/catalog/google-books";
+import {
+  GoogleBooksError,
+  searchGoogleBooks,
+} from "@/lib/catalog/google-books";
 
 async function userFacingMessage(
   error: unknown,
@@ -70,10 +73,7 @@ export async function GET(request: Request) {
   const subject = isBookSubject(subjectRaw) ? subjectRaw : null;
   const orderBy =
     searchParams.get("orderBy") === "newest" ? "newest" : "relevance";
-  const startIndex = Number.parseInt(
-    searchParams.get("startIndex") ?? "0",
-    10,
-  );
+  const startIndex = Number.parseInt(searchParams.get("startIndex") ?? "0", 10);
   const dictionary = await getDictionary();
 
   if (q.length === 1) {

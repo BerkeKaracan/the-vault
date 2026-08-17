@@ -8,7 +8,11 @@ import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCollections } from "@/lib/library/collections";
-import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/library/materials";
+import {
+  getMaterial,
+  getMaterialNote,
+  getMaterialPace,
+} from "@/lib/library/materials";
 import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {
@@ -19,9 +23,12 @@ export async function generateMetadata({
   params,
 }: MaterialPageProps): Promise<Metadata> {
   const { id } = await params;
-  const material = await getMaterial(id);
-  if (!material) return { title: "The Vault" };
-  return { title: `${material.title} · The Vault` };
+  const [material, dictionary] = await Promise.all([
+    getMaterial(id),
+    getDictionary(),
+  ]);
+  if (!material) return { title: dictionary.brand };
+  return { title: `${material.title} · ${dictionary.brand}` };
 }
 
 export default async function MaterialPage({ params }: MaterialPageProps) {

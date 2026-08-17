@@ -11,6 +11,7 @@ import { Cover } from "@/components/materials/cover";
 import { TagList } from "@/components/materials/tag-list";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
+import { t } from "@/i18n/t";
 import type { Collection } from "@/lib/library/collections";
 import type { Material, MaterialStatus } from "@/lib/types";
 
@@ -94,6 +95,13 @@ export function LibraryGrid({
     return dictionary.vault.statusShelved;
   }
 
+  function statusTone(material: Material) {
+    if (material.status === "active") return "bg-accent/15 text-accent";
+    if (material.status === "completed")
+      return "bg-foreground/8 text-foreground/70";
+    return "border border-border text-muted";
+  }
+
   if (materials.length === 0) {
     return (
       <div className="mt-8 rounded-lg border border-dashed border-border px-6 py-16 text-center">
@@ -134,20 +142,31 @@ export function LibraryGrid({
           <div key={shelf.id} className="flex items-center gap-1">
             <button
               type="button"
-              onClick={() => setShelfId(shelf.id)}
-              className={`min-w-0 flex-1 truncate rounded-full border px-2.5 py-1 text-left text-xs ${
+              aria-pressed={shelfId === shelf.id}
+              onClick={() => setShelfId(shelfId === shelf.id ? null : shelf.id)}
+              className={`flex min-w-0 flex-1 items-center gap-2 rounded-full border px-2.5 py-1 text-left text-xs transition ${
                 shelfId === shelf.id
                   ? "border-foreground/25 bg-foreground/8 text-foreground"
                   : "border-border text-muted hover:text-foreground/80"
               }`}
             >
-              {shelf.name}
+              <span className="min-w-0 flex-1 truncate">{shelf.name}</span>
+              <span className="shrink-0 font-mono text-[0.6rem] text-muted">
+                {shelf.materialIds.length}
+              </span>
             </button>
             <button
               type="button"
               disabled={pending}
+              aria-label={dictionary.vault.shelfDelete}
+              title={dictionary.vault.shelfDelete}
               onClick={() => {
-                if (!window.confirm(dictionary.vault.shelfDelete)) return;
+                const confirmed = window.confirm(
+                  t(dictionary.vault.shelfDeleteConfirm, {
+                    name: shelf.name,
+                  }),
+                );
+                if (!confirmed) return;
                 startTransition(async () => {
                   const result = await deleteCollection(shelf.id);
                   if (!result.ok) {
@@ -157,7 +176,7 @@ export function LibraryGrid({
                   if (shelfId === shelf.id) setShelfId(null);
                 });
               }}
-              className="px-1 text-[0.65rem] text-muted hover:text-foreground"
+              className="px-1 text-[0.8rem] leading-none text-muted transition hover:text-foreground disabled:opacity-40"
             >
               ×
             </button>
@@ -242,56 +261,74 @@ export function LibraryGrid({
 
         {visible.length === 0 ? (
           <p className="mt-8 text-sm text-muted">
-            {dictionary.vault.shelfEmpty}
+            {query.trim() || status !== "all"
+              ? dictionary.vault.noResults
+              : dictionary.vault.shelfEmpty}
           </p>
         ) : (
           <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {visible.map((material) => (
-              <li key={material.id} className="flex flex-col">
-                <Link href={`/materials/${material.id}`} className="block">
-                  <Cover
-                    title={material.title}
-                    author={material.author}
-                    coverUrl={material.cover_url}
-                  />
-                </Link>
-                <Link
-                  href={`/materials/${material.id}`}
-                  data-private
-                  className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
-                >
-                  {material.title}
-                </Link>
-                <p className="mt-1 font-mono text-[0.65rem] tracking-wide text-muted uppercase">
-                  {statusLabel(material)}
-                </p>
-                <div className="mt-2">
-                  <TagList tags={material.tags} />
-                </div>
-                {material.status !== "active" ? (
-                  <button
-                    type="button"
-                    disabled={pending}
-                    onClick={() => {
-                      setMessage(null);
-                      setPendingId(material.id);
-                      startTransition(async () => {
-                        const result = await activateMaterial(material.id);
-                        setPendingId(null);
-                        if (!result.ok) {
-                          setMessage(translateError(dictionary, result.error));
-                        }
-                      });
-                    }}
-                    className="mt-2 self-start rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
+            {visible.map((material) => {
+              const percent = Math.round(progressOf(material) * 100);
+              return (
+                <li key={material.id} className="group flex flex-col">
+                  <Link href={`/materials/${material.id}`} className="block">
+                    <Cover
+                      title={material.title}
+                      author={material.author}
+                      coverUrl={material.cover_url}
+                      className="transition duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-[0_22px_50px_-24px_color-mix(in_srgb,var(--foreground)_45%,transparent)] group-hover:ring-foreground/25"
+                    />
+                  </Link>
+                  {percent > 0 ? (
+                    <div className="mt-2 h-px w-full overflow-hidden bg-border">
+                      <div
+                        className="h-full bg-accent transition-[width] duration-500"
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                  ) : null}
+                  <Link
+                    href={`/materials/${material.id}`}
+                    data-private
+                    className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground transition group-hover:text-foreground"
                   >
-                    {pending && pendingId === material.id
-                      ? dictionary.busy
-                      : dictionary.vault.activate}
-                  </button>
-                ) : null}
-              </li>
-            ))}
+                    {material.title}
+                  </Link>
+                  <span
+                    className={`mt-2 w-fit rounded-full px-2 py-0.5 font-mono text-[0.58rem] tracking-[0.14em] uppercase ${statusTone(material)}`}
+                  >
+                    {statusLabel(material)}
+                  </span>
+                  <div className="mt-2">
+                    <TagList tags={material.tags} />
+                  </div>
+                  {material.status !== "active" ? (
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => {
+                        setMessage(null);
+                        setPendingId(material.id);
+                        startTransition(async () => {
+                          const result = await activateMaterial(material.id);
+                          setPendingId(null);
+                          if (!result.ok) {
+                            setMessage(
+                              translateError(dictionary, result.error),
+                            );
+                          }
+                        });
+                      }}
+                      className="mt-2 self-start rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
+                    >
+                      {pending && pendingId === material.id
+                        ? dictionary.busy
+                        : dictionary.vault.activate}
+                    </button>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

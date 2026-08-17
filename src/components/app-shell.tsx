@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AppNav } from "@/components/app-nav";
 import { FocusToggle } from "@/components/focus-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -19,6 +18,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     { href: "/library", label: dictionary.nav.library },
     { href: "/discover", label: dictionary.nav.discover },
     { href: "/log", label: dictionary.nav.log },
+    { href: "/stats", label: dictionary.nav.stats },
   ] as const;
 
   const userLabel =
@@ -33,12 +33,6 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 h-14 border-b border-border bg-surface/80 backdrop-blur-xl">
         <div className="flex h-full items-center gap-2 px-4 sm:px-8">
           <AppNav items={nav} />
-          <Link
-            href="/desk"
-            className="font-mono text-[0.7rem] tracking-[0.28em] text-muted uppercase transition hover:text-foreground"
-          >
-            {dictionary.brand}
-          </Link>
           <div className="ml-auto flex items-center gap-2 sm:gap-4">
             <div className="hidden items-center gap-4 md:flex">
               <ThemeToggle />

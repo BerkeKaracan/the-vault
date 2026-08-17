@@ -1,13 +1,19 @@
+import type { Metadata } from "next";
 import { LogCalendar } from "@/components/log/log-calendar";
 import { PageHeader } from "@/components/page-header";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getLocalDateString } from "@/lib/local-date";
-import { getMonthLog } from "@/lib/progress/log";
 import { getSessionProfile } from "@/lib/profile";
+import { getMonthLog } from "@/lib/progress/log";
 
 type LogPageProps = {
   searchParams: Promise<{ y?: string; m?: string; d?: string }>;
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dictionary = await getDictionary();
+  return { title: `${dictionary.log.title} · ${dictionary.brand}` };
+}
 
 export default async function LogPage({ searchParams }: LogPageProps) {
   const params = await searchParams;

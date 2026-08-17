@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import {
   BROWSE_ALL_QUERY,
@@ -154,6 +153,16 @@ export type GoogleBooksSearchOptions = {
   startIndex?: number;
 };
 
+const EMPTY_PAGE: GoogleBooksPage = {
+  books: [],
+  totalItems: 0,
+  startIndex: 0,
+  nextIndex: 0,
+  hasMore: false,
+};
+
+const FETCH_TIMEOUT_MS = 8_000;
+
 function toBooksPage(
   data: GoogleVolumesResponse,
   startIndex: number,
@@ -195,6 +204,7 @@ async function fetchVolumes(
     `https://www.googleapis.com/books/v1/volumes?${params.toString()}`,
     {
       cache: "no-store",
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         Accept: "application/json",
         "Accept-Language": GOOGLE_MARKET.acceptLanguage,
@@ -245,8 +255,12 @@ async function withRetry<T>(run: () => Promise<T>): Promise<T> {
     } catch (error) {
       lastError = error;
       const retryable =
-        error instanceof GoogleBooksError &&
-        (error.status === 503 || error.status === 429 || error.status >= 500);
+        (error instanceof GoogleBooksError &&
+          (error.status === 503 ||
+            error.status === 429 ||
+            error.status >= 500)) ||
+        (error instanceof Error &&
+          (error.name === "TimeoutError" || error.name === "AbortError"));
 
       if (!retryable || attempt === 2) {
         throw error;
@@ -286,28 +300,33 @@ export async function searchGoogleBooks(
   const trimmed = query.trim();
   const startIndex = Math.max(options?.startIndex ?? 0, 0);
   if (!trimmed || startIndex >= CATALOG_INDEX_CAP) {
-    return {
-      books: [],
-      totalItems: 0,
-      startIndex,
-      nextIndex: startIndex,
-      hasMore: false,
-    };
+    return { ...EMPTY_PAGE, startIndex, nextIndex: startIndex };
   }
   return withOptionalKey((apiKey) =>
     fetchVolumes(trimmed, limit, apiKey, options),
   );
 }
 
-/** Shared Discover vitrine. Search queries stay uncached. */
-export const getBrowseCatalogPage = unstable_cache(
-  async (): Promise<GoogleBooksPage> =>
-    searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
+/**
+ * Discover vitrine. Not wrapped in unstable_cache: an empty Google hit
+ * (common on the first request) would otherwise stick for minutes, and
+ * `cache: "no-store"` inside that wrapper also prevented a real cache.
+ * Search stays on the client `/api/books/search` path.
+ */
+export async function getBrowseCatalogPage(): Promise<GoogleBooksPage> {
+  try {
+    const page = await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
       orderBy: "newest",
-    }),
-  ["google-books-browse-vitrine"],
-  { revalidate: 600 },
-);
+    });
+    if (page.books.length > 0) return page;
+    await sleep(300);
+    return await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
+      orderBy: "newest",
+    });
+  } catch {
+    return EMPTY_PAGE;
+  }
+}
 
 export const getGoogleBook = cache(
   async (id: string): Promise<GoogleBookResult | null> => {

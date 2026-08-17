@@ -10,9 +10,9 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground">
+        <h1 className="font-display text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-[1.75rem]">
           {title}
         </h1>
         {subtitle ? (

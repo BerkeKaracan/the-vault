@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { DeskClient } from "@/components/desk/desk-client";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { getActiveMaterials } from "@/lib/library/materials";
 import { getSessionProfile } from "@/lib/profile";
 import { getHeatmapData } from "@/lib/progress/heatmap";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dictionary = await getDictionary();
+  return { title: `${dictionary.nav.desk} · ${dictionary.brand}` };
+}
 
 export default async function DeskPage() {
   const [materials, session, heatmap] = await Promise.all([

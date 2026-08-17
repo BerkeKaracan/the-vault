@@ -10,7 +10,7 @@ type LoginTarget = OAuthProvider | "dev";
 
 function GoogleMark() {
   return (
-    <svg aria-hidden viewBox="0 0 24 24" className="size-4">
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4">
       <path
         fill="currentColor"
         d="M21.6 12.23c0-.74-.07-1.45-.19-2.13H12v4.03h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 2.98-4.33 2.98-7.42Z"
@@ -36,7 +36,12 @@ function GoogleMark() {
 
 function GitHubMark() {
   return (
-    <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="currentColor"
+    >
       <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.86.09-.67.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.27 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.9-1.32 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.03 10.03 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" />
     </svg>
   );
@@ -124,13 +129,13 @@ export function LoginForm({
           onClick={signInDev}
           className="flex items-center justify-center rounded-full border border-dashed border-border px-4 py-3 font-mono text-xs text-muted transition hover:border-foreground/25 hover:text-foreground disabled:opacity-40"
         >
-          {pending && active === "dev"
-            ? dictionary.busy
-            : dictionary.login.dev}
+          {pending && active === "dev" ? dictionary.busy : dictionary.login.dev}
         </button>
       ) : null}
       {message ? (
-        <output className="mt-1 text-center text-sm text-muted">{message}</output>
+        <output className="mt-1 text-center text-sm text-muted">
+          {message}
+        </output>
       ) : null}
     </div>
   );

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addGoogleBook } from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
+import { Skeleton, skeletonKeys } from "@/components/skeleton";
 import type { Dictionary, ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
@@ -53,21 +54,108 @@ export function BookCatalog({
   const [hasMore, setHasMore] = useState(initialPage.hasMore);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
-  const [searching, setSearching] = useState(false);
+  const [searching, setSearching] = useState(initialPage.books.length === 0);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const skipInitialFetch = useRef(initialPage.books.length > 0);
+  const skipDefaultFetch = useRef(initialPage.books.length > 0);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 400);
     return () => window.clearTimeout(timer);
   }, [query]);
 
+  const loadBooks = useCallback(
+    async ({
+      replace,
+      startIndex,
+      signal,
+      retried = false,
+    }: {
+      replace: boolean;
+      startIndex: number;
+      signal?: AbortSignal;
+      retried?: boolean;
+    }) => {
+      const request = googleQueryFor(shelf, debouncedQuery);
+      if (request.q.length === 1) return;
+
+      setSearchError(null);
+      if (replace) {
+        setActionMessage(null);
+        setHasMore(false);
+      }
+      setSearching(true);
+
+      try {
+        const params = new URLSearchParams();
+        if (request.q) params.set("q", request.q);
+        if (request.subject) params.set("subject", request.subject);
+        params.set("orderBy", request.orderBy);
+        params.set("startIndex", String(startIndex));
+
+        const res = await fetch(`/api/books/search?${params.toString()}`, {
+          signal,
+          credentials: "same-origin",
+        });
+        const data = (await res.json()) as GoogleBooksPage & {
+          error?: string;
+          errorKey?: ErrorKey;
+        };
+
+        if (res.status === 401 && replace && !retried && !signal?.aborted) {
+          await new Promise((resolve) => window.setTimeout(resolve, 400));
+          if (signal?.aborted) return;
+          await loadBooks({ replace, startIndex, signal, retried: true });
+          return;
+        }
+
+        if (!res.ok) {
+          if (replace) setBooks([]);
+          setHasMore(false);
+          setSearchError(
+            data.error ??
+              (data.errorKey
+                ? translateError(dictionary, data.errorKey)
+                : dictionary.add.searchFailed),
+          );
+          return;
+        }
+
+        const next = data.books ?? [];
+        setBooks((current) => {
+          if (replace) return next;
+          const seen = new Set(current.map((book) => book.id));
+          return [...current, ...next.filter((book) => !seen.has(book.id))];
+        });
+        setNextIndex(data.nextIndex);
+        setHasMore(data.hasMore);
+        if (replace && next.length === 0) {
+          setSearchError(dictionary.add.noResults);
+        }
+      } catch (error) {
+        if (
+          signal?.aborted ||
+          (error instanceof DOMException && error.name === "AbortError")
+        ) {
+          return;
+        }
+        if (replace) setBooks([]);
+        setHasMore(false);
+        setSearchError(dictionary.add.searchFailed);
+      } finally {
+        if (!signal?.aborted) setSearching(false);
+      }
+    },
+    [shelf, debouncedQuery, dictionary],
+  );
+
   useEffect(() => {
-    if (skipInitialFetch.current) {
-      skipInitialFetch.current = false;
-      if (shelf === DEFAULT_BOOK_SHELF && debouncedQuery === "") return;
+    const isDefaultBrowse =
+      shelf === DEFAULT_BOOK_SHELF && debouncedQuery === "";
+    if (isDefaultBrowse && skipDefaultFetch.current) {
+      return;
     }
+    skipDefaultFetch.current = false;
 
     const controller = new AbortController();
     void loadBooks({
@@ -76,80 +164,7 @@ export function BookCatalog({
       signal: controller.signal,
     });
     return () => controller.abort();
-  }, [shelf, debouncedQuery]);
-
-  async function loadBooks({
-    replace,
-    startIndex,
-    signal,
-  }: {
-    replace: boolean;
-    startIndex: number;
-    signal?: AbortSignal;
-  }) {
-    const request = googleQueryFor(shelf, debouncedQuery);
-    if (request.q.length === 1) return;
-
-    setSearchError(null);
-    if (replace) {
-      setActionMessage(null);
-      setBooks([]);
-      setHasMore(false);
-    }
-    setSearching(true);
-
-    try {
-      const params = new URLSearchParams();
-      if (request.q) params.set("q", request.q);
-      if (request.subject) params.set("subject", request.subject);
-      params.set("orderBy", request.orderBy);
-      params.set("startIndex", String(startIndex));
-
-      const res = await fetch(`/api/books/search?${params.toString()}`, {
-        signal,
-      });
-      const data = (await res.json()) as GoogleBooksPage & {
-        error?: string;
-        errorKey?: ErrorKey;
-      };
-
-      if (!res.ok) {
-        if (replace) setBooks([]);
-        setHasMore(false);
-        setSearchError(
-          data.error ??
-            (data.errorKey
-              ? translateError(dictionary, data.errorKey)
-              : dictionary.add.searchFailed),
-        );
-        return;
-      }
-
-      const next = data.books ?? [];
-      setBooks((current) => {
-        if (replace) return next;
-        const seen = new Set(current.map((book) => book.id));
-        return [...current, ...next.filter((book) => !seen.has(book.id))];
-      });
-      setNextIndex(data.nextIndex);
-      setHasMore(data.hasMore);
-      if (replace && next.length === 0) {
-        setSearchError(dictionary.add.noResults);
-      }
-    } catch (error) {
-      if (
-        signal?.aborted ||
-        (error instanceof DOMException && error.name === "AbortError")
-      ) {
-        return;
-      }
-      if (replace) setBooks([]);
-      setHasMore(false);
-      setSearchError(dictionary.add.searchFailed);
-    } finally {
-      if (!signal?.aborted) setSearching(false);
-    }
-  }
+  }, [shelf, debouncedQuery, loadBooks]);
 
   function saveBook(book: GoogleBookResult, status: "active" | "shelved") {
     setActionMessage(null);
@@ -221,11 +236,10 @@ export function BookCatalog({
 
       <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {searching && books.length === 0
-          ? Array.from({ length: 10 }, (_, index) => (
-              <li
-                key={index}
-                className="aspect-2/3 animate-pulse rounded-sm bg-foreground/6"
-              />
+          ? skeletonKeys(10).map((key) => (
+              <li key={key}>
+                <Skeleton className="aspect-2/3 rounded-sm" />
+              </li>
             ))
           : books.map((book) => (
               <li key={book.id} className="flex flex-col">

@@ -163,7 +163,10 @@ const tr = {
     shelfName: "Raf adı",
     shelfEmpty: "Bu raf boş.",
     shelfDelete: "Rafı sil",
+    shelfDeleteConfirm:
+      "“{name}” rafı silinsin mi? Raftaki materyaller kütüphanende kalır.",
     shelfAdd: "Rafa ekle",
+    noResults: "Aramanla eşleşen materyal yok.",
   },
   add: {
     title: "Discover",
@@ -240,6 +243,8 @@ const tr = {
     emptyDay: "Bu günde kayıt yok.",
     prev: "Önceki ay",
     next: "Sonraki ay",
+    today: "Bugün",
+    dayCount: "{count} kayıt",
   },
   stats: {
     title: "Stats",
@@ -251,6 +256,9 @@ const tr = {
     completed: "Biten",
     streak: "En uzun seri",
     daysUnit: "{count} gün",
+    emptyTitle: "Henüz sayılacak mesai yok.",
+    emptyBody:
+      "İlk sayfanı kaydettiğinde bu sayılar dolmaya başlar. Masana bir materyal koy.",
   },
   metric: {
     page: "sayfa",
@@ -278,6 +286,12 @@ const tr = {
     booksFailedStatus: "Kitap araması başarısız oldu ({status}).",
     booksUnavailable:
       "Google Books şu an yanıt vermiyor. Biraz sonra tekrar dene.",
+  },
+  errorPage: {
+    title: "Bu yüzey açılamadı.",
+    body: "Beklenmedik bir hata oldu. Tekrar deneyebilir veya masana dönebilirsin.",
+    retry: "Tekrar dene",
+    backToDesk: "Masaya dön",
   },
   setup: {
     title: "Ortam değişkenleri eksik",
@@ -494,7 +508,10 @@ const en = {
     shelfName: "Shelf name",
     shelfEmpty: "This shelf is empty.",
     shelfDelete: "Delete shelf",
+    shelfDeleteConfirm:
+      "Delete the “{name}” shelf? The materials on it stay in your library.",
     shelfAdd: "Add to shelf",
+    noResults: "No material matches your search.",
   },
   add: {
     title: "Discover",
@@ -570,6 +587,8 @@ const en = {
     emptyDay: "Nothing logged this day.",
     prev: "Previous month",
     next: "Next month",
+    today: "Today",
+    dayCount: "{count} logged",
   },
   stats: {
     title: "Stats",
@@ -581,6 +600,9 @@ const en = {
     completed: "Finished",
     streak: "Longest streak",
     daysUnit: "{count} days",
+    emptyTitle: "Nothing to count yet.",
+    emptyBody:
+      "These numbers fill up once you log your first page. Put a material on the desk.",
   },
   metric: {
     page: "page",
@@ -608,6 +630,12 @@ const en = {
     booksFailedStatus: "Book search failed ({status}).",
     booksUnavailable:
       "Google Books is temporarily unavailable. Try again in a moment.",
+  },
+  errorPage: {
+    title: "This surface failed to load.",
+    body: "Something unexpected broke. Try again, or head back to your desk.",
+    retry: "Try again",
+    backToDesk: "Back to desk",
   },
   setup: {
     title: "Environment variables missing",
@@ -808,7 +836,9 @@ export type Dictionary = {
     shelfName: string;
     shelfEmpty: string;
     shelfDelete: string;
+    shelfDeleteConfirm: string;
     shelfAdd: string;
+    noResults: string;
   };
   add: {
     title: string;
@@ -884,6 +914,8 @@ export type Dictionary = {
     emptyDay: string;
     prev: string;
     next: string;
+    today: string;
+    dayCount: string;
   };
   stats: {
     title: string;
@@ -895,6 +927,8 @@ export type Dictionary = {
     completed: string;
     streak: string;
     daysUnit: string;
+    emptyTitle: string;
+    emptyBody: string;
   };
   metric: {
     page: string;
@@ -918,6 +952,12 @@ export type Dictionary = {
     booksFailed: string;
     booksFailedStatus: string;
     booksUnavailable: string;
+  };
+  errorPage: {
+    title: string;
+    body: string;
+    retry: string;
+    backToDesk: string;
   };
   setup: {
     title: string;

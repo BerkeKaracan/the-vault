@@ -67,7 +67,7 @@ export function AppNav({
         aria-controls="app-nav-drawer"
         aria-label={open ? dictionary.nav.close : dictionary.nav.menu}
         onClick={() => setOpen((value) => !value)}
-        className="flex size-9 items-center justify-center rounded-full text-muted transition hover:bg-foreground/6 hover:text-foreground"
+        className="flex size-9 items-center justify-center rounded-full text-muted transition hover:bg-foreground/6 hover:text-foreground lg:hidden"
       >
         <span aria-hidden className="flex h-3.5 w-4 flex-col justify-between">
           <span
@@ -88,8 +88,38 @@ export function AppNav({
         </span>
       </button>
 
+      <Link
+        href="/desk"
+        className="font-mono text-[0.7rem] tracking-[0.28em] text-muted uppercase transition hover:text-foreground"
+      >
+        {dictionary.brand}
+      </Link>
+
+      <nav
+        aria-label={dictionary.brand}
+        className="ml-4 hidden items-center gap-1 lg:flex"
+      >
+        {items.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              className={`rounded-full px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.18em] uppercase transition ${
+                active
+                  ? "bg-foreground/8 text-foreground"
+                  : "text-muted hover:bg-foreground/5 hover:text-foreground/90"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
       <div
-        className={`fixed inset-x-0 top-14 bottom-0 z-50 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-14 bottom-0 z-50 lg:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
         aria-hidden={!open}
       >
         <button
@@ -111,7 +141,7 @@ export function AppNav({
         >
           <nav
             className="flex flex-1 flex-col gap-1 px-3 py-5"
-            aria-label={dictionary.brand}
+            aria-label={dictionary.nav.menu}
           >
             {items.map((item, index) => {
               const active = isActive(item.href);

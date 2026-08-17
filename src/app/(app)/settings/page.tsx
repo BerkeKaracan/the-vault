@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { SettingsForm } from "@/app/(app)/settings/settings-form";
-import { getSessionProfile } from "@/lib/profile";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCookieConsent } from "@/lib/consent";
+import { getSessionProfile } from "@/lib/profile";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dictionary = await getDictionary();
+  return { title: `${dictionary.settings.title} · ${dictionary.brand}` };
+}
 
 export default async function SettingsPage() {
   const [dictionary, session, consent] = await Promise.all([

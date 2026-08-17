@@ -17,39 +17,76 @@ export function UserMenu({ label }: { label: string }) {
       }
     }
 
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
     window.addEventListener("pointerdown", onPointerDown);
-    return () => window.removeEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
+
+  const initial = label.trim().charAt(0).toLocaleUpperCase() || "?";
 
   return (
     <div ref={rootRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="max-w-36 truncate text-sm text-muted transition hover:text-foreground"
+        className={`flex items-center gap-2 rounded-full border py-1 pr-2 pl-1 transition ${
+          open
+            ? "border-foreground/25 bg-foreground/8 text-foreground"
+            : "border-transparent text-muted hover:border-border hover:bg-foreground/5 hover:text-foreground"
+        }`}
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        {label}
+        <span
+          aria-hidden="true"
+          className="flex size-7 items-center justify-center rounded-full bg-accent/15 font-mono text-[0.7rem] font-medium text-accent"
+        >
+          {initial}
+        </span>
+        <span
+          data-private
+          className="hidden max-w-32 truncate text-sm sm:block"
+        >
+          {label}
+        </span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 12 12"
+          className={`size-2.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <path
+            d="M2 4.5 6 8.5 10 4.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-50 mt-2 min-w-40 rounded-lg border border-border bg-elevated py-1 shadow-xl"
+          className="absolute right-0 z-50 mt-2 min-w-48 overflow-hidden rounded-xl border border-border bg-elevated py-1 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.6)]"
         >
-          <Link
-            href="/stats"
-            role="menuitem"
-            onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+          <p
+            data-private
+            className="truncate border-b border-border px-3 pt-2 pb-2.5 font-mono text-[0.62rem] tracking-[0.14em] text-muted uppercase"
           >
-            {dictionary.nav.stats}
-          </Link>
+            {label}
+          </p>
           <Link
             href="/settings"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+            className="mt-1 block px-3 py-2 text-sm text-foreground/80 transition hover:bg-foreground/5 hover:text-foreground"
           >
             {dictionary.nav.settings}
           </Link>
@@ -57,7 +94,7 @@ export function UserMenu({ label }: { label: string }) {
             <button
               type="submit"
               role="menuitem"
-              className="block w-full px-3 py-2 text-left text-sm text-muted hover:bg-foreground/5 hover:text-foreground"
+              className="block w-full px-3 py-2 text-left text-sm text-muted transition hover:bg-foreground/5 hover:text-foreground"
             >
               {dictionary.nav.signOut}
             </button>

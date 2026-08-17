@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/i18n/provider";
+import { t } from "@/i18n/t";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
 import { signedDeltaLabel, signedEntryId } from "@/lib/progress/day";
@@ -14,6 +15,11 @@ function daysInMonth(year: number, month: number): number {
 
 function pad(value: number): string {
   return String(value).padStart(2, "0");
+}
+
+function parseLocalDay(iso: string): Date {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(year, (month ?? 1) - 1, day ?? 1);
 }
 
 export function LogCalendar({
@@ -53,6 +59,18 @@ export function LogCalendar({
     month: "long",
     year: "numeric",
   }).format(first);
+  const dayFormatter = new Intl.DateTimeFormat(dateLocale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  function dayLabel(date: string, total: number): string {
+    const formatted = dayFormatter.format(parseLocalDay(date));
+    return total > 0
+      ? t(dictionary.desk.heatmapCell, { date: formatted, count: total })
+      : t(dictionary.desk.heatmapCellEmpty, { date: formatted });
+  }
   const weekdayLabels = Array.from({ length: 7 }, (_, i) => {
     const day = weekStartsOn === "sunday" ? i : i + 1;
     return new Intl.DateTimeFormat(dateLocale, { weekday: "short" }).format(
@@ -111,10 +129,14 @@ export function LogCalendar({
               <button
                 key={date}
                 type="button"
+                aria-label={dayLabel(date, total)}
+                aria-pressed={isSelected}
                 onClick={() =>
-                  router.push(`/log?y=${year}&m=${month}&d=${date}`)
+                  router.push(`/log?y=${year}&m=${month}&d=${date}`, {
+                    scroll: false,
+                  })
                 }
-                className={`aspect-square rounded-sm text-[0.7rem] transition ${heat} ${
+                className={`aspect-square cursor-pointer rounded-sm text-[0.7rem] transition hover:ring-1 hover:ring-foreground/40 ${heat} ${
                   isSelected ? "ring-1 ring-foreground/70" : ""
                 } ${isToday ? "ring-1 ring-accent/80" : ""}`}
               >
@@ -125,8 +147,14 @@ export function LogCalendar({
         </div>
       </div>
       <div>
-        <p className="font-mono text-[0.62rem] tracking-[0.22em] text-muted uppercase">
-          {selected}
+        <p className="font-display text-base font-semibold tracking-[-0.02em] text-foreground">
+          {dayFormatter.format(parseLocalDay(selected))}
+        </p>
+        <p className="mt-1 font-mono text-[0.62rem] tracking-[0.18em] text-muted uppercase">
+          {t(dictionary.log.dayCount, {
+            count: data.totals[selected] ?? 0,
+          })}
+          {selected === today ? ` · ${dictionary.log.today}` : ""}
         </p>
         {dayEntries.length === 0 ? (
           <p className="mt-3 text-sm text-muted">{dictionary.log.emptyDay}</p>

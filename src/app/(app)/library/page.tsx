@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { LibraryGrid } from "@/components/library/library-grid";
 import { PageHeader } from "@/components/page-header";
@@ -5,6 +6,11 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { getCollections } from "@/lib/library/collections";
 import { getLibraryMaterials } from "@/lib/library/materials";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dictionary = await getDictionary();
+  return { title: `${dictionary.vault.title} · ${dictionary.brand}` };
+}
 
 export default async function LibraryPage() {
   const [materials, collections, dictionary] = await Promise.all([
