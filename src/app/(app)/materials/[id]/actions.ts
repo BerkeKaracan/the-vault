@@ -231,7 +231,6 @@ export async function logProgress(input: {
     });
   }
 
-  refresh();
   return { ok: true, data };
 }
 

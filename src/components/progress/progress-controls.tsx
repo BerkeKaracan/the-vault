@@ -75,9 +75,11 @@ function clearTimer(materialId: string) {
 export function ProgressControls({
   material,
   showTimer = true,
+  onLogged,
 }: {
   material: Material;
   showTimer?: boolean;
+  onLogged?: (material: Material, delta: number) => void;
 }) {
   const { dictionary } = useI18n();
   const [pageAfter, setPageAfter] = useState(String(material.current_page));
@@ -167,6 +169,7 @@ export function ProgressControls({
         setMessage(translateError(dictionary, result.error ?? "generic"));
         return;
       }
+      onLogged?.(result.data, delta);
       if (delta > 0) {
         resetTimer();
       }

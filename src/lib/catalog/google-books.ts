@@ -1,5 +1,7 @@
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import {
+  BROWSE_ALL_QUERY,
   CATALOG_INDEX_CAP,
   CATALOG_PAGE_SIZE,
 } from "@/lib/catalog/book-shelves";
@@ -296,6 +298,16 @@ export async function searchGoogleBooks(
     fetchVolumes(trimmed, limit, apiKey, options),
   );
 }
+
+/** Shared Discover vitrine. Search queries stay uncached. */
+export const getBrowseCatalogPage = unstable_cache(
+  async (): Promise<GoogleBooksPage> =>
+    searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
+      orderBy: "newest",
+    }),
+  ["google-books-browse-vitrine"],
+  { revalidate: 600 },
+);
 
 export const getGoogleBook = cache(
   async (id: string): Promise<GoogleBookResult | null> => {

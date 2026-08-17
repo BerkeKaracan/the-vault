@@ -177,7 +177,13 @@ function EmptySlot({ slot }: { slot: number }) {
   );
 }
 
-function DeskDock({ material }: { material: Material }) {
+function DeskDock({
+  material,
+  onLogged,
+}: {
+  material: Material;
+  onLogged?: (material: Material, delta: number) => void;
+}) {
   const { dictionary } = useI18n();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -242,7 +248,7 @@ function DeskDock({ material }: { material: Material }) {
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
-          <ProgressControls material={material} />
+          <ProgressControls material={material} onLogged={onLogged} />
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
@@ -274,7 +280,13 @@ function DeskDock({ material }: { material: Material }) {
   );
 }
 
-export function DeskSurface({ materials }: { materials: Material[] }) {
+export function DeskSurface({
+  materials,
+  onLogged,
+}: {
+  materials: Material[];
+  onLogged?: (material: Material, delta: number) => void;
+}) {
   const [selectedId, setSelectedId] = useState<string | null>(
     materials[0]?.id ?? null,
   );
@@ -311,7 +323,9 @@ export function DeskSurface({ materials }: { materials: Material[] }) {
           ))}
         </div>
       </div>
-      {selected ? <DeskDock key={selected.id} material={selected} /> : null}
+      {selected ? (
+        <DeskDock key={selected.id} material={selected} onLogged={onLogged} />
+      ) : null}
     </>
   );
 }

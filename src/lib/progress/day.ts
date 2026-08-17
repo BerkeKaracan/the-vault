@@ -53,3 +53,34 @@ export function signedDeltaLabel(delta: number): string {
 export function signedEntryId(entry: SignedDayEntry): string {
   return bucketKey(entry.materialId, entry.delta);
 }
+
+export type HeatmapPatch = {
+  totals: Record<string, number>;
+  entries: Record<string, SignedDayEntry[]>;
+};
+
+/** Merge one signed delta into a day's heatmap without a server refetch. */
+export function applyProgressToHeatmap(
+  data: HeatmapPatch,
+  date: string,
+  entry: SignedDayEntry,
+): HeatmapPatch {
+  if (entry.delta === 0) return data;
+
+  const grouped = new Map<string, Map<string, SignedDayEntry>>();
+  for (const existing of data.entries[date] ?? []) {
+    addSignedDayEntry(grouped, date, existing);
+  }
+  addSignedDayEntry(grouped, date, entry);
+
+  return {
+    totals: {
+      ...data.totals,
+      [date]: (data.totals[date] ?? 0) + entry.delta,
+    },
+    entries: {
+      ...data.entries,
+      [date]: signedDayEntries(grouped)[date] ?? [],
+    },
+  };
+}
