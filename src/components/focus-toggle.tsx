@@ -1,7 +1,7 @@
 "use client";
 
-import { usePreferences } from "@/components/preferences";
 import { useI18n } from "@/i18n/provider";
+import { usePreferences } from "@/store";
 
 export function FocusToggle() {
   const { dictionary } = useI18n();

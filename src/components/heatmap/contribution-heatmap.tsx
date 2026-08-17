@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePreferences } from "@/components/preferences";
 import type { Locale } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
@@ -11,6 +10,7 @@ import { metricUnit } from "@/lib/metric";
 import { signedDeltaLabel, signedEntryId } from "@/lib/progress/day";
 import type { HeatmapData, HeatmapDayEntry } from "@/lib/progress/heatmap";
 import type { WeekStart } from "@/lib/types";
+import { usePreferences } from "@/store";
 
 const WEEKS = 26;
 const DAYS = WEEKS * 7;
