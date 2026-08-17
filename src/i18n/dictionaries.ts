@@ -342,6 +342,23 @@ const tr = {
     focusMode: "Gizlilik / odak",
     focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
   },
+  reminders: {
+    label: "Hedef hatırlatmaları",
+    hint: "Hedefin varsa ve bugün tutmadıysan, gün bitmeden 12 ve 3 saat kala işletim sistemi bildirimi gelir. Tarayıcı izni gerekir.",
+    denied: "Bildirim izni kapalı. Tarayıcı ayarlarından açabilirsin.",
+    unsupported: "Bu tarayıcı OS bildirimi desteklemiyor.",
+    noonTitle: "Günün yarısı.",
+    noonBody:
+      "Hedefin {goal} sayfa, bugün {today}. Öğleden sonra masaya otur, kutuyu yak.",
+    eveningTitle: "Güne 3 saat.",
+    eveningBody:
+      "Hedefe {left} sayfa kaldı. Bitirmeden gün kapanmasın — masana dön.",
+    actionDesk: "Masaya git",
+    test: "Test bildirimi",
+    testTitle: "The Vault",
+    testBody:
+      "Hedef hatırlatması böyle görünür. Masana dön, bugünün kutusunu yak.",
+  },
 } as const;
 
 const en = {
@@ -686,6 +703,24 @@ const en = {
     focusMode: "Privacy / focus",
     focusModeHint: "Blurs titles and numbers.",
   },
+  reminders: {
+    label: "Goal reminders",
+    hint: "If you set a daily goal and haven’t hit it, you get an OS notification 12 hours and 3 hours before the day ends. Browser permission required.",
+    denied:
+      "Notifications are blocked. You can enable them in the browser settings.",
+    unsupported: "This browser can’t show OS notifications.",
+    noonTitle: "Halfway through the day.",
+    noonBody:
+      "Goal {goal} pages, today {today}. Sit down this afternoon and light the cell.",
+    eveningTitle: "Three hours left.",
+    eveningBody:
+      "{left} pages left. Finish before the day closes — back to the desk.",
+    actionDesk: "Open desk",
+    test: "Test notification",
+    testTitle: "The Vault",
+    testBody:
+      "Goal reminders look like this. Back to the desk, light today’s cell.",
+  },
 } as const;
 
 export type Dictionary = {
@@ -1004,6 +1039,20 @@ export type Dictionary = {
     dailyGoalHint: string;
     focusMode: string;
     focusModeHint: string;
+  };
+  reminders: {
+    label: string;
+    hint: string;
+    denied: string;
+    unsupported: string;
+    noonTitle: string;
+    noonBody: string;
+    eveningTitle: string;
+    eveningBody: string;
+    actionDesk: string;
+    test: string;
+    testTitle: string;
+    testBody: string;
   };
 };
 

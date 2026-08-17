@@ -79,6 +79,7 @@ export type Database = {
           daily_goal: number | null
           display_name: string | null
           focus_mode: boolean
+          goal_reminders: boolean
           id: string
           timezone: string
           updated_at: string
@@ -91,6 +92,7 @@ export type Database = {
           daily_goal?: number | null
           display_name?: string | null
           focus_mode?: boolean
+          goal_reminders?: boolean
           id: string
           timezone?: string
           updated_at?: string
@@ -103,11 +105,63 @@ export type Database = {
           daily_goal?: number | null
           display_name?: string | null
           focus_mode?: boolean
+          goal_reminders?: boolean
           id?: string
           timezone?: string
           updated_at?: string
           week_starts_on?: Database["public"]["Enums"]["week_start"]
           color_scheme?: Database["public"]["Enums"]["color_scheme"]
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          locale: string
+          p256dh: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          locale?: string
+          p256dh: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          locale?: string
+          p256dh?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      goal_reminder_log: {
+        Row: {
+          logged_on: string
+          sent_at: string
+          slot: string
+          user_id: string
+        }
+        Insert: {
+          logged_on: string
+          sent_at?: string
+          slot: string
+          user_id: string
+        }
+        Update: {
+          logged_on?: string
+          sent_at?: string
+          slot?: string
+          user_id?: string
         }
         Relationships: []
       }

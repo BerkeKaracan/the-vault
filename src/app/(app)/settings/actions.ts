@@ -117,6 +117,38 @@ export async function setFocusMode(
   return { ok: true, data };
 }
 
+export async function setGoalReminders(
+  enabled: boolean,
+): Promise<ActionResult<Profile>> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "authRequired" };
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({
+      goal_reminders: enabled,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { ok: false, error: "generic" };
+  }
+  if (!data) {
+    return { ok: false, error: "notFound" };
+  }
+
+  refresh();
+  return { ok: true, data };
+}
+
 export async function setColorScheme(
   scheme: ColorScheme,
 ): Promise<ActionResult<ColorScheme>> {

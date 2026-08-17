@@ -1,5 +1,6 @@
 import { AppNav } from "@/components/app-nav";
 import { FocusToggle } from "@/components/focus-toggle";
+import { GoalReminders } from "@/components/goal-reminders";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/user-menu";
 import { getDictionary } from "@/i18n/get-dictionary";
@@ -44,6 +45,10 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <div className="flex flex-1 flex-col">{children}</div>
+      <GoalReminders
+        enabled={session.profile?.goal_reminders ?? false}
+        dailyGoal={session.profile?.daily_goal ?? null}
+      />
     </div>
   );
 }

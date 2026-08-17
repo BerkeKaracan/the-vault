@@ -5,6 +5,7 @@ import { PointerGlow } from "@/components/landing/pointer-glow";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
+import { getSiteUrl } from "@/lib/site";
 
 function Act({
   index,
@@ -40,6 +41,22 @@ function Act({
 export default async function LandingPage() {
   const dictionary = await getDictionary();
   const { landing } = dictionary;
+  const site = getSiteUrl();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: dictionary.brand,
+    applicationCategory: "LifestyleApplication",
+    operatingSystem: "Web",
+    description: dictionary.meta.description,
+    url: site,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
 
   const stats = [
     { value: "3", label: landing.statDeskLabel },
@@ -49,6 +66,11 @@ export default async function LandingPage() {
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from a static object, not user input
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Fixed atmosphere: never contributes to layout, so it cannot create a scrollport. */}
       <div
         aria-hidden

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateProfile } from "@/app/(app)/settings/actions";
+import { setGoalReminders, updateProfile } from "@/app/(app)/settings/actions";
 import { AccentSwatches } from "@/components/materials/catalog-fields";
 import { usePreferences } from "@/components/preferences";
 import type { CookieConsent } from "@/i18n/config";
@@ -10,6 +10,13 @@ import { LanguageSwitcher } from "@/i18n/language-switcher";
 import { useI18n } from "@/i18n/provider";
 import { isAccentColor } from "@/lib/catalog/fields";
 import { setCookieConsent } from "@/lib/consent-actions";
+import {
+  notificationsSupported,
+  registerGoalWorker,
+  showGoalNotification,
+  subscribeGoalPush,
+  unsubscribeGoalPush,
+} from "@/lib/push-client";
 import type { AccentColor, Profile, WeekStart } from "@/lib/types";
 
 const fieldClass =
@@ -40,6 +47,9 @@ export function SettingsForm({
   );
   const [cookiePref, setCookiePref] = useState<CookieConsent>(
     consent ?? "necessary",
+  );
+  const [goalReminders, setGoalRemindersOn] = useState(
+    profile?.goal_reminders ?? false,
   );
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -146,6 +156,74 @@ export function SettingsForm({
             {dictionary.settings.dailyGoalHint}
           </span>
         </label>
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <label className="flex items-center gap-2 text-sm text-foreground/80">
+            <input
+              type="checkbox"
+              checked={goalReminders}
+              disabled={pending}
+              onChange={(event) => {
+                const next = event.target.checked;
+                setMessage(null);
+                startTransition(async () => {
+                  if (next) {
+                    if (!notificationsSupported()) {
+                      setMessage(dictionary.reminders.unsupported);
+                      return;
+                    }
+                    const permission = await Notification.requestPermission();
+                    if (permission !== "granted") {
+                      setMessage(dictionary.reminders.denied);
+                      return;
+                    }
+                    await subscribeGoalPush();
+                  } else {
+                    await unsubscribeGoalPush();
+                  }
+                  const result = await setGoalReminders(next);
+                  if (!result.ok) {
+                    setMessage(dictionary.errors.generic);
+                    return;
+                  }
+                  setGoalRemindersOn(next);
+                });
+              }}
+            />
+            {dictionary.reminders.label}
+          </label>
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => {
+              setMessage(null);
+              startTransition(async () => {
+                if (!notificationsSupported()) {
+                  setMessage(dictionary.reminders.unsupported);
+                  return;
+                }
+                const permission =
+                  Notification.permission === "granted"
+                    ? "granted"
+                    : await Notification.requestPermission();
+                if (permission !== "granted") {
+                  setMessage(dictionary.reminders.denied);
+                  return;
+                }
+                await registerGoalWorker();
+                await showGoalNotification({
+                  title: dictionary.reminders.testTitle,
+                  body: dictionary.reminders.testBody,
+                  tag: "vault-goal-test",
+                  actionTitle: dictionary.reminders.actionDesk,
+                });
+              });
+            }}
+            className="rounded-full border border-border px-3 py-1.5 text-xs text-foreground/80 transition hover:border-foreground/25 hover:text-foreground disabled:opacity-40"
+          >
+            {dictionary.reminders.test}
+          </button>
+        </div>
+        <p className="mt-1 text-xs text-muted">{dictionary.reminders.hint}</p>
         <label className="mt-6 flex items-center gap-2 text-sm text-foreground/80">
           <input
             type="checkbox"

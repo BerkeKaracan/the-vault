@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
 import { PreferencesProvider } from "@/components/preferences";
@@ -7,6 +7,7 @@ import { I18nProvider } from "@/i18n/provider";
 import { isAccentColor } from "@/lib/catalog/fields";
 import { getCookieConsent } from "@/lib/consent";
 import { getSessionProfile } from "@/lib/profile";
+import { getSiteUrl } from "@/lib/site";
 import { isColorScheme } from "@/lib/theme";
 import { getColorScheme } from "@/lib/theme-server";
 import "./globals.css";
@@ -28,12 +29,53 @@ const syne = Syne({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const dictionary = await getDictionary();
+  const [dictionary, locale] = await Promise.all([
+    getDictionary(),
+    getLocale(),
+  ]);
+  const site = getSiteUrl();
+  const ogLocale = locale === "en" ? "en_US" : "tr_TR";
+
   return {
-    title: dictionary.brand,
+    metadataBase: new URL(site),
+    title: {
+      default: dictionary.brand,
+      template: `%s · ${dictionary.brand}`,
+    },
     description: dictionary.meta.description,
+    applicationName: dictionary.brand,
+    appleWebApp: {
+      capable: true,
+      title: dictionary.brand,
+      statusBarStyle: "black-translucent",
+    },
+    openGraph: {
+      type: "website",
+      locale: ogLocale,
+      alternateLocale: locale === "en" ? ["tr_TR"] : ["en_US"],
+      url: site,
+      siteName: dictionary.brand,
+      title: dictionary.brand,
+      description: dictionary.meta.description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dictionary.brand,
+      description: dictionary.meta.description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f6f4" },
+  ],
+};
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();

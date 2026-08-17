@@ -9,7 +9,17 @@ function isPublicPath(path: string) {
     path === "/" ||
     path.startsWith("/login") ||
     path.startsWith("/auth") ||
-    path.startsWith("/setup")
+    path.startsWith("/setup") ||
+    path.startsWith("/api/cron") ||
+    path === "/sw.js" ||
+    path === "/icon" ||
+    path.startsWith("/icon/") ||
+    path === "/apple-icon" ||
+    path.startsWith("/apple-icon/") ||
+    path === "/manifest.webmanifest" ||
+    path === "/robots.txt" ||
+    path === "/sitemap.xml" ||
+    path.startsWith("/opengraph-image")
   );
 }
 
