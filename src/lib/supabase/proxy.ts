@@ -116,5 +116,12 @@ export async function updateSession(request: NextRequest) {
     return redirectWithCookies(request, supabaseResponse, "/desk");
   }
 
+  if (!isPublicPath(path)) {
+    supabaseResponse.headers.set(
+      "Cache-Control",
+      "private, no-store, max-age=0, must-revalidate",
+    );
+  }
+
   return supabaseResponse;
 }

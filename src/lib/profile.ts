@@ -1,3 +1,4 @@
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -32,6 +33,7 @@ export const getSessionProfile = cache(async (): Promise<SessionProfile> => {
 
     return { email: user.email ?? null, profile: data };
   } catch (error) {
+    unstable_rethrow(error);
     console.error("[getSessionProfile]", error);
     return { email: null, profile: null };
   }

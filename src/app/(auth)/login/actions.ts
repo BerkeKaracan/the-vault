@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { safeNextPath } from "@/lib/paths";
 import { createClient } from "@/lib/supabase/server";
@@ -19,6 +20,7 @@ export async function devSignIn(next?: string) {
   });
 
   if (!error && data.session) {
+    revalidatePath("/", "layout");
     redirect(safeNextPath(next));
   }
 
@@ -42,5 +44,6 @@ export async function devSignIn(next?: string) {
     }
   }
 
+  revalidatePath("/", "layout");
   redirect(safeNextPath(next));
 }
