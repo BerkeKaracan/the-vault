@@ -7,6 +7,7 @@ import { MaterialNotes } from "@/components/books/material-notes";
 import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { getGoogleBook } from "@/lib/catalog/google-books";
 import { getCollections } from "@/lib/library/collections";
 import {
   getMaterial,
@@ -48,6 +49,16 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
     getCollections(),
   ]);
 
+  let about = material.description;
+  if (material.google_books_id) {
+    try {
+      const live = await getGoogleBook(material.google_books_id);
+      if (live?.description) about = live.description;
+    } catch {
+      /* stored blurb */
+    }
+  }
+
   const statusLabel =
     material.status === "active"
       ? dictionary.book.onDesk
@@ -87,7 +98,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
           title: material.title,
           author: material.author,
           coverUrl: material.cover_url,
-          description: material.description,
+          description: about,
           publishedDate: material.published_date,
           publisher: material.publisher,
           categories: material.categories,

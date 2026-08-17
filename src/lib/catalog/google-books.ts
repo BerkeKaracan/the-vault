@@ -1,4 +1,6 @@
 import { cache } from "react";
+import type { Locale } from "@/i18n/config";
+import { getLocale } from "@/i18n/get-dictionary";
 import {
   BROWSE_ALL_QUERY,
   CATALOG_INDEX_CAP,
@@ -17,6 +19,7 @@ export type GoogleBookResult = {
   publisher: string | null;
   categories: string[];
   language: string | null;
+  isbn: string | null;
 };
 
 export class GoogleBooksError extends Error {
@@ -38,6 +41,11 @@ type ImageLinks = {
   smallThumbnail?: string;
 };
 
+type IndustryIdentifier = {
+  type?: string;
+  identifier?: string;
+};
+
 type GoogleVolume = {
   id: string;
   volumeInfo?: {
@@ -50,6 +58,7 @@ type GoogleVolume = {
     categories?: string[];
     language?: string;
     imageLinks?: ImageLinks;
+    industryIdentifiers?: IndustryIdentifier[];
   };
 };
 
@@ -81,6 +90,21 @@ function upgradeCoverUrl(url: string | undefined): string | null {
   return url.replace(/^http:\/\//, "https://");
 }
 
+function pickIsbn(info: GoogleVolume["volumeInfo"]): string | null {
+  const ids = info?.industryIdentifiers ?? [];
+  const isbn13 = ids.find((item) => item.type === "ISBN_13")?.identifier;
+  const isbn10 = ids.find((item) => item.type === "ISBN_10")?.identifier;
+  const value = isbn13 ?? isbn10 ?? null;
+  return value?.trim() || null;
+}
+
+function queryToken(value: string): string {
+  return value
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function pickCover(links: ImageLinks | undefined): string | null {
   if (!links) return null;
   return upgradeCoverUrl(
@@ -110,6 +134,7 @@ function mapVolume(item: GoogleVolume): GoogleBookResult | null {
     publisher: info.publisher ?? null,
     categories: info.categories ?? [],
     language: info.language ?? null,
+    isbn: pickIsbn(info),
   };
 }
 
@@ -142,15 +167,28 @@ function throwIfGoogleError(
   }
 }
 
-/** Same catalog for every UI language. */
+/** Default catalog is English Google Books, not the TR storefront. */
 const GOOGLE_MARKET = {
+  country: "US",
+  hl: "en",
+  acceptLanguage: "en-US,en;q=0.9",
+} as const;
+
+const TURKISH_BLURB_MARKET = {
   country: "TR",
+  hl: "tr",
   acceptLanguage: "tr-TR,tr;q=0.9,en;q=0.8",
 } as const;
 
 export type GoogleBooksSearchOptions = {
   orderBy?: "relevance" | "newest";
   startIndex?: number;
+  langRestrict?: string;
+  revalidateSeconds?: number;
+  market?: {
+    country: string;
+    acceptLanguage: string;
+  };
 };
 
 const EMPTY_PAGE: GoogleBooksPage = {
@@ -187,27 +225,34 @@ async function fetchVolumes(
   options?: GoogleBooksSearchOptions,
 ): Promise<GoogleBooksPage> {
   const startIndex = Math.max(options?.startIndex ?? 0, 0);
+  const market = options?.market ?? GOOGLE_MARKET;
   const params = new URLSearchParams({
     q: query,
     maxResults: String(Math.min(Math.max(limit, 1), 40)),
     printType: "books",
-    country: GOOGLE_MARKET.country,
+    country: market.country,
     orderBy: options?.orderBy === "newest" ? "newest" : "relevance",
     startIndex: String(startIndex),
   });
 
+  if (options?.langRestrict) {
+    params.set("langRestrict", options.langRestrict);
+  }
   if (apiKey) {
     params.set("key", apiKey);
   }
 
+  const revalidate = options?.revalidateSeconds;
   const res = await fetch(
     `https://www.googleapis.com/books/v1/volumes?${params.toString()}`,
     {
-      cache: "no-store",
+      ...(revalidate != null
+        ? { next: { revalidate } }
+        : { cache: "no-store" as const }),
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         Accept: "application/json",
-        "Accept-Language": GOOGLE_MARKET.acceptLanguage,
+        "Accept-Language": market.acceptLanguage,
       },
     },
   );
@@ -217,12 +262,65 @@ async function fetchVolumes(
   return toBooksPage(data, startIndex);
 }
 
+async function findTurkishBlurb(
+  book: GoogleBookResult,
+  apiKey?: string,
+): Promise<Pick<GoogleBookResult, "description" | "categories"> | null> {
+  if (book.language === "tr" && book.description) return null;
+  if (book.description && /[çğıöşüÇĞİÖŞÜ]/.test(book.description)) return null;
+
+  const queries: string[] = [];
+  const title = queryToken(book.title);
+  const author = queryToken(book.authors[0] ?? "");
+  if (title && author) {
+    queries.push(`intitle:${title} inauthor:${author}`);
+  } else if (title) {
+    queries.push(`intitle:${title}`);
+  }
+  if (book.isbn) queries.push(`isbn:${book.isbn}`);
+
+  const needle = title.toLocaleLowerCase("tr");
+
+  for (const query of queries) {
+    try {
+      const page = await fetchVolumes(query, 8, apiKey, {
+        langRestrict: "tr",
+        revalidateSeconds: 60 * 60 * 24,
+        market: TURKISH_BLURB_MARKET,
+      });
+      const match = page.books.find((item) => {
+        if (item.language !== "tr" || !item.description) return false;
+        const candidate = queryToken(item.title).toLocaleLowerCase("tr");
+        return (
+          !needle ||
+          candidate === needle ||
+          candidate.includes(needle) ||
+          needle.includes(candidate)
+        );
+      });
+      if (match?.description) {
+        return {
+          description: match.description,
+          categories:
+            match.categories.length > 0 ? match.categories : book.categories,
+        };
+      }
+    } catch {
+      /* keep original blurb */
+    }
+  }
+
+  return null;
+}
+
 async function fetchVolume(
   id: string,
-  apiKey?: string,
+  apiKey: string | undefined,
+  locale: Locale,
 ): Promise<GoogleBookResult | null> {
   const params = new URLSearchParams({
     country: GOOGLE_MARKET.country,
+    hl: GOOGLE_MARKET.hl,
   });
   if (apiKey) params.set("key", apiKey);
 
@@ -243,7 +341,17 @@ async function fetchVolume(
     GoogleVolume & { error?: { code?: number; message?: string } }
   >(res);
   throwIfGoogleError(res, data);
-  return mapVolume(data);
+  const book = mapVolume(data);
+  if (!book) return null;
+  if (locale !== "tr") return book;
+
+  const turkish = await findTurkishBlurb(book, apiKey);
+  if (!turkish) return book;
+  return {
+    ...book,
+    description: turkish.description,
+    categories: turkish.categories,
+  };
 }
 
 async function withRetry<T>(run: () => Promise<T>): Promise<T> {
@@ -328,9 +436,17 @@ export async function getBrowseCatalogPage(): Promise<GoogleBooksPage> {
   }
 }
 
-export const getGoogleBook = cache(
-  async (id: string): Promise<GoogleBookResult | null> => {
+const loadGoogleBook = cache(
+  async (id: string, locale: Locale): Promise<GoogleBookResult | null> => {
     if (!isGoogleVolumeId(id)) return null;
-    return withOptionalKey((apiKey) => fetchVolume(id, apiKey));
+    return withOptionalKey((apiKey) => fetchVolume(id, apiKey, locale));
   },
 );
+
+export async function getGoogleBook(
+  id: string,
+): Promise<GoogleBookResult | null> {
+  if (!isGoogleVolumeId(id)) return null;
+  const locale = await getLocale();
+  return loadGoogleBook(id, locale);
+}
