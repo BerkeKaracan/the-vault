@@ -13,7 +13,7 @@ export const getAuthUser = cache(async () => {
 export async function requireUser() {
   const user = await getAuthUser();
   if (!user) {
-    redirect("/login");
+    redirect("/");
   }
   return user;
 }

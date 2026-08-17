@@ -104,9 +104,7 @@ export async function updateSession(request: NextRequest) {
         NextResponse.json({ error: "authRequired" }, { status: 401 }),
       );
     }
-    return redirectWithCookies(request, supabaseResponse, "/login", {
-      next: safeNextPath(`${path}${request.nextUrl.search}`),
-    });
+    return redirectWithCookies(request, supabaseResponse, "/");
   }
 
   if (user && path.startsWith("/login")) {
