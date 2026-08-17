@@ -7,8 +7,8 @@ import { MaterialNotes } from "@/components/books/material-notes";
 import { MaterialEditor } from "@/components/materials/material-editor";
 import { TagList } from "@/components/materials/tag-list";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getCollections } from "@/lib/collections";
-import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/materials";
+import { getCollections } from "@/lib/library/collections";
+import { getMaterial, getMaterialNote, getMaterialPace } from "@/lib/library/materials";
 import { metricUnit } from "@/lib/metric";
 
 type MaterialPageProps = {

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateProfile } from "@/app/(app)/settings-actions";
+import { updateProfile } from "@/app/(app)/settings/actions";
 import { AccentSwatches } from "@/components/materials/catalog-fields";
 import { usePreferences } from "@/components/preferences";
 import type { CookieConsent } from "@/i18n/config";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { LanguageSwitcher } from "@/i18n/language-switcher";
 import { useI18n } from "@/i18n/provider";
-import { isAccentColor } from "@/lib/catalog";
+import { isAccentColor } from "@/lib/catalog/fields";
 import { setCookieConsent } from "@/lib/consent-actions";
 import type { AccentColor, Profile, WeekStart } from "@/lib/types";
 

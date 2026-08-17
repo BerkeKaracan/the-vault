@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { upsertMaterialNote } from "@/app/(app)/materials-actions";
+import { upsertMaterialNote } from "@/app/(app)/materials/[id]/actions";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { renderMarkdown } from "@/lib/markdown";

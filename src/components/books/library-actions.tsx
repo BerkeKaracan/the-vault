@@ -5,7 +5,7 @@ import {
   activateMaterial,
   markCompleted,
   shelveMaterial,
-} from "@/app/(app)/materials-actions";
+} from "@/app/(app)/materials/[id]/actions";
 import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";

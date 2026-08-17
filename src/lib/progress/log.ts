@@ -1,11 +1,11 @@
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
-import { isMetricType } from "@/lib/catalog";
+import { isMetricType } from "@/lib/catalog/fields";
 import {
   addSignedDayEntry,
   type SignedDayEntry,
   signedDayEntries,
-} from "@/lib/progress-day";
+} from "@/lib/progress/day";
 import { createClient } from "@/lib/supabase/server";
 import type { MetricType } from "@/lib/types";
 

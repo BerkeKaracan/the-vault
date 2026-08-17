@@ -1,4 +1,4 @@
-import { tagTone } from "@/lib/catalog";
+import { tagTone } from "@/lib/catalog/fields";
 
 export function TagList({ tags }: { tags: string[] }) {
   if (!tags || tags.length === 0) return null;

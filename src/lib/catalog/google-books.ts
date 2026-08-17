@@ -1,5 +1,8 @@
 import { cache } from "react";
-import { CATALOG_INDEX_CAP, CATALOG_PAGE_SIZE } from "@/lib/book-shelves";
+import {
+  CATALOG_INDEX_CAP,
+  CATALOG_PAGE_SIZE,
+} from "@/lib/catalog/book-shelves";
 import { cleanBookDescription } from "@/lib/text";
 
 export type GoogleBookResult = {

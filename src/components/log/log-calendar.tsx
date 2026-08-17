@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/i18n/provider";
 import { getLocalDateString } from "@/lib/local-date";
-import type { MonthLog } from "@/lib/log";
 import { metricUnit } from "@/lib/metric";
-import { signedDeltaLabel, signedEntryId } from "@/lib/progress-day";
+import { signedDeltaLabel, signedEntryId } from "@/lib/progress/day";
+import type { MonthLog } from "@/lib/progress/log";
 
 function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();

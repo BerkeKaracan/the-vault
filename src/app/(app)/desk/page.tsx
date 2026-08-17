@@ -1,7 +1,7 @@
 import { DeskSurface } from "@/components/desk/desk-surface";
 import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
-import { getHeatmapData } from "@/lib/heatmap";
-import { getActiveMaterials } from "@/lib/materials";
+import { getHeatmapData } from "@/lib/progress/heatmap";
+import { getActiveMaterials } from "@/lib/library/materials";
 import { getSessionProfile } from "@/lib/profile";
 
 export default async function DeskPage() {

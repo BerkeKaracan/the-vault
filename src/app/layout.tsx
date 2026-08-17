@@ -5,7 +5,7 @@ import { CookieBanner } from "@/components/cookie-banner";
 import { PreferencesProvider } from "@/components/preferences";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { I18nProvider } from "@/i18n/provider";
-import { isAccentColor } from "@/lib/catalog";
+import { isAccentColor } from "@/lib/catalog/fields";
 import { getCookieConsent } from "@/lib/consent";
 import { isColorScheme } from "@/lib/theme";
 import { getColorScheme } from "@/lib/theme-server";

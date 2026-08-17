@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { setCollectionMembership } from "@/app/(app)/collection-actions";
-import { deleteMaterial, updateMaterial } from "@/app/(app)/materials-actions";
+import { setCollectionMembership } from "@/app/(app)/library/actions";
+import {
+  deleteMaterial,
+  updateMaterial,
+} from "@/app/(app)/materials/[id]/actions";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
-import type { Collection } from "@/lib/collections";
+import type { Collection } from "@/lib/library/collections";
 import type { Material } from "@/lib/types";
 
 const fieldClass =

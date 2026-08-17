@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import { markCompleted, shelveMaterial } from "@/app/(app)/materials-actions";
+import {
+  markCompleted,
+  shelveMaterial,
+} from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
 import { ProgressControls } from "@/components/progress/progress-controls";
 import type { ErrorKey } from "@/i18n/dictionaries";

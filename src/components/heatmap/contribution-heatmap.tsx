@@ -6,10 +6,10 @@ import { usePreferences } from "@/components/preferences";
 import type { Locale } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import type { HeatmapData, HeatmapDayEntry } from "@/lib/heatmap";
 import { getLocalDateString } from "@/lib/local-date";
 import { metricUnit } from "@/lib/metric";
-import { signedDeltaLabel, signedEntryId } from "@/lib/progress-day";
+import { signedDeltaLabel, signedEntryId } from "@/lib/progress/day";
+import type { HeatmapData, HeatmapDayEntry } from "@/lib/progress/heatmap";
 import type { WeekStart } from "@/lib/types";
 
 const WEEKS = 26;

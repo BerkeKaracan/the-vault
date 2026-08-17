@@ -1,12 +1,12 @@
 import { cache } from "react";
 import { getAuthUser } from "@/lib/auth";
-import { isMetricType } from "@/lib/catalog";
+import { isMetricType } from "@/lib/catalog/fields";
 import { getLocalDateString } from "@/lib/local-date";
 import {
   addSignedDayEntry,
   type SignedDayEntry,
   signedDayEntries,
-} from "@/lib/progress-day";
+} from "@/lib/progress/day";
 import { createClient } from "@/lib/supabase/server";
 
 const HEATMAP_WEEKS = 26;

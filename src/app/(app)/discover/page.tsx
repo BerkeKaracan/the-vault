@@ -1,8 +1,8 @@
 import { AddMaterialPanel } from "@/components/materials/add-material-panel";
 import { PageHeader } from "@/components/page-header";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE } from "@/lib/book-shelves";
-import { type GoogleBooksPage, searchGoogleBooks } from "@/lib/google-books";
+import { BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE } from "@/lib/catalog/book-shelves";
+import { type GoogleBooksPage, searchGoogleBooks } from "@/lib/catalog/google-books";
 
 export default async function DiscoverPage() {
   const dictionary = await getDictionary();

@@ -3,18 +3,21 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { addGoogleBook } from "@/app/(app)/materials-actions";
+import { addGoogleBook } from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
 import type { Dictionary, ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import {
   BOOK_SHELVES,
+  type BookShelfId,
   DEFAULT_BOOK_SHELF,
   googleQueryFor,
-  type BookShelfId,
-} from "@/lib/book-shelves";
-import type { GoogleBookResult, GoogleBooksPage } from "@/lib/google-books";
+} from "@/lib/catalog/book-shelves";
+import type {
+  GoogleBookResult,
+  GoogleBooksPage,
+} from "@/lib/catalog/google-books";
 import type { MetricType } from "@/lib/types";
 
 function translateError(
@@ -134,7 +137,10 @@ export function BookCatalog({
         setSearchError(dictionary.add.noResults);
       }
     } catch (error) {
-      if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+      if (
+        signal?.aborted ||
+        (error instanceof DOMException && error.name === "AbortError")
+      ) {
         return;
       }
       if (replace) setBooks([]);
@@ -211,9 +217,7 @@ export function BookCatalog({
         </output>
       ) : null}
 
-      {searchError ? (
-        <p className="text-sm text-muted">{searchError}</p>
-      ) : null}
+      {searchError ? <p className="text-sm text-muted">{searchError}</p> : null}
 
       <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {searching && books.length === 0

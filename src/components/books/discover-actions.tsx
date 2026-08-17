@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { addGoogleBook } from "@/app/(app)/materials-actions";
+import { addGoogleBook } from "@/app/(app)/materials/[id]/actions";
 import { MetricFields } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";

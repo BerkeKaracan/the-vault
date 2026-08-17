@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addMaterial } from "@/app/(app)/materials-actions";
+import { addMaterial } from "@/app/(app)/materials/[id]/actions";
 import { BookCatalog } from "@/components/books/book-catalog";
 import { MetricFields } from "@/components/materials/catalog-fields";
 import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
-import type { GoogleBooksPage } from "@/lib/google-books";
+import type { GoogleBooksPage } from "@/lib/catalog/google-books";
 import type { MetricType } from "@/lib/types";
 
 type Tab = "search" | "manual";
