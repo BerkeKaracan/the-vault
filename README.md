@@ -1,52 +1,71 @@
 # The Vault
 
-Odak odaklı okuma ve ilerleme terminali.
+A focus-driven reading and progress terminal.
 
 Production: [https://the-value.vercel.app](https://the-value.vercel.app)
 
-## Setup
+---
 
-1. Bağımlılıklar:
+## Setup & Installation
+
+### 1. Install Dependencies
+
+Begin by installing the required packages:
 
 ```bash
 npm install
 ```
 
-2. Env:
+### 2. Environment Variables
+
+Set up your local environment variables by copying the example file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Supabase proje URL + anon key’i doldur. `GOOGLE_BOOKS_API_KEY` katalog araması ve cilt detayı için **gerekli** (anahtarsız istekler kota/429’a düşer). Bu Books anahtarı Translate API değildir; çeviri çağrısı yok.
+- **Supabase:** Fill in your Supabase Project URL and Anon Key.
+- **Google Books API:** The `GOOGLE_BOOKS_API_KEY` is **required** for catalog searches and fetching volume details. Unauthenticated requests will quickly hit the 429 rate limit quota. _(Note: This utilizes the Books API exclusively; there are no translation calls in the application)_.
 
-3. Veritabanı:
+### 3. Database Initialization (Supabase)
 
-Supabase SQL Editor’de migration dosyalarını **sırayla** çalıştır:
+Navigate to the Supabase SQL Editor and execute the following migration files **in chronological order**:
 
-| Dosya | Ne işe yarar |
-| --- | --- |
-| [`001_init.sql`](supabase/migrations/001_init.sql) | Temel şema: materials, progress_entries |
-| [`002_profiles.sql`](supabase/migrations/002_profiles.sql) | Profiller ve `handle_new_user` tetikleyicisi |
-| [`003_material_details.sql`](supabase/migrations/003_material_details.sql) | Kitap keşif alanları (açıklama, yayınevi, kategoriler) |
-| [`004_advanced_materials.sql`](supabase/migrations/004_advanced_materials.sql) | Metrik, etiket, okuma oturumu, notlar |
-| [`005_color_scheme.sql`](supabase/migrations/005_color_scheme.sql) | Renk şeması (dark / light) |
-| [`006_progress_corrections.sql`](supabase/migrations/006_progress_corrections.sql) | İlerleme düzeltmeleri (negatif delta) |
-| [`007_profile_oauth_display_name.sql`](supabase/migrations/007_profile_oauth_display_name.sql) | OAuth görünen ad (`full_name` / `name` / `user_name` / `preferred_username`) |
-| [`008_collections.sql`](supabase/migrations/008_collections.sql) | Library rafları (`collections`, `collection_items`) |
+| File                                 | Description                                                                        |
+| :----------------------------------- | :--------------------------------------------------------------------------------- |
+| `001_init.sql`                       | Core schema setup (`materials`, `progress_entries`).                               |
+| `002_profiles.sql`                   | User profiles and the `handle_new_user` trigger.                                   |
+| `003_material_details.sql`           | Book discovery fields (descriptions, publishers, categories).                      |
+| `004_advanced_materials.sql`         | Metrics, tags, reading sessions, and notes.                                        |
+| `005_color_scheme.sql`               | Color scheme preferences (dark/light mode).                                        |
+| `006_progress_corrections.sql`       | Progress corrections (handling negative deltas).                                   |
+| `007_profile_oauth_display_name.sql` | OAuth display name logic (`full_name`, `name`, `user_name`, `preferred_username`). |
+| `008_collections.sql`                | Library shelving system (`collections`, `collection_items`).                       |
 
-Mevcut bir projeye geçiyorsan **007 ve 008’i SQL Editor’de çalıştırman gerekir.** 007 tetikleyici fonksiyonu `CREATE OR REPLACE` ile günceller; 008 rafları ekler. Kullanıcı verisi silinmez.
+> **Upgrading an Existing Project?**
+> If you are applying these updates to an existing database, you only need to run **`007`** and **`008`** in the SQL Editor. File `007` securely updates the trigger function via `CREATE OR REPLACE`, while `008` adds the new shelving tables. No user data will be lost.
 
-Auth → URL Configuration:
+### 4. Authentication Configuration
 
-- Site URL: `http://localhost:3000` (production’da `https://the-value.vercel.app`)
-- Redirect URLs: `/auth/callback` (local + production)
+**A. URL Configuration**
+In your Supabase dashboard, navigate to **Authentication → URL Configuration**:
 
-Auth → Providers: **Google** ve **GitHub**. Callback URL olarak Supabase’in verdiği `https://<project>.supabase.co/auth/v1/callback` adresini Google Cloud / GitHub OAuth app’e ekle.
+- **Site URL:** `http://localhost:3000` (Use `[https://the-value.vercel.app](https://the-value.vercel.app)` for production).
+- **Redirect URLs:** Add `/auth/callback` (Ensure both local and production callback URLs are listed).
 
-Yerel test girişi yalnızca `npm run dev` login butonunda görünür (`testuser@gmail.com` / `123456`). Email provider açık olsun; Confirm email kapalı olsun veya Authentication → Users’tan bu kullanıcıyı Auto Confirm ile ekle. Production’da bu buton yok.
+**B. OAuth Providers**
+Navigate to **Authentication → Providers** and enable **Google** and **GitHub**. Copy your Supabase callback URL (`https://<project>.supabase.co/auth/v1/callback`) and paste it into your Google Cloud Console and GitHub Developer (OAuth App) settings.
 
-4. Geliştirme:
+**C. Local Testing Credentials**
+A quick-login button is available exclusively in the development environment (`npm run dev`).
+
+- **Credentials:** `testuser@gmail.com` / `123456`.
+- **Action Required:** Ensure the **Email provider** is enabled. Either disable **Confirm email**, or manually auto-confirm this test user via the _Authentication → Users_ tab in Supabase.
+- _This test button is automatically hidden in the production environment._
+
+### 5. Local Development
+
+Start the development server:
 
 ```bash
 npm run dev
