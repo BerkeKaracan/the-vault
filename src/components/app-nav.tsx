@@ -67,7 +67,7 @@ export function AppNav({
         aria-controls="app-nav-drawer"
         aria-label={open ? dictionary.nav.close : dictionary.nav.menu}
         onClick={() => setOpen((value) => !value)}
-        className="flex size-9 items-center justify-center rounded-full text-muted transition hover:bg-foreground/6 hover:text-foreground lg:hidden"
+        className="flex size-9 items-center justify-center rounded-full text-muted caret-transparent select-none transition hover:bg-foreground/6 hover:text-foreground lg:hidden"
       >
         <span aria-hidden className="flex h-3.5 w-4 flex-col justify-between">
           <span
@@ -90,7 +90,7 @@ export function AppNav({
 
       <Link
         href="/desk"
-        className="font-mono text-[0.7rem] tracking-[0.28em] text-muted uppercase transition hover:text-foreground"
+        className="font-mono text-[0.7rem] tracking-[0.28em] text-muted uppercase caret-transparent select-none transition hover:text-foreground"
       >
         {dictionary.brand}
       </Link>
@@ -106,7 +106,7 @@ export function AppNav({
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`rounded-full px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.18em] uppercase transition ${
+              className={`rounded-full px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.18em] uppercase caret-transparent select-none transition ${
                 active
                   ? "bg-foreground/8 text-foreground"
                   : "text-muted hover:bg-foreground/5 hover:text-foreground/90"
@@ -151,7 +151,7 @@ export function AppNav({
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className={`group flex items-baseline gap-3 rounded-xl px-3 py-3 transition ${
+                  className={`group flex items-baseline gap-3 rounded-xl px-3 py-3 caret-transparent select-none transition ${
                     active
                       ? "bg-foreground/7 text-foreground"
                       : "text-muted hover:bg-foreground/4 hover:text-foreground"

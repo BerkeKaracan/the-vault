@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addGoogleBook } from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
-import { Skeleton, skeletonKeys } from "@/components/skeleton";
+import { CoverSkeletonGrid } from "@/components/skeleton";
 import type { Dictionary, ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
@@ -55,6 +55,7 @@ export function BookCatalog({
   const [searchError, setSearchError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [searching, setSearching] = useState(initialPage.books.length === 0);
+  const [replacing, setReplacing] = useState(initialPage.books.length === 0);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const skipDefaultFetch = useRef(initialPage.books.length > 0);
@@ -83,6 +84,7 @@ export function BookCatalog({
       if (replace) {
         setActionMessage(null);
         setHasMore(false);
+        setReplacing(true);
       }
       setSearching(true);
 
@@ -143,7 +145,10 @@ export function BookCatalog({
         setHasMore(false);
         setSearchError(dictionary.add.searchFailed);
       } finally {
-        if (!signal?.aborted) setSearching(false);
+        if (!signal?.aborted) {
+          setSearching(false);
+          if (replace) setReplacing(false);
+        }
       }
     },
     [shelf, debouncedQuery, dictionary],
@@ -232,67 +237,70 @@ export function BookCatalog({
         </output>
       ) : null}
 
-      {searchError ? <p className="text-sm text-muted">{searchError}</p> : null}
+      {searchError && !replacing ? (
+        <p className="text-sm text-muted">{searchError}</p>
+      ) : null}
 
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {searching && books.length === 0
-          ? skeletonKeys(10).map((key) => (
-              <li key={key}>
-                <Skeleton className="aspect-2/3 rounded-sm" />
-              </li>
-            ))
-          : books.map((book) => (
-              <li key={book.id} className="flex flex-col">
-                <Link
-                  href={`/discover/${encodeURIComponent(book.id)}`}
-                  className="block"
+      {replacing ? (
+        <CoverSkeletonGrid
+          count={10}
+          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+        />
+      ) : (
+        <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {books.map((book) => (
+            <li key={book.id} className="flex flex-col">
+              <Link
+                href={`/discover/${encodeURIComponent(book.id)}`}
+                className="block"
+              >
+                <Cover
+                  title={book.title}
+                  author={book.authors.join(", ")}
+                  coverUrl={book.coverUrl}
+                  sizes="(max-width: 640px) 45vw, 180px"
+                />
+              </Link>
+              <Link
+                href={`/discover/${encodeURIComponent(book.id)}`}
+                className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+              >
+                {book.title}
+              </Link>
+              <p className="mt-1 truncate text-xs text-muted">
+                {book.authors.join(", ") || dictionary.add.noAuthor}
+              </p>
+              <p className="mt-0.5 font-mono text-[0.65rem] text-muted">
+                {book.pageCount
+                  ? t(dictionary.add.pages, { count: book.pageCount })
+                  : dictionary.add.pagesUnknown}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => saveBook(book, "active")}
+                  className="rounded-full bg-accent px-2.5 py-1 text-[0.7rem] font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
                 >
-                  <Cover
-                    title={book.title}
-                    author={book.authors.join(", ")}
-                    coverUrl={book.coverUrl}
-                    sizes="(max-width: 640px) 45vw, 180px"
-                  />
-                </Link>
-                <Link
-                  href={`/discover/${encodeURIComponent(book.id)}`}
-                  className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+                  {pending && pendingId === book.id
+                    ? dictionary.busy
+                    : dictionary.add.addToDesk}
+                </button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => saveBook(book, "shelved")}
+                  className="rounded-full border border-border px-2.5 py-1 text-[0.7rem] text-foreground/80 transition hover:border-foreground/25 disabled:opacity-40"
                 >
-                  {book.title}
-                </Link>
-                <p className="mt-1 truncate text-xs text-muted">
-                  {book.authors.join(", ") || dictionary.add.noAuthor}
-                </p>
-                <p className="mt-0.5 font-mono text-[0.65rem] text-muted">
-                  {book.pageCount
-                    ? t(dictionary.add.pages, { count: book.pageCount })
-                    : dictionary.add.pagesUnknown}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    disabled={pending}
-                    onClick={() => saveBook(book, "active")}
-                    className="rounded-full bg-accent px-2.5 py-1 text-[0.7rem] font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-40"
-                  >
-                    {pending && pendingId === book.id
-                      ? dictionary.busy
-                      : dictionary.add.addToDesk}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={pending}
-                    onClick={() => saveBook(book, "shelved")}
-                    className="rounded-full border border-border px-2.5 py-1 text-[0.7rem] text-foreground/80 transition hover:border-foreground/25 disabled:opacity-40"
-                  >
-                    {dictionary.add.addToVault}
-                  </button>
-                </div>
-              </li>
-            ))}
-      </ul>
+                  {dictionary.add.addToVault}
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
-      {hasMore && books.length > 0 ? (
+      {hasMore && books.length > 0 && !replacing ? (
         <button
           type="button"
           disabled={searching}

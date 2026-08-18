@@ -155,18 +155,23 @@ html::-webkit-scrollbar-corner {
 
 .heat-0 {
   background: var(--heat-0);
+  fill: var(--heat-0);
 }
 .heat-1 {
   background: var(--heat-1);
+  fill: var(--heat-1);
 }
 .heat-2 {
   background: var(--heat-2);
+  fill: var(--heat-2);
 }
 .heat-3 {
   background: var(--heat-3);
+  fill: var(--heat-3);
 }
 .heat-4 {
   background: var(--heat-4);
+  fill: var(--heat-4);
 }
 
 .focus-private [data-private] {
@@ -474,6 +479,20 @@ html[data-theme="light"] .landing-orb-warm {
   opacity: 0.16;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: landing-grain 7s steps(3) infinite;
+}
+
+@media (max-width: 767px) {
+  .desk-orb,
+  .desk-orb-alt,
+  .desk-ruling,
+  .desk-enter {
+    animation: none;
+    transform: none;
+  }
+
+  .desk-grain {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
