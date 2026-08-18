@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { WeekChart } from "@/components/stats/week-chart";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { getStatsSummary } from "@/lib/progress/stats";
@@ -11,15 +12,40 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function StatsPage() {
-  const [dictionary, stats] = await Promise.all([
+  const [dictionary, result] = await Promise.all([
     getDictionary(),
     getStatsSummary(),
   ]);
 
+  if (!result.ok) {
+    return (
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10 sm:px-8">
+        <PageHeader
+          title={dictionary.stats.title}
+          subtitle={dictionary.stats.subtitle}
+        />
+        <p className="mt-10 text-sm text-muted">{dictionary.stats.loadError}</p>
+      </main>
+    );
+  }
+
+  const stats = result.data;
   const isEmpty =
-    stats.yearDays === 0 && stats.yearPages === 0 && stats.completed === 0;
+    stats.yearDays === 0 &&
+    stats.yearPages === 0 &&
+    stats.yearQuestions === 0 &&
+    stats.yearChapters === 0 &&
+    stats.completed === 0;
 
   const cards = [
+    {
+      label: `${dictionary.stats.thisWeek} · ${dictionary.stats.activeDays}`,
+      value: String(stats.weekDays),
+    },
+    {
+      label: `${dictionary.stats.thisWeek} · ${dictionary.stats.pages}`,
+      value: String(stats.weekPages),
+    },
     {
       label: `${dictionary.stats.thisMonth} · ${dictionary.stats.activeDays}`,
       value: String(stats.monthDays),
@@ -27,6 +53,14 @@ export default async function StatsPage() {
     {
       label: `${dictionary.stats.thisMonth} · ${dictionary.stats.pages}`,
       value: String(stats.monthPages),
+    },
+    {
+      label: `${dictionary.stats.thisMonth} · ${dictionary.stats.questions}`,
+      value: String(stats.monthQuestions),
+    },
+    {
+      label: `${dictionary.stats.thisMonth} · ${dictionary.stats.chapters}`,
+      value: String(stats.monthChapters),
     },
     {
       label: `${dictionary.stats.thisYear} · ${dictionary.stats.activeDays}`,
@@ -37,12 +71,24 @@ export default async function StatsPage() {
       value: String(stats.yearPages),
     },
     {
+      label: `${dictionary.stats.thisYear} · ${dictionary.stats.questions}`,
+      value: String(stats.yearQuestions),
+    },
+    {
+      label: `${dictionary.stats.thisYear} · ${dictionary.stats.chapters}`,
+      value: String(stats.yearChapters),
+    },
+    {
       label: dictionary.stats.completed,
       value: String(stats.completed),
     },
     {
+      label: dictionary.stats.currentStreak,
+      value: t(dictionary.stats.daysUnit, { count: stats.currentStreak }),
+    },
+    {
       label: dictionary.stats.streak,
-      value: t(dictionary.stats.daysUnit, { count: stats.streak }),
+      value: t(dictionary.stats.daysUnit, { count: stats.longestStreak }),
     },
   ];
 
@@ -87,6 +133,13 @@ export default async function StatsPage() {
           </div>
         ))}
       </dl>
+      {isEmpty ? null : (
+        <WeekChart
+          weeks={stats.weeks}
+          title={dictionary.stats.weekChart}
+          ariaLabel={dictionary.stats.weekChartAria}
+        />
+      )}
     </main>
   );
 }

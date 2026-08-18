@@ -41,11 +41,11 @@ function DeskAtmosphere() {
       aria-hidden
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
-      <div className="desk-orb absolute top-[-28%] right-[-18%] size-[70vh] rounded-full bg-[radial-gradient(circle,var(--accent-glow),transparent_68%)] blur-3xl" />
-      <div className="desk-orb-alt landing-orb-warm absolute bottom-[-30%] left-[-20%] size-[62vh] rounded-full blur-3xl" />
+      <div className="desk-orb absolute top-[-28%] right-[-18%] hidden size-[70vh] rounded-full bg-[radial-gradient(circle,var(--accent-glow),transparent_68%)] blur-3xl md:block" />
+      <div className="desk-orb-alt landing-orb-warm absolute bottom-[-30%] left-[-20%] hidden size-[62vh] rounded-full blur-3xl md:block" />
       <div className="desk-ruling absolute inset-0" />
       <div className="desk-grain absolute inset-[-45%]" />
-      <div className="absolute bottom-[10%] left-1/2 h-28 w-[min(42rem,80%)] -translate-x-1/2 rounded-[100%] bg-[radial-gradient(ellipse_at_center,var(--accent-glow),transparent_72%)] blur-2xl" />
+      <div className="absolute bottom-[10%] left-1/2 hidden h-28 w-[min(42rem,80%)] -translate-x-1/2 rounded-[100%] bg-[radial-gradient(ellipse_at_center,var(--accent-glow),transparent_72%)] blur-2xl md:block" />
       <div className="absolute inset-x-0 bottom-0 h-[32%] bg-linear-to-t from-[var(--desk-fade)] to-transparent" />
     </div>
   );
@@ -89,7 +89,7 @@ function CoverSlot({
           className="relative w-full max-w-56"
         >
           <span
-            className={`absolute -bottom-4 left-1/2 h-8 w-4/5 -translate-x-1/2 rounded-full bg-accent/25 blur-xl transition-opacity duration-500 ${
+            className={`absolute -bottom-4 left-1/2 hidden h-8 w-4/5 -translate-x-1/2 rounded-full bg-accent/25 blur-xl transition-opacity duration-500 md:block ${
               selected ? "opacity-100" : "opacity-0 group-hover:opacity-40"
             }`}
           />

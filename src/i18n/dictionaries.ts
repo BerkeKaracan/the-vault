@@ -248,14 +248,21 @@ const tr = {
   },
   stats: {
     title: "Stats",
-    subtitle: "Ölçülebilir mesai. Grafik yok, sayı var.",
+    subtitle: "Ölçülebilir mesai.",
     thisMonth: "Bu ay",
     thisYear: "Bu yıl",
+    thisWeek: "Bu hafta",
     activeDays: "Aktif gün",
     pages: "Sayfa",
+    questions: "Soru",
+    chapters: "Bölüm",
     completed: "Biten",
     streak: "En uzun seri",
+    currentStreak: "Mevcut seri",
     daysUnit: "{count} gün",
+    weekChart: "Son 12 hafta",
+    weekChartAria: "Son 12 haftanın sayfa toplamları",
+    loadError: "Sayılar yüklenemedi. Sayfayı yenile.",
     emptyTitle: "Henüz sayılacak mesai yok.",
     emptyBody:
       "İlk sayfanı kaydettiğinde bu sayılar dolmaya başlar. Masana bir materyal koy.",
@@ -609,14 +616,21 @@ const en = {
   },
   stats: {
     title: "Stats",
-    subtitle: "Measurable hours. No charts, just counts.",
+    subtitle: "Measurable hours.",
     thisMonth: "This month",
     thisYear: "This year",
+    thisWeek: "This week",
     activeDays: "Active days",
     pages: "Pages",
+    questions: "Questions",
+    chapters: "Chapters",
     completed: "Finished",
     streak: "Longest streak",
+    currentStreak: "Current streak",
     daysUnit: "{count} days",
+    weekChart: "Last 12 weeks",
+    weekChartAria: "Page totals for the last 12 weeks",
+    loadError: "Could not load these counts. Refresh the page.",
     emptyTitle: "Nothing to count yet.",
     emptyBody:
       "These numbers fill up once you log your first page. Put a material on the desk.",
@@ -957,11 +971,18 @@ export type Dictionary = {
     subtitle: string;
     thisMonth: string;
     thisYear: string;
+    thisWeek: string;
     activeDays: string;
     pages: string;
+    questions: string;
+    chapters: string;
     completed: string;
     streak: string;
+    currentStreak: string;
     daysUnit: string;
+    weekChart: string;
+    weekChartAria: string;
+    loadError: string;
     emptyTitle: string;
     emptyBody: string;
   };

@@ -31,7 +31,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     <div
       className={`flex min-h-dvh flex-1 flex-col bg-surface ${consent ? "" : "pb-44 sm:pb-32"}`}
     >
-      <header className="sticky top-0 z-40 h-14 border-b border-border bg-surface/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 h-14 border-b border-border bg-surface/80 caret-transparent select-none backdrop-blur-xl">
         <div className="flex h-full items-center gap-2 px-4 sm:px-8">
           <AppNav items={nav} />
           <div className="ml-auto flex items-center gap-2 sm:gap-4">

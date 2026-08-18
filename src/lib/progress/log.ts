@@ -2,6 +2,7 @@ import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
 import { requireUser } from "@/lib/auth";
 import { isMetricType } from "@/lib/catalog/fields";
+import { normalizeLoggedOn } from "@/lib/local-date";
 import {
   addSignedDayEntry,
   type SignedDayEntry,
@@ -19,11 +20,20 @@ export type MonthLog = {
 
 const EMPTY_LOG: MonthLog = { totals: {}, entries: {} };
 
+type NestedMaterial = {
+  title: string | null;
+  metric_type: string | null;
+};
+
+type LogRow = {
+  logged_on: string;
+  pages_delta: number;
+  material_id: string;
+  materials?: NestedMaterial | NestedMaterial[] | null;
+};
+
 function nestedTitle(
-  value:
-    | { title: string | null; metric_type: string | null }
-    | { title: string | null; metric_type: string | null }[]
-    | null,
+  value: NestedMaterial | NestedMaterial[] | null | undefined,
 ): { title: string; metricType: MetricType } {
   const row = Array.isArray(value) ? value[0] : value;
   return {
@@ -48,7 +58,7 @@ export const getMonthLog = cache(
       const nextYear = month === 12 ? year + 1 : year;
       const to = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
 
-      const { data, error } = await supabase
+      const withJoin = await supabase
         .from("progress_entries")
         .select(
           "logged_on, pages_delta, material_id, materials(title, metric_type)",
@@ -58,18 +68,55 @@ export const getMonthLog = cache(
         .lt("logged_on", to)
         .order("created_at", { ascending: true });
 
-      if (error) {
-        console.error("[getMonthLog]", error.message);
-        return EMPTY_LOG;
+      let rows: LogRow[] = withJoin.data ?? [];
+      const extras = new Map<
+        string,
+        { title: string; metricType: MetricType }
+      >();
+
+      if (withJoin.error) {
+        console.error("[getMonthLog] embed", withJoin.error.message);
+        const plain = await supabase
+          .from("progress_entries")
+          .select("logged_on, pages_delta, material_id")
+          .eq("user_id", user.id)
+          .gte("logged_on", from)
+          .lt("logged_on", to)
+          .order("created_at", { ascending: true });
+
+        if (plain.error) {
+          console.error("[getMonthLog]", plain.error.message);
+          return EMPTY_LOG;
+        }
+
+        rows = plain.data ?? [];
+        const ids = [...new Set(rows.map((row) => row.material_id))];
+        if (ids.length > 0) {
+          const { data: materials } = await supabase
+            .from("materials")
+            .select("id, title, metric_type")
+            .in("id", ids);
+          for (const material of materials ?? []) {
+            extras.set(material.id, {
+              title: material.title?.trim() || "—",
+              metricType: isMetricType(material.metric_type)
+                ? material.metric_type
+                : "pages",
+            });
+          }
+        }
       }
 
       const totals: Record<string, number> = {};
       const grouped = new Map<string, Map<string, LogDayEntry>>();
 
-      for (const row of data ?? []) {
-        totals[row.logged_on] = (totals[row.logged_on] ?? 0) + row.pages_delta;
-        const material = nestedTitle(row.materials);
-        addSignedDayEntry(grouped, row.logged_on, {
+      for (const row of rows) {
+        const date = normalizeLoggedOn(row.logged_on);
+        if (!date) continue;
+        totals[date] = (totals[date] ?? 0) + row.pages_delta;
+        const material =
+          extras.get(row.material_id) ?? nestedTitle(row.materials);
+        addSignedDayEntry(grouped, date, {
           materialId: row.material_id,
           title: material.title,
           metricType: material.metricType,
