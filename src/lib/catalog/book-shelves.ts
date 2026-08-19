@@ -14,12 +14,12 @@ export const BOOK_SHELVES = [
 export type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
 
 export const DEFAULT_BOOK_SHELF: BookShelfId = "all";
-/** Default vitrine is fiction — Google Books has no true newest-all feed. */
+/** Default vitrine: fiction by relevance (no likes feed; Google has no true all-newest). */
 export const BROWSE_ALL_QUERY = "subject:fiction";
 /** Google Books maxResults ceiling. */
 export const CATALOG_PAGE_SIZE = 40;
-/** Volumes search degrades after a few hundred hits. */
-export const CATALOG_INDEX_CAP = 400;
+/** Volumes list is only useful through the first thousand hits. */
+export const CATALOG_INDEX_CAP = 1000;
 
 export type BookSubject = Exclude<
   (typeof BOOK_SHELVES)[number]["subject"],
@@ -46,11 +46,16 @@ export function googleQueryFor(
     return { q: trimmed, subject, orderBy: "relevance" };
   }
 
-  if (subject) {
-    return { q: "", subject, orderBy: "newest" };
+  if (!subject) {
+    return { q: BROWSE_ALL_QUERY, subject: null, orderBy: "relevance" };
   }
 
-  return { q: "", subject: null, orderBy: "newest" };
+  return { q: "", subject, orderBy: "relevance" };
+}
+
+/** Keep paging until Google returns an empty page or the index cap. */
+export function catalogHasMore(rawCount: number, nextIndex: number): boolean {
+  return rawCount > 0 && nextIndex < CATALOG_INDEX_CAP;
 }
 
 export function toGoogleBooksQuery(q: string, subject: string | null): string {

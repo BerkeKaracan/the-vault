@@ -5,6 +5,7 @@ import {
   BROWSE_ALL_QUERY,
   CATALOG_INDEX_CAP,
   CATALOG_PAGE_SIZE,
+  catalogHasMore,
 } from "@/lib/catalog/book-shelves";
 import { cleanBookDescription } from "@/lib/text";
 
@@ -208,13 +209,12 @@ function toBooksPage(
   const rawCount = data.items?.length ?? 0;
   const totalItems = Math.max(0, data.totalItems ?? 0);
   const nextIndex = startIndex + rawCount;
-  const reachable = Math.min(totalItems, CATALOG_INDEX_CAP);
   return {
     books: mapVolumes(data),
     totalItems,
     startIndex,
     nextIndex,
-    hasMore: rawCount > 0 && nextIndex < reachable,
+    hasMore: catalogHasMore(rawCount, nextIndex),
   };
 }
 
@@ -374,7 +374,10 @@ async function withRetry<T>(run: () => Promise<T>): Promise<T> {
         throw error;
       }
 
-      await sleep(400 * (attempt + 1));
+      const heavy =
+        error instanceof GoogleBooksError &&
+        (error.status === 503 || error.status === 429 || error.status >= 500);
+      await sleep((heavy ? 900 : 400) * (attempt + 1));
     }
   }
 
@@ -424,12 +427,12 @@ export async function searchGoogleBooks(
 export async function getBrowseCatalogPage(): Promise<GoogleBooksPage> {
   try {
     const page = await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
-      orderBy: "newest",
+      orderBy: "relevance",
     });
     if (page.books.length > 0) return page;
     await sleep(300);
     return await searchGoogleBooks(BROWSE_ALL_QUERY, CATALOG_PAGE_SIZE, {
-      orderBy: "newest",
+      orderBy: "relevance",
     });
   } catch {
     return EMPTY_PAGE;

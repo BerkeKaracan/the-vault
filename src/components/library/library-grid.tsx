@@ -19,7 +19,11 @@ import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import type { Collection } from "@/lib/library/collections";
-import { readLibraryScroll, writeLibraryScroll } from "@/lib/list-session";
+import {
+  readLibraryScroll,
+  restoreWindowScroll,
+  writeLibraryScroll,
+} from "@/lib/list-session";
 import type { Material, MaterialStatus } from "@/lib/types";
 
 function translateError(
@@ -59,9 +63,14 @@ export function LibraryGrid({
 
   useLayoutEffect(() => {
     const y = readLibraryScroll();
-    if (y != null && y > 0) {
-      window.scrollTo(0, y);
-    }
+    if (y == null || y <= 0) return;
+    restoreWindowScroll(y);
+  }, []);
+
+  useEffect(() => {
+    const y = readLibraryScroll();
+    if (y == null || y <= 0) return;
+    restoreWindowScroll(y);
   }, []);
 
   useEffect(() => {

@@ -206,7 +206,7 @@ const tr = {
     coverUploading: "Kapak yükleniyor…",
     coverRemove: "Kapağı kaldır",
     shelves: {
-      all: "Kurgu vitrini",
+      all: "Vitrin",
       fiction: "Kurgu",
       history: "Tarih",
       science: "Bilim",
@@ -583,7 +583,7 @@ const en = {
     coverUploading: "Uploading cover…",
     coverRemove: "Remove cover",
     shelves: {
-      all: "Fiction shelf",
+      all: "Featured",
       fiction: "Fiction",
       history: "History",
       science: "Science",

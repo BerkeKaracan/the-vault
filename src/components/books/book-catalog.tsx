@@ -19,6 +19,7 @@ import { t } from "@/i18n/t";
 import {
   BOOK_SHELVES,
   type BookShelfId,
+  CATALOG_INDEX_CAP,
   DEFAULT_BOOK_SHELF,
   googleQueryFor,
 } from "@/lib/catalog/book-shelves";
@@ -26,7 +27,11 @@ import type {
   GoogleBookResult,
   GoogleBooksPage,
 } from "@/lib/catalog/google-books";
-import { readDiscoverCache, writeDiscoverCache } from "@/lib/list-session";
+import {
+  readDiscoverCache,
+  restoreWindowScroll,
+  writeDiscoverCache,
+} from "@/lib/list-session";
 import type { MetricType } from "@/lib/types";
 
 function translateError(
@@ -59,7 +64,11 @@ export function BookCatalog({
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [books, setBooks] = useState(initialPage.books);
   const [nextIndex, setNextIndex] = useState(initialPage.nextIndex);
-  const [hasMore, setHasMore] = useState(initialPage.hasMore);
+  const [hasMore, setHasMore] = useState(
+    initialPage.hasMore ||
+      (initialPage.books.length > 0 &&
+        initialPage.nextIndex < CATALOG_INDEX_CAP),
+  );
   const [searchError, setSearchError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [searching, setSearching] = useState(initialPage.books.length === 0);
@@ -70,6 +79,10 @@ export function BookCatalog({
   const skipNextFetch = useRef(false);
   const loadingMoreRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const restoreY = useRef<number | null>(null);
+  const restoreCount = useRef(0);
+  const booksRef = useRef(initialPage.books);
+  const nextIndexRef = useRef(initialPage.nextIndex);
   const snapshotRef = useRef({
     shelf,
     query: debouncedQuery,
@@ -84,22 +97,38 @@ export function BookCatalog({
     nextIndex,
     hasMore,
   };
+  booksRef.current = books;
+  nextIndexRef.current = nextIndex;
 
   useLayoutEffect(() => {
     const cache = readDiscoverCache();
     if (!cache) return;
     skipNextFetch.current = true;
     skipDefaultFetch.current = false;
+    restoreY.current = cache.scrollY;
+    restoreCount.current = cache.books.length;
     setShelf(cache.shelf);
     setQuery(cache.query);
     setDebouncedQuery(cache.query);
     setBooks(cache.books);
     setNextIndex(cache.nextIndex);
-    setHasMore(cache.hasMore);
+    setHasMore(cache.nextIndex < CATALOG_INDEX_CAP);
     setSearching(false);
     setReplacing(false);
-    window.scrollTo(0, cache.scrollY);
   }, []);
+
+  useLayoutEffect(() => {
+    if (restoreY.current == null) return;
+    if (books.length < restoreCount.current) return;
+    restoreWindowScroll(restoreY.current);
+  }, [books]);
+
+  useEffect(() => {
+    if (restoreY.current == null) return;
+    if (books.length < restoreCount.current) return;
+    restoreWindowScroll(restoreY.current);
+    restoreY.current = null;
+  }, [books]);
 
   useEffect(() => {
     const onHide = () => {
@@ -113,6 +142,7 @@ export function BookCatalog({
   }, []);
 
   useEffect(() => {
+    if (restoreY.current != null) return;
     writeDiscoverCache({
       shelf,
       query: debouncedQuery,
@@ -175,8 +205,13 @@ export function BookCatalog({
         }
 
         if (!res.ok) {
-          if (replace) setBooks([]);
-          setHasMore(false);
+          const retryable = res.status === 429 || res.status >= 500;
+          if (replace) {
+            setBooks([]);
+            setHasMore(false);
+          } else if (!retryable) {
+            setHasMore(false);
+          }
           setSearchError(
             data.error ??
               (data.errorKey
@@ -187,13 +222,16 @@ export function BookCatalog({
         }
 
         const next = data.books ?? [];
-        setBooks((current) => {
-          if (replace) return next;
-          const seen = new Set(current.map((book) => book.id));
-          return [...current, ...next.filter((book) => !seen.has(book.id))];
-        });
+        if (replace) {
+          setBooks(next);
+          setHasMore(Boolean(data.hasMore));
+        } else {
+          const seen = new Set(booksRef.current.map((book) => book.id));
+          const added = next.filter((book) => !seen.has(book.id));
+          setBooks([...booksRef.current, ...added]);
+          setHasMore(Boolean(data.hasMore) && added.length > 0);
+        }
         setNextIndex(data.nextIndex);
-        setHasMore(data.hasMore);
         if (replace && next.length === 0) {
           setSearchError(dictionary.add.noResults);
         }
@@ -245,19 +283,22 @@ export function BookCatalog({
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return;
-        if (searching || loadingMoreRef.current) return;
+        if (loadingMoreRef.current) return;
         loadingMoreRef.current = true;
-        void loadBooks({ replace: false, startIndex: nextIndex }).finally(
-          () => {
+        void loadBooks({
+          replace: false,
+          startIndex: nextIndexRef.current,
+        }).finally(() => {
+          window.setTimeout(() => {
             loadingMoreRef.current = false;
-          },
-        );
+          }, 800);
+        });
       },
-      { rootMargin: "400px" },
+      { root: null, rootMargin: "800px", threshold: 0 },
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, replacing, searching, nextIndex, loadBooks]);
+  }, [hasMore, replacing, loadBooks]);
 
   function saveBook(book: GoogleBookResult, status: "active" | "shelved") {
     writeDiscoverCache({
@@ -404,8 +445,30 @@ export function BookCatalog({
         </ul>
       )}
 
+      {searching && !replacing && books.length > 0 ? (
+        <CoverSkeletonGrid
+          count={5}
+          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+        />
+      ) : null}
+
       {hasMore && books.length > 0 && !replacing ? (
-        <div ref={sentinelRef} className="h-8 w-full" />
+        <div className="flex flex-col items-center gap-3">
+          <div ref={sentinelRef} className="h-8 w-full" />
+          <button
+            type="button"
+            disabled={searching}
+            onClick={() =>
+              void loadBooks({
+                replace: false,
+                startIndex: nextIndexRef.current,
+              })
+            }
+            className="rounded-full border border-border px-4 py-2 text-sm text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/5 disabled:opacity-40"
+          >
+            {searching ? dictionary.add.searching : dictionary.add.loadMore}
+          </button>
+        </div>
       ) : null}
     </div>
   );
