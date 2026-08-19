@@ -1,7 +1,7 @@
 import { BOOK_SHELVES, type BookShelfId } from "@/lib/catalog/book-shelves";
 import type { GoogleBookResult } from "@/lib/catalog/google-books";
 
-const DISCOVER_KEY = "vault:discover";
+const DISCOVER_KEY = "vault:discover:v4";
 const LIBRARY_SCROLL_KEY = "vault:library:scrollY";
 
 export type DiscoverCache = {
@@ -81,6 +81,15 @@ export function readLibraryScroll(): number | null {
   } catch {
     return null;
   }
+}
+
+export function restoreWindowScroll(top: number) {
+  if (!Number.isFinite(top) || top < 0) return;
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo({ top, left: 0, behavior: "instant" });
+  root.style.scrollBehavior = previous;
 }
 
 export function writeLibraryScroll(scrollY: number) {

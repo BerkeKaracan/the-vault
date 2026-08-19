@@ -108,6 +108,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       data-theme={colorScheme}
       data-accent={accent}
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased ${colorScheme === "dark" ? "dark" : ""}`}
+      data-scroll-behavior="smooth"
     >
       <body className="flex min-h-dvh flex-col bg-background text-foreground">
         <I18nProvider locale={locale} dictionary={dictionary}>

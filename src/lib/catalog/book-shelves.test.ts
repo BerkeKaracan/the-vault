@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   BROWSE_ALL_QUERY,
+  CATALOG_INDEX_CAP,
+  catalogHasMore,
   googleQueryFor,
   isBookSubject,
   toGoogleBooksQuery,
@@ -15,19 +17,19 @@ describe("googleQueryFor", () => {
     });
   });
 
-  it("browses a shelf by newest subject", () => {
+  it("browses a shelf by relevance", () => {
     expect(googleQueryFor("history", "")).toEqual({
       q: "",
       subject: "history",
-      orderBy: "newest",
+      orderBy: "relevance",
     });
   });
 
-  it("browses the default all shelf without a subject", () => {
+  it("browses the default all shelf as the fiction vitrine", () => {
     expect(googleQueryFor("all", "")).toEqual({
-      q: "",
+      q: BROWSE_ALL_QUERY,
       subject: null,
-      orderBy: "newest",
+      orderBy: "relevance",
     });
   });
 });
@@ -47,6 +49,15 @@ describe("toGoogleBooksQuery", () => {
   it("passes through a lone query or subject", () => {
     expect(toGoogleBooksQuery("Socrates", null)).toBe("Socrates");
     expect(toGoogleBooksQuery("", "history")).toBe("subject:history");
+  });
+});
+
+describe("catalogHasMore", () => {
+  it("keeps paging after a short page and stops on empty", () => {
+    expect(catalogHasMore(12, 12)).toBe(true);
+    expect(catalogHasMore(40, 40)).toBe(true);
+    expect(catalogHasMore(0, 40)).toBe(false);
+    expect(catalogHasMore(40, CATALOG_INDEX_CAP)).toBe(false);
   });
 });
 
