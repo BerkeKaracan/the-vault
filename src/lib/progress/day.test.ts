@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { applyProgressToHeatmap } from "@/lib/progress/day";
+import {
+  addSignedDayEntry,
+  applyProgressToHeatmap,
+  signedDayEntries,
+  signedDeltaLabel,
+  signedEntryId,
+} from "@/lib/progress/day";
 
 const base = {
   totals: {} as Record<string, number>,
@@ -61,5 +67,53 @@ describe("applyProgressToHeatmap", () => {
         delta: 15,
       },
     ]);
+  });
+
+  it("ignores a zero delta without rewriting the patch", () => {
+    const next = applyProgressToHeatmap(base, "2026-08-17", {
+      materialId: "m1",
+      title: "Book",
+      metricType: "pages",
+      delta: 0,
+    });
+    expect(next).toBe(base);
+  });
+});
+
+describe("signed day helpers", () => {
+  it("labels plus and minus deltas", () => {
+    expect(signedDeltaLabel(12)).toBe("+12");
+    expect(signedDeltaLabel(-3)).toBe("-3");
+    expect(signedDeltaLabel(0)).toBe("0");
+  });
+
+  it("keeps plus and minus ids distinct", () => {
+    expect(
+      signedEntryId({
+        materialId: "m1",
+        title: "Book",
+        metricType: "pages",
+        delta: 4,
+      }),
+    ).toBe("m1:pos");
+    expect(
+      signedEntryId({
+        materialId: "m1",
+        title: "Book",
+        metricType: "pages",
+        delta: -4,
+      }),
+    ).toBe("m1:neg");
+  });
+
+  it("skips a zero delta when grouping", () => {
+    const grouped = new Map();
+    addSignedDayEntry(grouped, "2026-08-17", {
+      materialId: "m1",
+      title: "Book",
+      metricType: "pages",
+      delta: 0,
+    });
+    expect(signedDayEntries(grouped)).toEqual({});
   });
 });

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { googleQueryFor } from "@/lib/catalog/book-shelves";
+import {
+  BROWSE_ALL_QUERY,
+  googleQueryFor,
+  isBookSubject,
+  toGoogleBooksQuery,
+} from "@/lib/catalog/book-shelves";
 
 describe("googleQueryFor", () => {
   it("uses the typed search with relevance", () => {
@@ -24,5 +29,31 @@ describe("googleQueryFor", () => {
       subject: null,
       orderBy: "newest",
     });
+  });
+});
+
+describe("toGoogleBooksQuery", () => {
+  it("combines a search with a subject filter", () => {
+    expect(toGoogleBooksQuery("Woolf", "fiction")).toBe(
+      "Woolf subject:fiction",
+    );
+  });
+
+  it("uses the fiction vitrine when browsing all", () => {
+    expect(toGoogleBooksQuery("", null)).toBe(BROWSE_ALL_QUERY);
+    expect(toGoogleBooksQuery("  ", null)).toBe(BROWSE_ALL_QUERY);
+  });
+
+  it("passes through a lone query or subject", () => {
+    expect(toGoogleBooksQuery("Socrates", null)).toBe("Socrates");
+    expect(toGoogleBooksQuery("", "history")).toBe("subject:history");
+  });
+});
+
+describe("isBookSubject", () => {
+  it("accepts catalog subjects and rejects all", () => {
+    expect(isBookSubject("fiction")).toBe(true);
+    expect(isBookSubject("all")).toBe(false);
+    expect(isBookSubject("")).toBe(false);
   });
 });
