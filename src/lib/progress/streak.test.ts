@@ -3,6 +3,7 @@ import {
   currentStreak,
   longestStreak,
   positiveLoggedDates,
+  uniqueSortedDates,
 } from "@/lib/progress/streak";
 
 describe("longestStreak", () => {
@@ -20,6 +21,23 @@ describe("longestStreak", () => {
 
   it("returns 0 when empty", () => {
     expect(longestStreak([])).toBe(0);
+  });
+
+  it("resets after a gap", () => {
+    expect(longestStreak(["2026-08-10", "2026-08-11", "2026-08-13"])).toBe(2);
+  });
+});
+
+describe("uniqueSortedDates", () => {
+  it("normalizes, dedupes, and sorts", () => {
+    expect(
+      uniqueSortedDates([
+        "2026-08-17T12:00:00.000Z",
+        "2026-08-16",
+        "2026-08-17",
+        "nope",
+      ]),
+    ).toEqual(["2026-08-16", "2026-08-17"]);
   });
 });
 

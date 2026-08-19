@@ -9,6 +9,8 @@
     "lint": "biome check",
     "format": "biome format --write",
     "test": "vitest run",
+    "test:rls": "vitest run --config vitest.integration.config.mts",
+    "test:e2e": "playwright test",
     "db:types": "supabase gen types --local --lang typescript --schema public > src/lib/database.types.ts"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "supabase": "^2.114.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "@playwright/test": "^1.55.0"
   }
 }

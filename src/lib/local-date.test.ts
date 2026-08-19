@@ -3,6 +3,7 @@ import {
   addDaysToDateString,
   calendarPartsInTimeZone,
   dateStringInTimeZone,
+  getLocalDateString,
   normalizeLoggedOn,
   startOfWeekDateString,
 } from "@/lib/local-date";
@@ -19,7 +20,15 @@ describe("normalizeLoggedOn", () => {
 
   it("rejects empty and malformed values", () => {
     expect(normalizeLoggedOn(null)).toBeNull();
+    expect(normalizeLoggedOn("")).toBeNull();
     expect(normalizeLoggedOn("17/08/2026")).toBeNull();
+  });
+});
+
+describe("getLocalDateString", () => {
+  it("uses the Date object's local calendar fields", () => {
+    expect(getLocalDateString(new Date(2026, 7, 17))).toBe("2026-08-17");
+    expect(getLocalDateString(new Date(2026, 0, 5))).toBe("2026-01-05");
   });
 });
 
@@ -58,5 +67,15 @@ describe("calendar helpers", () => {
   it("starts the week on monday or sunday", () => {
     expect(startOfWeekDateString("2026-08-17", "monday")).toBe("2026-08-17");
     expect(startOfWeekDateString("2026-08-17", "sunday")).toBe("2026-08-16");
+    expect(startOfWeekDateString("2026-08-19", "monday")).toBe("2026-08-17");
+  });
+
+  it("rolls the year at a UTC midnight that is already next day in Istanbul", () => {
+    const parts = calendarPartsInTimeZone(
+      new Date("2025-12-31T22:00:00.000Z"),
+      "Europe/Istanbul",
+    );
+    expect(parts.date).toBe("2026-01-01");
+    expect(parts.year).toBe(2026);
   });
 });

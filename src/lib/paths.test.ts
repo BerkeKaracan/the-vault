@@ -9,9 +9,12 @@ describe("safeNextPath", () => {
 
   it("rejects empty, off-site, and auth loops", () => {
     expect(safeNextPath(null)).toBe("/desk");
+    expect(safeNextPath("")).toBe("/desk");
+    expect(safeNextPath("https://evil.example/desk")).toBe("/desk");
     expect(safeNextPath("//evil.example")).toBe("/desk");
     expect(safeNextPath("/login?next=/desk")).toBe("/desk");
     expect(safeNextPath("/auth/callback")).toBe("/desk");
+    expect(safeNextPath("/setup")).toBe("/desk");
     expect(safeNextPath("\\desk")).toBe("/desk");
   });
 });
