@@ -130,7 +130,7 @@ export function ContributionHeatmap({
   data: HeatmapData;
 }) {
   const { dictionary, locale } = useI18n();
-  const { focusMode } = usePreferences();
+  const focusMode = usePreferences((state) => state.focusMode);
   const hostRef = useRef<HTMLDivElement>(null);
   const fromDate = useMemo(
     () => weekStartWeeksAgo(WEEKS, weekStartsOn),
@@ -283,7 +283,7 @@ export function ContributionHeatmap({
               onBlur={() => {
                 if (!tip?.pinned) setTip(null);
               }}
-              className={`relative aspect-square cursor-pointer rounded-xs caret-transparent select-none outline-none transition-[box-shadow] hover:z-10 hover:ring-1 hover:ring-foreground/55 focus-visible:z-10 focus-visible:ring-1 focus-visible:ring-foreground ${heatClass(pages)} ${isToday ? "ring-1 ring-accent/80" : ""} ${tip?.date === date ? "z-10 ring-1 ring-foreground/70" : ""} ${isFuture ? "opacity-30" : ""}`}
+              className={`relative aspect-square cursor-pointer rounded-xs caret-transparent select-none outline-none transition-shadow hover:z-10 hover:ring-1 hover:ring-foreground/55 focus-visible:z-10 focus-visible:ring-1 focus-visible:ring-foreground ${heatClass(pages)} ${isToday ? "ring-1 ring-accent/80" : ""} ${tip?.date === date ? "z-10 ring-1 ring-foreground/70" : ""} ${isFuture ? "opacity-30" : ""}`}
             >
               {goalMet ? (
                 <span

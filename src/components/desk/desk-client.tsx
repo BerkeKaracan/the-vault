@@ -1,12 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { DeskSurface } from "@/components/desk/desk-surface";
-import { ContributionHeatmap } from "@/components/heatmap/contribution-heatmap";
 import { isMetricType } from "@/lib/catalog/fields";
 import { getLocalDateString } from "@/lib/local-date";
 import { applyProgressToHeatmap, type HeatmapPatch } from "@/lib/progress/day";
 import type { Material, WeekStart } from "@/lib/types";
+
+const ContributionHeatmap = dynamic(
+  () =>
+    import("@/components/heatmap/contribution-heatmap").then(
+      (mod) => mod.ContributionHeatmap,
+    ),
+  { ssr: false, loading: () => <div className="min-h-40" /> },
+);
 
 export function DeskClient({
   materials: initialMaterials,

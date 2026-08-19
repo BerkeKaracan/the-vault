@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  serverExternalPackages: ["@google-cloud/storage"],
   images: {
     remotePatterns: [
       {
@@ -15,6 +16,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "books.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
       },
     ],
   },

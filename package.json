@@ -14,6 +14,7 @@
     "db:types": "supabase gen types --local --lang typescript --schema public > src/lib/database.types.ts"
   },
   "dependencies": {
+    "@google-cloud/storage": "^8.0.1",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "next": "16.3.1",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -33,7 +35,6 @@
     "supabase": "^2.114.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.11",
-    "@playwright/test": "^1.55.0"
+    "vitest": "^4.1.11"
   }
 }

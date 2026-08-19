@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { addGoogleBook } from "@/app/(app)/materials/[id]/actions";
 import { Cover } from "@/components/materials/cover";
 import { CoverSkeletonGrid } from "@/components/skeleton";
@@ -19,6 +26,7 @@ import type {
   GoogleBookResult,
   GoogleBooksPage,
 } from "@/lib/catalog/google-books";
+import { readDiscoverCache, writeDiscoverCache } from "@/lib/list-session";
 import type { MetricType } from "@/lib/types";
 
 function translateError(
@@ -59,6 +67,61 @@ export function BookCatalog({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const skipDefaultFetch = useRef(initialPage.books.length > 0);
+  const skipNextFetch = useRef(false);
+  const loadingMoreRef = useRef(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const snapshotRef = useRef({
+    shelf,
+    query: debouncedQuery,
+    books,
+    nextIndex,
+    hasMore,
+  });
+  snapshotRef.current = {
+    shelf,
+    query: debouncedQuery,
+    books,
+    nextIndex,
+    hasMore,
+  };
+
+  useLayoutEffect(() => {
+    const cache = readDiscoverCache();
+    if (!cache) return;
+    skipNextFetch.current = true;
+    skipDefaultFetch.current = false;
+    setShelf(cache.shelf);
+    setQuery(cache.query);
+    setDebouncedQuery(cache.query);
+    setBooks(cache.books);
+    setNextIndex(cache.nextIndex);
+    setHasMore(cache.hasMore);
+    setSearching(false);
+    setReplacing(false);
+    window.scrollTo(0, cache.scrollY);
+  }, []);
+
+  useEffect(() => {
+    const onHide = () => {
+      writeDiscoverCache({
+        ...snapshotRef.current,
+        scrollY: window.scrollY,
+      });
+    };
+    window.addEventListener("pagehide", onHide);
+    return () => window.removeEventListener("pagehide", onHide);
+  }, []);
+
+  useEffect(() => {
+    writeDiscoverCache({
+      shelf,
+      query: debouncedQuery,
+      books,
+      nextIndex,
+      hasMore,
+      scrollY: window.scrollY,
+    });
+  }, [shelf, debouncedQuery, books, nextIndex, hasMore]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 400);
@@ -157,6 +220,10 @@ export function BookCatalog({
   useEffect(() => {
     const isDefaultBrowse =
       shelf === DEFAULT_BOOK_SHELF && debouncedQuery === "";
+    if (skipNextFetch.current) {
+      skipNextFetch.current = false;
+      return;
+    }
     if (isDefaultBrowse && skipDefaultFetch.current) {
       return;
     }
@@ -171,7 +238,32 @@ export function BookCatalog({
     return () => controller.abort();
   }, [shelf, debouncedQuery, loadBooks]);
 
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore || replacing) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        if (searching || loadingMoreRef.current) return;
+        loadingMoreRef.current = true;
+        void loadBooks({ replace: false, startIndex: nextIndex }).finally(
+          () => {
+            loadingMoreRef.current = false;
+          },
+        );
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, replacing, searching, nextIndex, loadBooks]);
+
   function saveBook(book: GoogleBookResult, status: "active" | "shelved") {
+    writeDiscoverCache({
+      ...snapshotRef.current,
+      scrollY: window.scrollY,
+    });
     setActionMessage(null);
     setPendingId(book.id);
     startTransition(async () => {
@@ -253,6 +345,12 @@ export function BookCatalog({
               <Link
                 href={`/discover/${encodeURIComponent(book.id)}`}
                 className="block"
+                onClick={() =>
+                  writeDiscoverCache({
+                    ...snapshotRef.current,
+                    scrollY: window.scrollY,
+                  })
+                }
               >
                 <Cover
                   title={book.title}
@@ -264,6 +362,12 @@ export function BookCatalog({
               <Link
                 href={`/discover/${encodeURIComponent(book.id)}`}
                 className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground hover:text-foreground"
+                onClick={() =>
+                  writeDiscoverCache({
+                    ...snapshotRef.current,
+                    scrollY: window.scrollY,
+                  })
+                }
               >
                 {book.title}
               </Link>
@@ -301,16 +405,7 @@ export function BookCatalog({
       )}
 
       {hasMore && books.length > 0 && !replacing ? (
-        <button
-          type="button"
-          disabled={searching}
-          onClick={() =>
-            void loadBooks({ replace: false, startIndex: nextIndex })
-          }
-          className="self-center rounded-full border border-border px-4 py-2 text-sm text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/5 disabled:opacity-40"
-        >
-          {searching ? dictionary.add.searching : dictionary.add.loadMore}
-        </button>
+        <div ref={sentinelRef} className="h-8 w-full" />
       ) : null}
     </div>
   );

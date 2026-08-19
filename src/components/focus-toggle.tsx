@@ -5,7 +5,8 @@ import { usePreferences } from "@/store";
 
 export function FocusToggle() {
   const { dictionary } = useI18n();
-  const { focusMode, toggleFocus } = usePreferences();
+  const focusMode = usePreferences((state) => state.focusMode);
+  const toggleFocus = usePreferences((state) => state.toggleFocus);
 
   return (
     <button

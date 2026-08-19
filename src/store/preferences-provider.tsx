@@ -13,6 +13,7 @@ import {
   applyTheme,
   createPreferencesStore,
   type PreferencesSnapshot,
+  type PreferencesState,
   type PreferencesStore,
 } from "@/store/preferences";
 
@@ -78,7 +79,11 @@ export function PreferencesProvider({
   );
 }
 
-export function usePreferences() {
+export function usePreferences(): PreferencesState;
+export function usePreferences<T>(selector: (state: PreferencesState) => T): T;
+export function usePreferences<T>(
+  selector?: (state: PreferencesState) => T,
+): T | PreferencesState {
   const store = useContext(PreferencesStoreContext) ?? fallbackStore;
-  return useStore(store);
+  return useStore(store, selector ?? ((state) => state as T));
 }

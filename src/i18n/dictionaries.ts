@@ -35,34 +35,34 @@ const tr = {
     ],
     keptTitle: "Kaldı",
     kept: ["Masandaki üç materyal", "Girdiğin her sayfa", "Bugünün kutusu"],
-    deskTitle: "Active Desk",
+    deskTitle: "Aktif masa",
     deskBody:
-      "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Library’ye kaldırırsın — sınırın kendisi odaktır.",
-    deskMockLabel: "Active Desk",
+      "Aynı anda en fazla üç materyal. Dördüncüyü eklemek istersen önce birini Kütüphane’ye kaldırırsın — sınırın kendisi odaktır.",
+    deskMockLabel: "Aktif masa",
     heatTitle: "İstikrar haritası",
     heatBody:
       "“Yılda 50 kitap” gibi yapay hedefler yok. Tek soru: bugün masaya oturdun mu. Girdiğin her sayfa o günün kutusunu yakar.",
     heatMockLabel: "Son 6 ay",
     heatMockLabelYear: "Son 12 ay",
-    vaultTitle: "Library",
+    vaultTitle: "Kütüphane",
     vaultBody:
       "Biten ve sırada bekleyen her şey, alt alta listeler yerine kapaklardan oluşan bir ızgarada durur. Kapağı olmayan materyal tipografik kapak alır.",
     vaultMockLabel: "Arşiv",
     tourTitle: "Dört yüzey. Sosyal yok.",
     tourDesk: "Masa",
     tourDeskHint: "Aynı anda üç materyal.",
-    tourLibrary: "Library",
+    tourLibrary: "Kütüphane",
     tourLibraryHint: "Raflar, bekleyenler, bitenler.",
-    tourDiscover: "Discover",
+    tourDiscover: "Keşfet",
     tourDiscoverHint: "Vitrinden kapak seç.",
-    tourLog: "Log",
+    tourLog: "Kayıt",
     tourLogHint: "Gün gün ne okudun.",
     shelvesPitchTitle: "Raflar.",
     shelvesPitchBody:
       "Bekleyenler ayrı, bitenler ayrı. İsimli raflarla kendi düzenini kur — feed yok.",
     navHow: "Nasıl",
-    navLibrary: "Library",
-    navLog: "Log",
+    navLibrary: "Kütüphane",
+    navLog: "Kayıt",
     footerNoSocial: "Sosyal yok. Sadece mesai.",
     closingTitle: "Masana dön.",
     closingBody: "Hesabını aç, ilk materyalini ekle, bugünün kutusunu yak.",
@@ -85,12 +85,12 @@ const tr = {
     mockCoverF: "Arşiv notu",
   },
   nav: {
-    desk: "Desk",
-    library: "Library",
-    discover: "Discover",
-    log: "Log",
-    stats: "Stats",
-    vault: "Vault",
+    desk: "Masa",
+    library: "Kütüphane",
+    discover: "Keşfet",
+    log: "Kayıt",
+    stats: "İstatistik",
+    vault: "Kütüphane",
     add: "Ekle",
     menu: "Menü",
     close: "Kapat",
@@ -112,14 +112,14 @@ const tr = {
       "Aynı anda en fazla üç materyal. Kitap, soru seti veya doküman — ilkini ekle, bugünün kutusunu yak.",
     emptyCta: "Vitrine git",
     emptySlot: "Boş yer",
-    openLog: "Log’a git",
+    openLog: "Kayıt’a git",
     pageOnly: "{page} {unit}",
     pageOf: "{current} / {total}",
     consistency: "İstikrar",
     pageInput: "Ulaşılan {unit}",
     updateProgress: "Kaydet",
     markCompleted: "Bitir",
-    shelve: "Library’ye kaldır",
+    shelve: "Kütüphane’ye kaldır",
     heatmapStats: "{days} aktif gün",
     heatmapEmptyCaption: "Bugünü yakmak için bir sayfa kaydet.",
     heatmapLess: "Az",
@@ -142,7 +142,7 @@ const tr = {
     todayGoalCaption: "bugün / hedef",
   },
   vault: {
-    title: "Library",
+    title: "Kütüphane",
     subtitle: "Kütüphane · {count}",
     emptyTitle: "Kütüphane henüz boş.",
     emptyBody:
@@ -169,7 +169,7 @@ const tr = {
     noResults: "Aramanla eşleşen materyal yok.",
   },
   add: {
-    title: "Discover",
+    title: "Keşfet",
     subtitle: "Vitrinden bir kapak seç, ara veya kendi kaynağını elle gir.",
     tabSearch: "Google Books",
     tabManual: "Manuel",
@@ -183,16 +183,16 @@ const tr = {
     pages: "{count} sayfa",
     pagesUnknown: "Sayfa ?",
     addToDesk: "Masaya ekle",
-    addToVault: "Library’ye koy",
+    addToVault: "Kütüphane’ye koy",
     addedToDesk: '"{title}" masaya eklendi.',
-    addedToVault: '"{title}" Library’ye koyuldu.',
+    addedToVault: '"{title}" Kütüphane’ye koyuldu.',
     added: '"{title}" eklendi.',
     titleLabel: "Başlık",
     authorLabel: "Yazar",
     totalPagesLabel: "Toplam (opsiyonel)",
     descriptionLabel: "Açıklama (opsiyonel)",
-    statusActive: "Active Desk",
-    statusVault: "Library",
+    statusActive: "Aktif masa",
+    statusVault: "Kütüphane",
     submit: "Ekle",
     openDetails: "İncele",
     metricLabel: "Ölçüm",
@@ -201,6 +201,10 @@ const tr = {
     metricChapters: "Bölüm",
     tagsLabel: "Etiketler",
     tagsPlaceholder: "Yazılım, Sınav, Edebiyat",
+    coverLabel: "Kapak (opsiyonel)",
+    coverHint: "JPEG, PNG veya WebP · en fazla 2 MB",
+    coverUploading: "Kapak yükleniyor…",
+    coverRemove: "Kapağı kaldır",
     shelves: {
       all: "Kurgu vitrini",
       fiction: "Kurgu",
@@ -217,10 +221,10 @@ const tr = {
   book: {
     about: "Hakkında",
     noDescription: "Bu kitap için açıklama yok.",
-    openInVault: "Library’de aç",
+    openInVault: "Kütüphane’de aç",
     backToAdd: "Vitrine dön",
     backToDesk: "Masaya dön",
-    backToVault: "Library’ye dön",
+    backToVault: "Kütüphane’ye dön",
     onDesk: "Masada",
     notes: "Notlar",
     notesHint: "Markdown: **kalın**, *italik*, listeler.",
@@ -237,7 +241,7 @@ const tr = {
       "Bu materyali silmek istediğine emin misin? Bu işlem geri alınamaz.",
   },
   log: {
-    title: "Log",
+    title: "Kayıt",
     subtitle: "Girdiğin her gün. Kutuya tıkla.",
     empty: "Bu ay henüz kayıt yok.",
     emptyDay: "Bu günde kayıt yok.",
@@ -247,7 +251,7 @@ const tr = {
     dayCount: "{count} kayıt",
   },
   stats: {
-    title: "Stats",
+    title: "İstatistik",
     subtitle: "Ölçülebilir mesai.",
     thisMonth: "Bu ay",
     thisYear: "Bu yıl",
@@ -277,13 +281,17 @@ const tr = {
   },
   errors: {
     deskFull:
-      "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Library’ye kaldırın.",
+      "Masanız dolu. Yeni bir materyal eklemek için önce bir kitabı Kütüphane’ye kaldırın.",
     titleRequired: "Başlık zorunlu.",
     authRequired: "Oturum gerekli.",
     invalidPage: "Değer 0 veya üzeri olmalı.",
     notFound: "Materyal bulunamadı.",
-    alreadyOwned: "Bu kitap zaten masanda veya Library’de.",
+    alreadyOwned: "Bu kitap zaten masanda veya Kütüphane’de.",
     generic: "Bir hata oluştu.",
+    coverTooLarge: "Kapak en fazla 2 MB olabilir.",
+    coverType: "Kapak JPEG, PNG veya WebP olmalı.",
+    coverFailed: "Kapak yüklenemedi.",
+    coverUnavailable: "Kapak depolama yapılandırılmamış.",
     queryTooShort: "En az 2 karakter girin.",
     booksRateLimit:
       "Google Books kota limiti aşıldı. Birkaç dakika sonra tekrar dene veya API anahtarını kontrol et.",
@@ -570,6 +578,10 @@ const en = {
     metricChapters: "Chapters",
     tagsLabel: "Tags",
     tagsPlaceholder: "Software, Exam, Literature",
+    coverLabel: "Cover (optional)",
+    coverHint: "JPEG, PNG, or WebP · 2 MB max",
+    coverUploading: "Uploading cover…",
+    coverRemove: "Remove cover",
     shelves: {
       all: "Fiction shelf",
       fiction: "Fiction",
@@ -652,6 +664,10 @@ const en = {
     notFound: "Material not found.",
     alreadyOwned: "This book is already on your desk or in the Library.",
     generic: "Something went wrong.",
+    coverTooLarge: "Cover must be 2 MB or smaller.",
+    coverType: "Cover must be JPEG, PNG, or WebP.",
+    coverFailed: "Cover could not be uploaded.",
+    coverUnavailable: "Cover storage is not configured.",
     queryTooShort: "Enter at least 2 characters.",
     booksRateLimit:
       "Google Books rate limit hit. Try again in a few minutes or check your API key.",
@@ -922,6 +938,10 @@ export type Dictionary = {
     metricChapters: string;
     tagsLabel: string;
     tagsPlaceholder: string;
+    coverLabel: string;
+    coverHint: string;
+    coverUploading: string;
+    coverRemove: string;
     shelves: {
       all: string;
       fiction: string;
@@ -1002,6 +1022,10 @@ export type Dictionary = {
     notFound: string;
     alreadyOwned: string;
     generic: string;
+    coverTooLarge: string;
+    coverType: string;
+    coverFailed: string;
+    coverUnavailable: string;
     queryTooShort: string;
     booksRateLimit: string;
     booksKeyRejected: string;
