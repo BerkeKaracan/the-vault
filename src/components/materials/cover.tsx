@@ -29,11 +29,10 @@ export function Cover({
           sizes={sizes}
           className="object-cover"
           priority={priority}
-          unoptimized
         />
       ) : (
         <div className="flex h-full w-full flex-col justify-between bg-linear-to-br from-elevated via-surface to-background p-3">
-          <span className="absolute inset-y-0 left-0 w-[3px] bg-foreground/20" />
+          <span className="absolute inset-y-0 left-0 w-0.75 bg-foreground/20" />
           <p
             className="line-clamp-4 text-[0.8rem] leading-snug font-medium tracking-tight text-foreground"
             data-private

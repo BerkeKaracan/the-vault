@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import {
   createCollection,
   deleteCollection,
@@ -13,6 +19,7 @@ import type { ErrorKey } from "@/i18n/dictionaries";
 import { useI18n } from "@/i18n/provider";
 import { t } from "@/i18n/t";
 import type { Collection } from "@/lib/library/collections";
+import { readLibraryScroll, writeLibraryScroll } from "@/lib/list-session";
 import type { Material, MaterialStatus } from "@/lib/types";
 
 function translateError(
@@ -49,6 +56,19 @@ export function LibraryGrid({
   const [shelfId, setShelfId] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("updated");
   const [newShelf, setNewShelf] = useState("");
+
+  useLayoutEffect(() => {
+    const y = readLibraryScroll();
+    if (y != null && y > 0) {
+      window.scrollTo(0, y);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onHide = () => writeLibraryScroll(window.scrollY);
+    window.addEventListener("pagehide", onHide);
+    return () => window.removeEventListener("pagehide", onHide);
+  }, []);
 
   const shelfIds = useMemo(() => {
     if (!shelfId) return null;
@@ -271,7 +291,11 @@ export function LibraryGrid({
               const percent = Math.round(progressOf(material) * 100);
               return (
                 <li key={material.id} className="group flex flex-col">
-                  <Link href={`/materials/${material.id}`} className="block">
+                  <Link
+                    href={`/materials/${material.id}`}
+                    className="block"
+                    onClick={() => writeLibraryScroll(window.scrollY)}
+                  >
                     <Cover
                       title={material.title}
                       author={material.author}
@@ -291,6 +315,7 @@ export function LibraryGrid({
                     href={`/materials/${material.id}`}
                     data-private
                     className="mt-3 line-clamp-2 font-display text-sm leading-snug font-semibold tracking-[-0.02em] text-foreground transition group-hover:text-foreground"
+                    onClick={() => writeLibraryScroll(window.scrollY)}
                   >
                     {material.title}
                   </Link>

@@ -32,7 +32,10 @@ export function SettingsForm({
   consent: CookieConsent | null;
 }) {
   const { dictionary } = useI18n();
-  const { colorScheme, setTheme, focusMode, toggleFocus } = usePreferences();
+  const colorScheme = usePreferences((state) => state.colorScheme);
+  const setTheme = usePreferences((state) => state.setTheme);
+  const focusMode = usePreferences((state) => state.focusMode);
+  const toggleFocus = usePreferences((state) => state.toggleFocus);
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [weekStartsOn, setWeekStartsOn] = useState<WeekStart>(
     profile?.week_starts_on ?? "monday",

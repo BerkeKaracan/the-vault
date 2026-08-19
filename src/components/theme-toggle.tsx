@@ -5,7 +5,8 @@ import { usePreferences } from "@/store";
 
 export function ThemeToggle() {
   const { dictionary } = useI18n();
-  const { colorScheme, toggleTheme } = usePreferences();
+  const colorScheme = usePreferences((state) => state.colorScheme);
+  const toggleTheme = usePreferences((state) => state.toggleTheme);
   const light = colorScheme === "light";
 
   return (

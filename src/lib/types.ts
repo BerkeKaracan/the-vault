@@ -21,4 +21,8 @@ export type ActionErrorCode =
   | "invalidPage"
   | "notFound"
   | "alreadyOwned"
-  | "generic";
+  | "generic"
+  | "coverTooLarge"
+  | "coverType"
+  | "coverFailed"
+  | "coverUnavailable";
