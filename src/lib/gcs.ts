@@ -1,26 +1,55 @@
 import { Storage } from "@google-cloud/storage";
-import { coverExtensionFor } from "@/lib/cover";
 import type { ActionErrorCode } from "@/lib/types";
 
 export { COVER_MAX_BYTES, coverExtensionFor } from "@/lib/cover";
 
+export function normalizeGcsPrivateKey(raw: string): string {
+  let key = raw.trim();
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1);
+  }
+  return key.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
+}
+
+export function normalizeGcsBucket(raw: string): string {
+  return raw
+    .trim()
+    .replace(/^gs:\/\//i, "")
+    .replace(/\/+$/, "");
+}
+
 function gcsConfig() {
-  const bucket = process.env.GCS_BUCKET?.trim();
-  const clientEmail = process.env.GCS_CLIENT_EMAIL?.trim();
-  const privateKey = process.env.GCS_PRIVATE_KEY?.replace(/\\n/g, "\n");
-  if (!bucket || !clientEmail || !privateKey) return null;
-  return { bucket, clientEmail, privateKey };
+  const bucket = normalizeGcsBucket(process.env.GCS_BUCKET ?? "");
+  const clientEmail = process.env.GCS_CLIENT_EMAIL?.trim() ?? "";
+  const privateKey = normalizeGcsPrivateKey(process.env.GCS_PRIVATE_KEY ?? "");
+  const projectId =
+    process.env.GCS_PROJECT_ID?.trim() || projectIdFromEmail(clientEmail) || "";
+  if (!bucket || !clientEmail || !privateKey.includes("BEGIN")) return null;
+  return { bucket, clientEmail, privateKey, projectId };
 }
 
 export function isGcsConfigured() {
   return gcsConfig() !== null;
 }
 
-function projectIdFromEmail(email: string) {
+export function projectIdFromEmail(email: string) {
   const domain = email.split("@")[1] ?? "";
   const suffix = ".iam.gserviceaccount.com";
-  if (!domain.endsWith(suffix)) return undefined;
+  if (!domain.endsWith(suffix)) return "";
   return domain.slice(0, -suffix.length);
+}
+
+function logGcsError(error: unknown) {
+  const err = error as {
+    message?: string;
+    code?: string | number;
+    errors?: { message?: string }[];
+  };
+  const detail = err.errors?.[0]?.message ?? err.message ?? String(error);
+  console.error("[gcs/cover]", err.code ?? "", detail);
 }
 
 export async function uploadPublicCover(input: {
@@ -35,14 +64,12 @@ export async function uploadPublicCover(input: {
     return { error: "coverUnavailable" };
   }
 
-  if (!coverExtensionFor(input.contentType)) {
-    return { error: "coverType" };
-  }
-
   try {
     const storage = new Storage({
-      projectId: projectIdFromEmail(config.clientEmail),
+      projectId: config.projectId || undefined,
       credentials: {
+        type: "service_account",
+        project_id: config.projectId || undefined,
         client_email: config.clientEmail,
         private_key: config.privateKey,
       },
@@ -51,12 +78,14 @@ export async function uploadPublicCover(input: {
     const file = storage.bucket(config.bucket).file(path);
     await file.save(input.buffer, {
       resumable: false,
-      contentType: input.contentType,
+      validation: "md5",
+      contentType: input.contentType || `image/${input.extension}`,
       metadata: { cacheControl: "public, max-age=31536000, immutable" },
     });
     const url = `https://storage.googleapis.com/${config.bucket}/${path}`;
     return { url };
-  } catch {
+  } catch (error) {
+    logGcsError(error);
     return { error: "coverFailed" };
   }
 }
