@@ -97,6 +97,7 @@ const tr = {
     settings: "Ayarlar",
     signOut: "Çıkış",
     focus: "Odak",
+    feedback: "Geri bildirim",
   },
   login: {
     title: "Odak terminali",
@@ -356,6 +357,10 @@ const tr = {
       "Boş = hedef yok. Sayfa cinsinden. Heatmap’te hedefi geçen günler işaretlenir.",
     focusMode: "Gizlilik / odak",
     focusModeHint: "İsimleri ve sayıları bulanıklaştırır.",
+    feedbackTitle: "Geri bildirim",
+    feedbackBody:
+      "Hata, fikir veya not — Feedback Portal’a gider. Giriş gerekmez.",
+    feedbackCta: "Portal’ı aç",
   },
   reminders: {
     label: "Hedef hatırlatmaları",
@@ -474,6 +479,7 @@ const en = {
     settings: "Settings",
     signOut: "Sign out",
     focus: "Focus",
+    feedback: "Feedback",
   },
   login: {
     title: "Focus terminal",
@@ -732,6 +738,10 @@ const en = {
       "Leave empty for no goal. Counted in pages. Days that beat it get a mark on the heatmap.",
     focusMode: "Privacy / focus",
     focusModeHint: "Blurs titles and numbers.",
+    feedbackTitle: "Feedback",
+    feedbackBody:
+      "Bugs, ideas, or notes go to the Feedback Portal. No sign-in required.",
+    feedbackCta: "Open portal",
   },
   reminders: {
     label: "Goal reminders",
@@ -837,6 +847,7 @@ export type Dictionary = {
     settings: string;
     signOut: string;
     focus: string;
+    feedback: string;
   };
   login: {
     title: string;
@@ -1084,6 +1095,9 @@ export type Dictionary = {
     dailyGoalHint: string;
     focusMode: string;
     focusModeHint: string;
+    feedbackTitle: string;
+    feedbackBody: string;
+    feedbackCta: string;
   };
   reminders: {
     label: string;

@@ -356,6 +356,14 @@ export default async function LandingPage() {
           <p className="font-mono text-[0.62rem] tracking-[0.18em] text-muted uppercase">
             {landing.footerNoSocial}
           </p>
+          <a
+            href="/feedback"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 text-[0.78rem] text-muted underline-offset-2 transition hover:text-foreground hover:underline"
+          >
+            {dictionary.nav.feedback}
+          </a>
         </div>
       </footer>
     </div>
