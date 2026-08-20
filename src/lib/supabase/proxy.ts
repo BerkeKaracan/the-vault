@@ -20,6 +20,7 @@ function isPublicPath(path: string) {
     path === "/manifest.webmanifest" ||
     path === "/robots.txt" ||
     path === "/sitemap.xml" ||
+    path === "/feedback" ||
     path === "/feedback-portal-verify.txt" ||
     path.startsWith("/opengraph-image")
   );

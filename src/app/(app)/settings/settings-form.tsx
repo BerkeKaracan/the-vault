@@ -305,6 +305,23 @@ export function SettingsForm({
         </fieldset>
       </section>
 
+      <section className="rounded-xl border border-border bg-elevated/40 px-4 py-5 sm:px-5">
+        <h2 className="font-display text-sm font-semibold tracking-[-0.02em] text-foreground">
+          {dictionary.settings.feedbackTitle}
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          {dictionary.settings.feedbackBody}
+        </p>
+        <a
+          href="/feedback"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex rounded-full border border-border px-4 py-2 text-sm text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/5 hover:text-foreground"
+        >
+          {dictionary.settings.feedbackCta}
+        </a>
+      </section>
+
       <div className="flex items-center gap-4">
         <button
           type="submit"

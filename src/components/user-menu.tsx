@@ -90,6 +90,16 @@ export function UserMenu({ label }: { label: string }) {
           >
             {dictionary.nav.settings}
           </Link>
+          <a
+            href="/feedback"
+            role="menuitem"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-foreground/80 transition hover:bg-foreground/5 hover:text-foreground"
+          >
+            {dictionary.nav.feedback}
+          </a>
           <form action={signOut}>
             <button
               type="submit"
