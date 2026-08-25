@@ -30,6 +30,15 @@ function isBook(value: unknown): value is GoogleBookResult {
   );
 }
 
+export function clearDiscoverCache() {
+  if (typeof sessionStorage === "undefined") return;
+  try {
+    sessionStorage.removeItem(DISCOVER_KEY);
+  } catch {
+    /* private mode */
+  }
+}
+
 export function readDiscoverCache(): DiscoverCache | null {
   if (typeof sessionStorage === "undefined") return null;
   try {
@@ -40,6 +49,12 @@ export function readDiscoverCache(): DiscoverCache | null {
       return null;
     }
     if (!Array.isArray(parsed.books) || !parsed.books.every(isBook)) {
+      return null;
+    }
+    // Empty lists are failure/timeout states — restoring them skips refetch
+    // and leaves Discover blank across logout/login in the same tab.
+    if (parsed.books.length === 0) {
+      sessionStorage.removeItem(DISCOVER_KEY);
       return null;
     }
     if (
@@ -65,6 +80,10 @@ export function readDiscoverCache(): DiscoverCache | null {
 export function writeDiscoverCache(cache: DiscoverCache) {
   if (typeof sessionStorage === "undefined") return;
   try {
+    if (cache.books.length === 0) {
+      sessionStorage.removeItem(DISCOVER_KEY);
+      return;
+    }
     sessionStorage.setItem(DISCOVER_KEY, JSON.stringify(cache));
   } catch {
     /* quota / private mode */
